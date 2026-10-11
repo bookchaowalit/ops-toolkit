@@ -89,6 +89,7 @@ class EngagementTaskIdentityTest(unittest.TestCase):
         environment = types.ModuleType("_env")
         environment.PROJECT_ROOT = ROOT.parent
         environment.ARCHITECTURE_ROOT = ARCHITECTURE_ROOT
+        environment.skip_without_architecture = lambda *_a, **_k: None
         environment.DB_PATH = Path("fixture-only.db")
         spec = importlib.util.spec_from_file_location("engagement_review_fixture", SCRIPT)
         self.review = importlib.util.module_from_spec(spec)
