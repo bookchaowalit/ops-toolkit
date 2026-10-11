@@ -1,0 +1,78 @@
+version: '3'
+
+# learning command adapters owned by the Solo Empire control plane.
+# Included by ../../Taskfile.yml with the repository root as working directory.
+# Product build/test implementations must stay inside their own repository.
+
+tasks:
+  learning:health:
+    desc: Check learning health and coverage
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/learning/learning_health.py {{.CLI_ARGS}}
+
+  learning:evidence:
+    desc: Record bounded learning evidence
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/learning/learning_evidence.py {{.CLI_ARGS}}
+
+  learning:sync:
+    desc: Validate or synchronize learning sources
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/learning/learning_sync.py {{.CLI_ARGS}}
+
+  free:find:
+    desc: Search the local free-resource catalog
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/discovery/free_resource.py {{.CLI_ARGS}}
+
+  learning:sync:check:
+    desc: Check learning source synchronization without writing
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/learning/learning_sync.py --check {{.CLI_ARGS}}
+
+  quiz:check:
+    desc: Validate learning quiz files and source links
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/learning/quiz.py --check {{.CLI_ARGS}}
+
+  quiz:
+    desc: Run the learning quiz workflow
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/learning/quiz.py {{.CLI_ARGS}}
+
+  test:quiz:
+    desc: Test the learning quiz workflow
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/learning/learning_quiz_test.py
+
+  test:learning-health:
+    desc: Test learning health projections
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/learning/learning_health_test.py
+
+  test:learning-evidence:
+    desc: Test learning evidence workflows
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/learning/learning_evidence_test.py
+
+  test:free-resource:
+    desc: Test free-resource discovery
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/discovery/free_resource_test.py
+
+  test:learning-sync:
+    desc: Test learning synchronization
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/learning/learning_sync_test.py

@@ -1,0 +1,259 @@
+version: '3'
+
+# operations command adapters owned by the Solo Empire control plane.
+# Included by ../../Taskfile.yml with the repository root as working directory.
+# Product build/test implementations must stay inside their own repository.
+
+tasks:
+  test:task-ownership:
+    desc: Test package-script ownership and Task parity
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/quality/task_command_ownership_test.py
+
+  test:goal-portfolio-map:
+    desc: Test goal portfolio mapping
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/quality/goal_portfolio_mapping_test.py
+      - bash scripts/setup/run-python3.sh tests/quality/season_quest_test.py
+
+  diary:
+    desc: Record a daily diary workflow entry
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/workflows/daily_diary.py {{.CLI_ARGS}}
+
+  diary:summary:
+    desc: Summarize diary activity
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/workflows/diary_summary.py {{.CLI_ARGS}}
+
+  decision:
+    desc: Run the decision CLI
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/cli/decision-cli.py {{.CLI_ARGS}}
+
+  decision:brief:
+    desc: Generate a decision brief
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/workflows/decision_brief.py {{.CLI_ARGS}}
+
+  decision:review:
+    desc: Review due decisions and optionally sync tasks
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/workflows/decision_review.py {{.CLI_ARGS}}
+
+  tasks:
+    desc: Query or update operational tasks through the TypeScript CLI
+    dir: infra
+    cmds:
+      - node node_modules/tsx/dist/cli.mjs cli.ts tasks {{.CLI_ARGS}}
+
+  tasks:health:
+    desc: Show read-only task, WIP, calendar freshness, and delivery health
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/utils/task_calendar_health.py
+
+  tasks:views:
+    desc: Refresh VS Code-friendly task views
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/tasks_view.py {{.CLI_ARGS}}
+
+  tracking:views:
+    desc: Refresh goal, habit, routine, and task tracking views
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/tracking_views.py {{.CLI_ARGS}}
+
+  life:checkin:
+    desc: Weekly Life Framework check-in into the habits cell
+    dir: infra
+    interactive: true
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/cli/life-checkin.py {{.CLI_ARGS}}
+
+  test:life-checkin:
+    desc: Test the weekly life check-in
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/quality/life_checkin_test.py
+
+  operating:cycle:check:
+    desc: Validate the operating cycle gate
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/operating_cycle.py check {{.CLI_ARGS}}
+
+  operating:cycle:report:
+    desc: Write the operating cycle report
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/operating_cycle.py report --write {{.CLI_ARGS}}
+
+  operating:cycle:
+    desc: Inspect or operate the evidence-backed operating cycle
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/operating_cycle.py {{.CLI_ARGS}}
+
+  operating:cycle:snapshot:
+    desc: Write an operating cycle snapshot
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/operating_cycle.py snapshot {{.CLI_ARGS}}
+
+  goals:portfolio-map:
+    desc: Build the goal portfolio mapping projection
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/goal_portfolio_mapping.py {{.CLI_ARGS}}
+
+  operating:personal-review:
+    desc: Run the personal operating review workflow
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/workflows/personal_operating_review.py {{.CLI_ARGS}}
+
+  diary:daily:
+    desc: Record the daily diary workflow entry
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/workflows/daily_diary.py {{.CLI_ARGS}}
+
+  task:owner:claim-all:
+    desc: Claim all local tasks for the canonical user Owner
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/role_task_workflow.py --claim-all-owner {{.CLI_ARGS}}
+
+  task:ownership:
+    desc: Report package-script ownership and root Task parity
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/task_command_ownership.py {{.CLI_ARGS}}
+
+  task:parity:
+    desc: Fail when an infra package script lacks a root Task mapping
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/utils/task_command_ownership.py --check {{.CLI_ARGS}}
+
+  seo:report:
+    desc: Run the SEO reporting CLI
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/cli/seo-cli.py {{.CLI_ARGS}}
+
+  # Compatibility and domain-test migration batch. These wrappers call the
+  # native runtime directly; npm remains only for package installation and
+  # nested Node package boundaries.
+
+  test:seo-report:
+    desc: Test the SEO monthly report workflow
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/seo/seo_monthly_report_test.py
+      - bash scripts/setup/run-python3.sh tests/seo/seo_shopify_extract_test.py
+
+  test:decisions:
+    desc: Test decision records and lifecycle boundaries
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/decisions/decision_records_test.py
+
+  test:daily-diary:
+    desc: Test the daily diary workflow
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/diary/daily_diary_test.py
+
+  test:diary-summary:
+    desc: Test diary summary generation
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/diary/diary_summary_test.py
+
+  test:personal-operating-review:
+    desc: Test the personal operating review workflow
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/quality/personal_operating_review_test.py
+
+  test:decision-context:
+    desc: Test bounded decision context generation
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/decisions/decision_context_test.py
+
+  test:decision-brief:
+    desc: Test decision brief generation
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/decisions/decision_brief_test.py
+
+  test:analytics:
+    desc: Test analytics projections
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/quality/analytics_test.py
+
+  media:lifecycle:
+    desc: Plan and save the media lifecycle projection (writes generated state)
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/media_lifecycle.py --plan --save
+
+  media:catalog:
+    desc: Build and save the media catalog projection (writes generated state)
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/media_lifecycle.py --catalog --save
+
+  media:pipeline:
+    desc: Process files dropped in media/inbox into review previews
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/art_pipeline.py {{.CLI_ARGS}}
+
+  media:pipeline:start:
+    desc: Start the background art/media inbox watcher
+    dir: infra
+    cmds:
+      - bash scripts/setup/art-pipeline-watcher.sh start
+
+  media:pipeline:stop:
+    desc: Stop the background art/media inbox watcher
+    dir: infra
+    cmds:
+      - bash scripts/setup/art-pipeline-watcher.sh stop
+
+  media:pipeline:status:
+    desc: Show the background art/media inbox watcher status
+    dir: infra
+    cmds:
+      - bash scripts/setup/art-pipeline-watcher.sh status
+
+  media:stock:
+    desc: Query the free image asset stock
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/free_image_assets.py {{.CLI_ARGS}}
+
+  test:media-stock:
+    desc: Test free image asset discovery
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/media/free_image_assets_test.py
+
+  test:art-pipeline:
+    desc: Test the local art/media intake pipeline
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/media/art_pipeline_test.py

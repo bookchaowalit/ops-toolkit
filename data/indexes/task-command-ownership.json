@@ -1,0 +1,1771 @@
+{
+  "mapped_script_count": 185,
+  "missing_task_names": [],
+  "package_path": "infra/package.json",
+  "package_script_count": 185,
+  "runtime_counts": {
+    "node": 5,
+    "polyglot": 2,
+    "python": 171,
+    "shell": 7
+  },
+  "schema_version": "solo-empire.task-command-ownership.v1",
+  "scripts": [
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/agent/decision_context.py",
+      "name": "agent:decision-context",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/operating_cycle.py",
+      "name": "ai:cycle",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/operating_cycle.py check",
+      "name": "ai:cycle:check",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/operating_cycle.py report --write",
+      "name": "ai:cycle:report",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/operating_cycle.py snapshot",
+      "name": "ai:cycle:snapshot",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/get_google_refresh_token.py --matrix --store-infisical",
+      "name": "auth:google-matrix",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/get_google_refresh_token.py --search-console --store-infisical",
+      "name": "auth:google-search-console",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/security/hash_api_token.py",
+      "name": "auth:hash-token",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/workflows/book_dev_ai_dispatch.py",
+      "name": "book-dev:dispatch",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/workflows/book_dev_ai_dispatch.py --providers grok,codex",
+      "name": "book-dev:dispatch:both",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/workflows/book_dev_ai_dispatch.py --providers codex",
+      "name": "book-dev:dispatch:codex",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/workflows/book_dev_ai_dispatch.py --providers grok",
+      "name": "book-dev:dispatch:grok",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/workflows/portfolio_domain_loop.py",
+      "name": "book-dev:domain",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/workflows/book_dev_execution_hook.py",
+      "name": "book-dev:execution",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/workflows/book_dev_loop.py",
+      "name": "book-dev:loop",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/platform/cloudflare_r2_usage.py --json",
+      "name": "cloud:r2:usage",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/platform/cloudflare_r2_usage.py --live --json",
+      "name": "cloud:r2:usage:live",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/platform/cloud_usage.py --json",
+      "name": "cloud:usage",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/platform/cloud_usage.py --live --json",
+      "name": "cloud:usage:live",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/platform/vercel_billing.py --json",
+      "name": "cloud:vercel:billing",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/platform/vercel_billing.py --live --json",
+      "name": "cloud:vercel:billing:live",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/data_product_contract_guard.py",
+      "name": "contracts:check",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "npx tsx cli.ts dashboard",
+      "name": "dashboard",
+      "runtime": "node",
+      "runtime_labels": [
+        "node"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/db/open-oak-review-dbeaver.sh",
+      "name": "db:oak-review",
+      "runtime": "shell",
+      "runtime_labels": [
+        "shell"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/cli/decision-cli.py",
+      "name": "decision",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/workflows/decision_brief.py",
+      "name": "decision:brief",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/workflows/decision_review.py",
+      "name": "decision:review",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/workflows/daily_diary.py",
+      "name": "diary:daily",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/workflows/diary_summary.py",
+      "name": "diary:summary",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/toolchain-preflight.sh --python && npm run rnd:check && npm run evidence:check && npm run step:check && npm run role-tasks:check && npm run portfolio:contexts:check && npm run quiz -- --check && npm run learning:sync -- --check && npm run evaluation:check && npm run engagements:review -- --strict && npm run contracts:check",
+      "name": "docs:check",
+      "runtime": "polyglot",
+      "runtime_labels": [
+        "node",
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/engagement_notifications.py",
+      "name": "engagements:notify",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/engagement_review.py",
+      "name": "engagements:review",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/engagement_tasks_sync.py",
+      "name": "engagements:sync-tasks",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/ai_doc_evaluation_guard.py",
+      "name": "evaluation:check",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/evidence_contract_guard.py --audit",
+      "name": "evidence:audit",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/evidence_contract_guard.py --audit --strict",
+      "name": "evidence:audit:strict",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/evidence_contract_guard.py --check",
+      "name": "evidence:check",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/discovery/free_resource.py",
+      "name": "free:find",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/goal_portfolio_mapping.py",
+      "name": "goals:portfolio-map",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "npx tsx cli.ts health",
+      "name": "health",
+      "runtime": "node",
+      "runtime_labels": [
+        "node"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/sync/asana_readonly.py --resource workspaces --json",
+      "name": "integrations:asana:workspaces",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/sync/discord_readonly.py --resource guilds --json",
+      "name": "integrations:discord:guilds",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/sync/discover_external_apps.py",
+      "name": "integrations:discover",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/sync/linear_readonly.py --resource teams --json",
+      "name": "integrations:linear:teams",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/sync/microsoft_graph_readonly.py --resource me --json",
+      "name": "integrations:microsoft-graph:me",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/sync/monday_readonly.py --resource boards --json",
+      "name": "integrations:monday:boards",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/sync/notion_readonly.py --json",
+      "name": "integrations:notion:search",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/sync/posthog_readonly.py --json",
+      "name": "integrations:posthog:insights",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/sync/sentry_readonly.py --json",
+      "name": "integrations:sentry:issues",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/sync/slack_readonly.py --json",
+      "name": "integrations:slack:channels",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/sync/whatsapp_business_readonly.py --resource phone-numbers --json",
+      "name": "integrations:whatsapp:phone-numbers",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/sync/zoom_readonly.py --resource me --json",
+      "name": "integrations:zoom:me",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/learning/learning_evidence.py",
+      "name": "learning:evidence",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/learning/learning_health.py",
+      "name": "learning:health",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/learning/learning_sync.py",
+      "name": "learning:sync",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "if grep -rIn --include='*.py' --exclude='security_audit.py' 'GOCSPX-\\|fc-[a-f0-9]\\{32\\}\\|ghp_\\|gho_\\|sk_live\\|sk_test\\|xox[bpas]-\\|CLIENT_ID = \"4452' scripts/; then echo 'FAIL: secrets found'; exit 1; else echo 'OK: no hardcoded secrets'; fi",
+      "name": "lint:secrets",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/sync/matrix_sync.py",
+      "name": "matrices:sync",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/sync/matrix_targets.py",
+      "name": "matrices:targets",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/media_lifecycle.py --catalog --save",
+      "name": "media:catalog",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/media_lifecycle.py --plan --save",
+      "name": "media:lifecycle",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/art_pipeline.py",
+      "name": "media:pipeline",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/art-pipeline-watcher.sh start",
+      "name": "media:pipeline:start",
+      "runtime": "shell",
+      "runtime_labels": [
+        "shell"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/art-pipeline-watcher.sh status",
+      "name": "media:pipeline:status",
+      "runtime": "shell",
+      "runtime_labels": [
+        "shell"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/art-pipeline-watcher.sh stop",
+      "name": "media:pipeline:stop",
+      "runtime": "shell",
+      "runtime_labels": [
+        "shell"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/free_image_assets.py",
+      "name": "media:stock",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/mobile_release_gate.py audit",
+      "name": "mobile:audit",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/mobile_release_gate.py check",
+      "name": "mobile:check",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/mobile_release_gate.py emulator",
+      "name": "mobile:emulator",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/mobile_release_gate.py environment",
+      "name": "mobile:environment",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/operating_cycle.py",
+      "name": "operating:cycle",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/operating_cycle.py check",
+      "name": "operating:cycle:check",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/operating_cycle.py report --write",
+      "name": "operating:cycle:report",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/operating_cycle.py snapshot",
+      "name": "operating:cycle:snapshot",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/workflows/personal_operating_review.py",
+      "name": "operating:personal-review",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/platform/paas_action.py propose",
+      "name": "paas:action:propose",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/platform/paas_action.py catalog --json",
+      "name": "paas:actions",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/platform/paas_health.py --catalog --json",
+      "name": "paas:catalog",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/platform/paas_health.py --offline --json",
+      "name": "paas:health",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/platform/paas_health.py --live --json",
+      "name": "paas:health:live",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/platform/paas_inventory.py --json",
+      "name": "paas:inventory",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/platform/paas_inventory.py --live --json",
+      "name": "paas:inventory:live",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/autonomous_portfolio_seed.py",
+      "name": "portfolio:autonomous",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/autonomous_portfolio_seed.py --dry-run",
+      "name": "portfolio:autonomous:dry-run",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/portfolio_context_seed.py",
+      "name": "portfolio:contexts",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/portfolio_context_guard.py",
+      "name": "portfolio:contexts:check",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/portfolio_context_seed.py --dry-run",
+      "name": "portfolio:contexts:dry-run",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/workflows/portfolio_domain_loop.py",
+      "name": "portfolio:domain-loop",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/portfolio_progress.py --update",
+      "name": "portfolio:progress",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/portfolio_progress.py --dry-run",
+      "name": "portfolio:progress:dry-run",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/portfolio_context_seed.py && bash scripts/setup/run-python3.sh scripts/utils/portfolio_progress.py --update",
+      "name": "portfolio:sync",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/fix-bin-permissions.sh",
+      "name": "postinstall",
+      "runtime": "shell",
+      "runtime_labels": [
+        "shell"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/toolchain-preflight.sh",
+      "name": "preflight",
+      "runtime": "shell",
+      "runtime_labels": [
+        "shell"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/toolchain-preflight.sh --production",
+      "name": "preflight:production",
+      "runtime": "shell",
+      "runtime_labels": [
+        "shell"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/toolchain-preflight.sh --python",
+      "name": "preflight:python",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh",
+      "name": "py",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/learning/quiz.py",
+      "name": "quiz",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/rnd_pipeline_guard.py",
+      "name": "rnd:check",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/role_task_guard.py --report",
+      "name": "role-integrations:report",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/role_task_guard.py --sync",
+      "name": "role-integrations:sync",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/role_portfolio_seed.py --dry-run",
+      "name": "role-portfolio:dry-run",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/role_portfolio_seed.py",
+      "name": "role-portfolio:seed",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/role_practice_evidence.py",
+      "name": "role-practice:evidence",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/role_task_mapper.py",
+      "name": "role-task:map",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/role_task_mapper.py --dry-run",
+      "name": "role-task:map:dry-run",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/role_task_workflow.py --queue-only",
+      "name": "role-task:queue",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/role_task_workflow.py",
+      "name": "role-task:review",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/role_task_guard.py",
+      "name": "role-tasks:check",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/platform/self_hosted_health.py --json",
+      "name": "selfhosted:health",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/platform/self_hosted_health.py --docker-only --json",
+      "name": "selfhosted:health:docker",
+      "runtime": "polyglot",
+      "runtime_labels": [
+        "container",
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/platform/self_hosted_health.py --k8s-only --json",
+      "name": "selfhosted:health:k8s",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/platform/self_hosted_readiness.py --json",
+      "name": "selfhosted:readiness",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/platform/self_hosted_readiness.py --profile caprover --json",
+      "name": "selfhosted:readiness:caprover",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/platform/self_hosted_readiness.py --profile coolify --json",
+      "name": "selfhosted:readiness:coolify",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/platform/self_hosted_readiness.py --profile dokku --json",
+      "name": "selfhosted:readiness:dokku",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/cli/seo-cli.py",
+      "name": "seo:report",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "cp -n .env.example .env 2>/dev/null; npm run preflight && npm install",
+      "name": "setup",
+      "runtime": "node",
+      "runtime_labels": [
+        "node"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/universal_step_contract_guard.py",
+      "name": "step:check",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/universal_step_record.py",
+      "name": "step:record",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/role_task_workflow.py --claim-all-owner",
+      "name": "task:owner:claim-all",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "npx tsx cli.ts tasks",
+      "name": "tasks",
+      "runtime": "node",
+      "runtime_labels": [
+        "node"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/tasks_view.py",
+      "name": "tasks:views",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "python3 tests/run_all.py",
+      "name": "test",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/quality/run_a11y_gate.py",
+      "name": "test:a11y",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/quality/run_a11y_gate.py --run",
+      "name": "test:a11y:run",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/agent/unused_files_test.py && bash scripts/setup/run-python3.sh tests/agent/ai_cycle_test.py && bash scripts/setup/run-python3.sh tests/agent/book_dev_loop_test.py && bash scripts/setup/run-python3.sh tests/agent/book_dev_execution_hook_test.py && bash scripts/setup/run-python3.sh tests/agent/book_dev_ai_dispatch_test.py && bash scripts/setup/run-python3.sh tests/agent/portfolio_domain_loop_test.py && bash scripts/setup/run-python3.sh tests/decisions/decision_context_test.py && bash scripts/setup/run-python3.sh tests/decisions/decision_brief_test.py",
+      "name": "test:agent",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/agent/ai_cycle_test.py",
+      "name": "test:ai-cycle",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/quality/analytics_test.py",
+      "name": "test:analytics",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/media/art_pipeline_test.py",
+      "name": "test:art-pipeline",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/integrations/asana_readonly_test.py",
+      "name": "test:asana",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/quality/automation_test.py",
+      "name": "test:automation",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/agent/book_dev_ai_dispatch_test.py",
+      "name": "test:book-dev-dispatch",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/agent/portfolio_domain_loop_test.py",
+      "name": "test:book-dev-domain",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/agent/book_dev_execution_hook_test.py",
+      "name": "test:book-dev-execution",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/agent/book_dev_loop_test.py",
+      "name": "test:book-dev-loop",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/diary/daily_diary_test.py",
+      "name": "test:daily-diary",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/decisions/decision_brief_test.py",
+      "name": "test:decision-brief",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/decisions/decision_context_test.py",
+      "name": "test:decision-context",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/decisions/decision_records_test.py",
+      "name": "test:decisions",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/diary/diary_summary_test.py",
+      "name": "test:diary-summary",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/integrations/discord_readonly_test.py",
+      "name": "test:discord",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/engagements/engagement_notifications_test.py",
+      "name": "test:engagement-notifications",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/engagements/engagement_review_test.py",
+      "name": "test:engagements",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/quality/evidence_contract_test.py",
+      "name": "test:evidence-contract",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/quality/run_flagship_test_gate.py",
+      "name": "test:flagships",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/quality/run_flagship_test_gate.py --list",
+      "name": "test:flagships:list",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/discovery/free_resource_test.py",
+      "name": "test:free-resource",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/quality/goal_portfolio_mapping_test.py",
+      "name": "test:goal-portfolio-map",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/learning/learning_evidence_test.py",
+      "name": "test:learning-evidence",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/learning/learning_health_test.py",
+      "name": "test:learning-health",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/learning/learning_sync_test.py",
+      "name": "test:learning-sync",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/quality/run_lighthouse_gate.py",
+      "name": "test:lighthouse",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/quality/run_lighthouse_gate.py --run",
+      "name": "test:lighthouse:run",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/integrations/linear_readonly_test.py",
+      "name": "test:linear",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/quality/run_test_matrix.py",
+      "name": "test:matrix",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/integrations/matrix_sync_test.py",
+      "name": "test:matrix-sync",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/integrations/matrix_targets_test.py",
+      "name": "test:matrix-targets",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/quality/run_test_matrix.py --list",
+      "name": "test:matrix:list",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/media/free_image_assets_test.py",
+      "name": "test:media-stock",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/integrations/microsoft_graph_readonly_test.py",
+      "name": "test:microsoft-graph",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/platform/mobile_release_gate_test.py",
+      "name": "test:mobile-release",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/integrations/monday_readonly_test.py",
+      "name": "test:monday",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/integrations/notion_readonly_test.py",
+      "name": "test:notion",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/quality/personal_operating_review_test.py",
+      "name": "test:personal-operating-review",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/platform/paas_control_plane_test.py && bash scripts/setup/run-python3.sh tests/platform/paas_inventory_test.py && bash scripts/setup/run-python3.sh tests/platform/cloud_usage_test.py && bash scripts/setup/run-python3.sh tests/platform/cloudflare_r2_usage_test.py && bash scripts/setup/run-python3.sh tests/platform/vercel_billing_test.py && bash scripts/setup/run-python3.sh tests/platform/self_hosted_health_test.py && bash scripts/setup/run-python3.sh tests/platform/self_hosted_readiness_test.py && bash scripts/setup/run-python3.sh tests/platform/paas_action_policy_test.py",
+      "name": "test:platform",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/quality/run_playwright_portfolio.py run",
+      "name": "test:playwright",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/quality/run_playwright_portfolio.py list",
+      "name": "test:playwright:list",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/quality/run_playwright_portfolio.py report",
+      "name": "test:playwright:report",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/quality/run_playwright_portfolio.py ui",
+      "name": "test:playwright:ui",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/integrations/posthog_readonly_test.py",
+      "name": "test:posthog",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh -m compileall -q scripts",
+      "name": "test:python",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/learning/learning_quiz_test.py",
+      "name": "test:quiz",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/rnd/rnd_pipeline_test.py",
+      "name": "test:rnd",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/quality/role_practice_evidence_test.py",
+      "name": "test:role-practice-evidence",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/quality/role_task_workflow_test.py",
+      "name": "test:role-task-workflow",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/security/secret_resolver_test.py",
+      "name": "test:secrets",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/seo/seo_monthly_report_test.py",
+      "name": "test:seo-report",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/learning/skills_enrichment_test.py",
+      "name": "test:skills-enrichment",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/integrations/slack_readonly_test.py",
+      "name": "test:slack",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/quality/source_of_truth_test.py",
+      "name": "test:sot",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/quality/universal_step_contract_test.py",
+      "name": "test:step-contract",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/integrations/whatsapp_business_readonly_test.py",
+      "name": "test:whatsapp",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/platform/workspace_paths_test.py",
+      "name": "test:workspace",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh tests/integrations/zoom_readonly_test.py",
+      "name": "test:zoom",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "bash scripts/setup/run-python3.sh scripts/utils/tracking_views.py",
+      "name": "tracking:views",
+      "runtime": "python",
+      "runtime_labels": [
+        "python"
+      ]
+    },
+    {
+      "canonical_owner": "task",
+      "command": "node node_modules/typescript/bin/tsc --noEmit",
+      "name": "typecheck",
+      "runtime": "node",
+      "runtime_labels": [
+        "node"
+      ]
+    }
+  ],
+  "task_count": 270,
+  "task_only_names": [
+    "accounts:isolation:check",
+    "ai-gateway:client:provision",
+    "ai-gateway:service:test",
+    "backend:check",
+    "backend:mcp:build",
+    "backend:test",
+    "backend:typecheck",
+    "book-dev:dispatch:claude",
+    "check",
+    "cleanup:unused",
+    "cloud:github:actions",
+    "cloud:github:actions:live",
+    "cloud:providers:check",
+    "cloud:secrets:health",
+    "cloud:status",
+    "cloud:tools:doctor",
+    "data:check",
+    "default",
+    "diary",
+    "dns:apply",
+    "dns:plan",
+    "docpack:build",
+    "docpack:build:stale",
+    "docpack:cards:index",
+    "docpack:check",
+    "doctor",
+    "domains:check",
+    "domains:snapshot",
+    "engagements:review:strict",
+    "governance:check",
+    "gpu:workers:catalog",
+    "gpu:workers:enqueue",
+    "gpu:workers:preflight",
+    "gpu:workers:route",
+    "gpu:workers:status",
+    "install",
+    "learning:sync:check",
+    "legacy",
+    "life:checkin",
+    "lint:paths",
+    "llm:budget",
+    "llm:pilot-preflight",
+    "llm:profile-env",
+    "llm:profiles",
+    "mcp:build",
+    "monitor",
+    "orchestration:check",
+    "platform:services",
+    "platform:services:check",
+    "platforms:check",
+    "production-hub:check",
+    "production-tools:check",
+    "quiz:check",
+    "runpod:vllm:idle-guard",
+    "runpod:vllm:smoke",
+    "scraping:news:schedule:plan",
+    "status",
+    "step:coverage",
+    "step:role-set",
+    "systems:coldstart",
+    "systems:probe",
+    "task:ownership",
+    "task:parity",
+    "tasks:health",
+    "test:all:legacy",
+    "test:book-portfolio",
+    "test:book-production-platform",
+    "test:docpack",
+    "test:email-pipeline",
+    "test:empire-cli",
+    "test:finance-core",
+    "test:gpu-workers",
+    "test:identity-isolation",
+    "test:life-checkin",
+    "test:monitor",
+    "test:orchestration",
+    "test:production-tools",
+    "test:scraping-discovery",
+    "test:task-ownership",
+    "test:trading",
+    "trading:daily",
+    "trading:lake:capture",
+    "trading:lake:status",
+    "trading:signal",
+    "trading:walk-forward"
+  ],
+  "taskfile_path": "Taskfile.yml"
+}

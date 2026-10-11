@@ -1,0 +1,138 @@
+version: '3'
+
+# integrations command adapters owned by the Solo Empire control plane.
+# Included by ../../Taskfile.yml with the repository root as working directory.
+# Product build/test implementations must stay inside their own repository.
+
+tasks:
+  integrations:discover:
+    desc: Discover configured external integrations
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/sync/discover_external_apps.py {{.CLI_ARGS}}
+
+  integrations:sentry:issues:
+    desc: Read Sentry issues in JSON form
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/sync/sentry_readonly.py --json {{.CLI_ARGS}}
+
+  integrations:posthog:insights:
+    desc: Read PostHog insights in JSON form
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/sync/posthog_readonly.py --json {{.CLI_ARGS}}
+
+  integrations:slack:channels:
+    desc: Read Slack channels in JSON form
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/sync/slack_readonly.py --json {{.CLI_ARGS}}
+
+  integrations:notion:search:
+    desc: Search Notion in read-only mode
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/sync/notion_readonly.py --json {{.CLI_ARGS}}
+
+  integrations:asana:workspaces:
+    desc: Read Asana workspaces in JSON form
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/sync/asana_readonly.py --resource workspaces --json {{.CLI_ARGS}}
+
+  integrations:linear:teams:
+    desc: Read Linear teams in JSON form
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/sync/linear_readonly.py --resource teams --json {{.CLI_ARGS}}
+
+  integrations:discord:guilds:
+    desc: Read Discord guilds in JSON form
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/sync/discord_readonly.py --resource guilds --json {{.CLI_ARGS}}
+
+  integrations:whatsapp:phone-numbers:
+    desc: Read WhatsApp Business phone numbers
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/sync/whatsapp_business_readonly.py --resource phone-numbers --json {{.CLI_ARGS}}
+
+  integrations:microsoft-graph:me:
+    desc: Read the Microsoft Graph current-user resource
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/sync/microsoft_graph_readonly.py --resource me --json {{.CLI_ARGS}}
+
+  integrations:zoom:me:
+    desc: Read the Zoom current-user resource
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/sync/zoom_readonly.py --resource me --json {{.CLI_ARGS}}
+
+  integrations:monday:boards:
+    desc: Read Monday boards in JSON form
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/sync/monday_readonly.py --resource boards --json {{.CLI_ARGS}}
+
+  test:posthog:
+    desc: Test the read-only PostHog integration
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/integrations/posthog_readonly_test.py
+
+  test:slack:
+    desc: Test the read-only Slack integration
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/integrations/slack_readonly_test.py
+
+  test:notion:
+    desc: Test the read-only Notion integration
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/integrations/notion_readonly_test.py
+
+  test:asana:
+    desc: Test the read-only Asana integration
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/integrations/asana_readonly_test.py
+
+  test:linear:
+    desc: Test the read-only Linear integration
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/integrations/linear_readonly_test.py
+
+  test:discord:
+    desc: Test the read-only Discord integration
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/integrations/discord_readonly_test.py
+
+  test:whatsapp:
+    desc: Test the read-only WhatsApp integration
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/integrations/whatsapp_business_readonly_test.py
+
+  test:microsoft-graph:
+    desc: Test the read-only Microsoft Graph integration
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/integrations/microsoft_graph_readonly_test.py
+
+  test:zoom:
+    desc: Test the read-only Zoom integration
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/integrations/zoom_readonly_test.py
+
+  test:monday:
+    desc: Test the read-only Monday integration
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/integrations/monday_readonly_test.py

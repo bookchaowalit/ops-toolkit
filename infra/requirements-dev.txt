@@ -1,0 +1,7 @@
+# Python development dependencies for testing
+# Install with: pip3 install -r requirements-dev.txt
+
+requests>=2.34.2
+PyYAML>=6.0.3
+# OAuth helper used by get_google_refresh_token.py --send-only
+google-auth-oauthlib>=1.4.1

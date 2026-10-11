@@ -1,0 +1,112 @@
+version: '3'
+
+# products command adapters owned by the Solo Empire control plane.
+# Included by ../../Taskfile.yml with the repository root as working directory.
+# Product build/test implementations must stay inside their own repository.
+
+tasks:
+  test:flagships:
+    desc: Run the flagship project test gate
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/quality/run_flagship_test_gate.py {{.CLI_ARGS}}
+
+  test:flagships:list:
+    desc: List flagship project test targets
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/quality/run_flagship_test_gate.py --list {{.CLI_ARGS}}
+
+  test:playwright:
+    desc: Run the portfolio Playwright test gate
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/quality/run_playwright_portfolio.py run {{.CLI_ARGS}}
+
+  test:playwright:list:
+    desc: List portfolio Playwright targets
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/quality/run_playwright_portfolio.py list {{.CLI_ARGS}}
+
+  test:playwright:ui:
+    desc: Open the portfolio Playwright UI workflow
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/quality/run_playwright_portfolio.py ui {{.CLI_ARGS}}
+
+  test:playwright:report:
+    desc: Generate the portfolio Playwright report
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/quality/run_playwright_portfolio.py report {{.CLI_ARGS}}
+
+  test:lighthouse:
+    desc: Run the local Lighthouse quality gate
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/quality/run_lighthouse_gate.py {{.CLI_ARGS}}
+
+  test:lighthouse:run:
+    desc: Run Lighthouse against configured targets
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/quality/run_lighthouse_gate.py --run {{.CLI_ARGS}}
+
+  test:a11y:
+    desc: Run the local accessibility quality gate
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/quality/run_a11y_gate.py {{.CLI_ARGS}}
+
+  test:a11y:run:
+    desc: Run accessibility checks against configured targets
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/quality/run_a11y_gate.py --run {{.CLI_ARGS}}
+
+  test:mobile-release:
+    desc: Test the mobile release gate
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/platform/mobile_release_gate_test.py
+
+  mobile:audit:
+    desc: Audit mobile release readiness
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/mobile_release_gate.py audit {{.CLI_ARGS}}
+
+  mobile:environment:
+    desc: Inspect the mobile development environment
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/mobile_release_gate.py environment {{.CLI_ARGS}}
+
+  mobile:check:
+    desc: Run the mobile release gate checks
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/mobile_release_gate.py check {{.CLI_ARGS}}
+
+  mobile:emulator:
+    desc: Start or inspect the mobile emulator workflow
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/mobile_release_gate.py emulator {{.CLI_ARGS}}
+
+  test:finance-core:
+    desc: Run the check entrypoint owned by the BookFinance Core repository
+    cmds:
+      - bash {{.BOOK_DEV_GITHUB}}/bookchaowalit/private/book-products/book-finance-core/scripts/check.sh
+
+  test:book-portfolio:
+    desc: Run the check entrypoint owned by the BookPortfolio frontend repository
+    cmds:
+      - bash {{.BOOK_DEV_GITHUB}}/bookchaowalit/private/book-products/book-portfolio/scripts/check.sh
+
+  test:book-production-platform:
+    desc: Run the check entrypoint owned by the shared Book Production Platform repository
+    cmds:
+      - python {{.BOOK_DEV_GITHUB}}/bookchaowalit/private/book-production-platform/scripts/check.py
+

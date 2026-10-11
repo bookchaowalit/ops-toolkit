@@ -1,0 +1,431 @@
+{
+  "schema_version": "solo-empire.gpu-worker-catalog.v1",
+  "updated": "2026-09-16",
+  "default_api_lane": "api",
+  "runpod_lane": "runpod",
+  "thresholds_status": "planning_defaults_require_job_benchmark",
+  "model_preflight": {
+    "provider_calls": false,
+    "launch_requires": [
+      "official_or_explicitly_reviewed_model_source",
+      "hardware_compatibility_benchmark",
+      "license_and_commercial_use_review"
+    ],
+    "unresolved_models_must_remain_blocked": true
+  },
+  "runpod_enabled_env": "GPU_WORKER_RUNPOD_ENABLED",
+  "monthly_budget_env": "LLM_LAB_MONTHLY_BUDGET_USD",
+  "queue": {
+    "state_path": "data/runtime/gpu-workers/jobs.json",
+    "raw_payloads": "forbidden",
+    "idempotency": "job_id_and_idempotency_key",
+    "concurrency": "one_gpu_job_at_a_time_per_pod",
+    "max_attempts": 2
+  },
+  "pods": {
+    "pod-1": {
+      "name": "coding-agent",
+      "purpose": "coding_and_agent",
+      "service_lane": "runpod",
+      "activation": "on_demand",
+      "status": "blocked_pending_blackwell_or_ampere_compatibility_benchmark",
+      "launch_gate": "blackwell_or_ampere_compatibility_benchmark_required",
+      "hardware_guidance": "Official NVFP4 checkpoint targets NVIDIA Blackwell; the connected RTX A6000 (Ampere/SM86) is not validated for this checkpoint",
+      "network_volume_gb": 50,
+      "volume_mount_path": "/workspace",
+      "language_support": ["th", "en"],
+      "model_strategy": "one_shared_model_with_concurrent_agents",
+      "model_profile": "compact",
+      "deployment_mode": "blackwell_single_or_multi_gpu_after_benchmark",
+      "tensor_parallelism": "provider_and_runtime_benchmark_required",
+      "models": [
+        {
+          "id": "nvidia/Qwen3.8-27B-NVFP4",
+          "display_name": "Qwen3.8-27B NVFP4/Q4",
+          "role": "main_coding_brain",
+          "precision": "NVFP4/Q4",
+          "model_card_url": "https://huggingface.co/nvidia/Qwen3.8-27B-NVFP4",
+          "source_type": "official_huggingface_checkpoint",
+          "model_id_status": "verified_official_checkpoint_blackwell_target",
+          "status": "blocked_pending_hardware_compatibility_benchmark",
+          "hardware_gate": "blackwell_required_for_official_nvfp4; a6000_ampere_not_validated",
+          "runtime_quantization": "modelopt_fp4",
+          "license_gate": "review_model_card_before_commercial_use"
+        }
+      ],
+      "capacity_plan": {
+        "model_weights_gb": "20-22",
+        "runtime_and_cuda_gb": "3-5",
+        "kv_cache_target_gb": "12-18",
+        "headroom_gb": "3-5",
+        "steady_state_vram_target_gb": "42-46",
+        "initial_concurrent_agents": 4,
+        "benchmark_concurrency_steps": [4, 6, 8, 12]
+      }
+    },
+    "pod-2": {
+      "name": "specialized-th-en-services",
+      "purpose": "ocr_embeddings_reranking_speech_vision",
+      "service_lane": "runpod",
+      "activation": "on_demand",
+      "status": "planned",
+      "hardware_guidance": "RTX A6000 48GB or equivalent; keep light services resident and schedule heavy services",
+      "network_volume_gb": 100,
+      "volume_mount_path": "/workspace",
+      "language_support": ["th", "en"],
+      "model_strategy": "service_models_with_one_heavy_slot",
+      "models": [
+        {
+          "id": "PaddlePaddle/PaddleOCR-VL-1.6",
+          "role": "ocr",
+          "languages": ["th", "en"],
+          "model_card_url": "https://huggingface.co/PaddlePaddle/PaddleOCR-VL-1.6",
+          "source_type": "official_huggingface_checkpoint",
+          "model_id_status": "verified_official_checkpoint",
+          "status": "candidate_requires_th_en_benchmark",
+          "license": "Apache-2.0",
+          "language_evidence_url": "https://github.com/PaddlePaddle/PaddleOCR/blob/main/docs/version3.x/algorithm/PaddleOCR-VL/PaddleOCR-VL.md"
+        },
+        {
+          "id": "Qwen/Qwen3-Embedding-8B",
+          "role": "embeddings",
+          "languages": ["th", "en"],
+          "model_card_url": "https://huggingface.co/Qwen/Qwen3-Embedding-8B",
+          "source_type": "official_huggingface_checkpoint",
+          "model_id_status": "verified_official_checkpoint",
+          "status": "candidate_requires_th_en_benchmark",
+          "language_evidence_url": "https://huggingface.co/Qwen/Qwen3-Embedding-8B"
+        },
+        {
+          "id": "Qwen/Qwen3-Reranker-8B",
+          "role": "reranking",
+          "languages": ["th", "en"],
+          "model_card_url": "https://huggingface.co/Qwen/Qwen3-Reranker-8B",
+          "source_type": "official_huggingface_checkpoint",
+          "model_id_status": "verified_official_checkpoint",
+          "status": "candidate_requires_th_en_benchmark",
+          "language_evidence_url": "https://huggingface.co/Qwen/Qwen3-Reranker-8B"
+        },
+        {
+          "id": "Qwen/Qwen3-ASR-1.7B-hf",
+          "role": "stt",
+          "languages": ["th", "en"],
+          "model_card_url": "https://huggingface.co/Qwen/Qwen3-ASR-1.7B-hf",
+          "source_type": "official_huggingface_checkpoint",
+          "model_id_status": "verified_official_checkpoint",
+          "status": "candidate_requires_th_en_wer_benchmark",
+          "license": "Apache-2.0",
+          "language_evidence_url": "https://huggingface.co/Qwen/Qwen3-ASR-1.7B-hf"
+        },
+        {
+          "id": "fishaudio/s2-pro",
+          "role": "tts_and_voice_clone",
+          "languages": ["th", "en"],
+          "model_card_url": "https://huggingface.co/fishaudio/s2-pro",
+          "source_type": "official_huggingface_checkpoint",
+          "model_id_status": "verified_official_checkpoint",
+          "status": "candidate_requires_privacy_voice_consent_and_language_benchmark",
+          "license": "Fish Audio Research License",
+          "license_gate": "commercial_use_requires_separate_license",
+          "language_evidence_url": "https://huggingface.co/fishaudio/s2-pro"
+        },
+        {
+          "id": "roboflow/rf-detr",
+          "role": "detection",
+          "languages": ["th", "en"],
+          "source_url": "https://github.com/roboflow/rf-detr",
+          "source_type": "official_source_repository",
+          "artifact_type": "python_package_and_pretrained_checkpoints",
+          "model_id_status": "verified_official_source_repository",
+          "status": "candidate_requires_checkpoint_selection_and_benchmark",
+          "license": "Apache-2.0_for_Nano_to_Large; PML_1.0_for_XLarge_and_2XLarge"
+        },
+        {
+          "id": "facebook/sam3.1",
+          "role": "segmentation",
+          "languages": ["th", "en"],
+          "model_card_url": "https://huggingface.co/facebook/sam3.1",
+          "source_url": "https://github.com/facebookresearch/sam3",
+          "source_type": "official_huggingface_checkpoint",
+          "model_id_status": "verified_official_checkpoint",
+          "status": "candidate_requires_access_request_and_benchmark",
+          "license": "SAM License",
+          "access_gate": "checkpoint_access_may_require_huggingface_request"
+        }
+      ]
+    },
+    "pod-3": {
+      "name": "generative-media",
+      "purpose": "image_video_music_generation",
+      "service_lane": "runpod",
+      "activation": "on_demand",
+      "status": "planned",
+      "hardware_guidance": "RTX 5090/A6000 or larger after model benchmark",
+      "network_volume_gb": 150,
+      "volume_mount_path": "/workspace",
+      "language_support": ["th", "en"],
+      "model_strategy": "heavy_slot_one_model_at_a_time",
+      "models": [
+        {
+          "id": "image-generation-editing-model",
+          "role": "image_generation_and_editing",
+          "status": "candidate_requires_model_selection_and_thai_text_benchmark"
+        },
+        {
+          "id": "MiniMaxAI/MiniMax-H3",
+          "role": "video_generation",
+          "model_card_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
+          "source_url": "https://github.com/MiniMax-AI/MiniMax-H3",
+          "source_type": "official_huggingface_checkpoint",
+          "model_id_status": "verified_official_checkpoint",
+          "status": "candidate_requires_vram_and_video_benchmark",
+          "license": "MiniMax H3 Community License"
+        },
+        {
+          "id": "ACE-Step/Ace-Step1.5",
+          "role": "music_generation",
+          "languages": ["th", "en"],
+          "model_card_url": "https://huggingface.co/ACE-Step/Ace-Step1.5",
+          "source_url": "https://github.com/ace-step/ACE-Step-1.5",
+          "source_type": "official_huggingface_checkpoint",
+          "model_id_status": "verified_official_checkpoint",
+          "status": "candidate_requires_th_en_music_benchmark",
+          "license": "MIT",
+          "language_evidence_url": "https://huggingface.co/ACE-Step/Ace-Step1.5"
+        }
+      ]
+    }
+  },
+  "api_workloads": [
+    "chat",
+    "coding",
+    "reasoning",
+    "planning",
+    "orchestration",
+    "small_ocr",
+    "small_stt",
+    "small_tts",
+    "small_embeddings",
+    "small_reranking"
+  ],
+  "workloads": {
+    "image": {
+      "unit": "assets",
+      "gpu_trigger_units": 10,
+      "worker": "media-image",
+      "api_fallback": "managed_media_api",
+      "fallback_ready": false,
+      "privacy_classes": ["public", "internal"]
+    },
+    "video": {
+      "unit": "minutes",
+      "gpu_trigger_units": 30,
+      "worker": "media-video",
+      "api_fallback": "managed_media_api",
+      "fallback_ready": false,
+      "privacy_classes": ["public", "internal"]
+    },
+    "music": {
+      "unit": "tracks",
+      "gpu_trigger_units": 10,
+      "worker": "media-music",
+      "api_fallback": "managed_media_api",
+      "fallback_ready": false,
+      "privacy_classes": ["public", "internal"]
+    },
+    "ocr": {
+      "unit": "pages",
+      "gpu_trigger_units": 500,
+      "worker": "doc-ocr",
+      "api_fallback": "api_or_cpu",
+      "fallback_ready": true,
+      "language_support": ["th", "en"],
+      "privacy_classes": ["public", "internal"]
+    },
+    "stt": {
+      "unit": "audio_hours",
+      "gpu_trigger_units": 10,
+      "worker": "audio-stt",
+      "api_fallback": "api_or_cpu",
+      "fallback_ready": true,
+      "language_support": ["th", "en"],
+      "privacy_classes": ["public", "internal"]
+    },
+    "tts": {
+      "unit": "audio_hours",
+      "gpu_trigger_units": 10,
+      "worker": "voice-tts",
+      "api_fallback": "api_or_cpu",
+      "fallback_ready": true,
+      "language_support": ["th", "en"],
+      "privacy_classes": ["public", "internal"]
+    },
+    "embeddings": {
+      "unit": "documents",
+      "gpu_trigger_units": 1000000,
+      "worker": "vector-embeddings",
+      "api_fallback": "api_or_cpu",
+      "fallback_ready": true,
+      "language_support": ["th", "en"],
+      "privacy_classes": ["public", "internal"]
+    },
+    "reranking": {
+      "unit": "documents",
+      "gpu_trigger_units": 100000,
+      "worker": "text-reranker",
+      "api_fallback": "api_or_cpu",
+      "fallback_ready": true,
+      "language_support": ["th", "en"],
+      "privacy_classes": ["public", "internal"]
+    },
+    "detection": {
+      "unit": "assets",
+      "gpu_trigger_units": 10000,
+      "worker": "vision-detection",
+      "api_fallback": "api_or_cpu",
+      "fallback_ready": true,
+      "language_support": ["th", "en"],
+      "privacy_classes": ["public", "internal"]
+    },
+    "segmentation": {
+      "unit": "assets",
+      "gpu_trigger_units": 10000,
+      "worker": "vision-segmentation",
+      "api_fallback": "api_or_cpu",
+      "fallback_ready": true,
+      "language_support": ["th", "en"],
+      "privacy_classes": ["public", "internal"]
+    },
+    "batch_text": {
+      "unit": "requests",
+      "gpu_trigger_units": 1000,
+      "worker": "qwen-text",
+      "api_fallback": "api",
+      "fallback_ready": true,
+      "privacy_classes": ["public", "internal"]
+    }
+  },
+  "workers": {
+    "media-image": {
+      "pod": "pod-3",
+      "role": "image_generation_or_editing",
+      "model_candidates": ["image-generation-editing-model"],
+      "backend": "runpod-specialized",
+      "activation": "on_demand",
+      "status": "planned",
+      "hardware_guidance": "RTX 5090/A6000 or equivalent",
+      "min_network_volume_gb": 150,
+      "queue_required": true
+    },
+    "media-video": {
+      "pod": "pod-3",
+      "role": "video_generation_or_transcode",
+      "model_candidates": ["MiniMaxAI/MiniMax-H3"],
+      "backend": "runpod-specialized",
+      "activation": "on_demand",
+      "status": "planned",
+      "hardware_guidance": "RTX 5090/A6000+ after model benchmark",
+      "min_network_volume_gb": 150,
+      "queue_required": true
+    },
+    "media-music": {
+      "pod": "pod-3",
+      "role": "music_generation",
+      "model_candidates": ["ACE-Step/Ace-Step1.5"],
+      "backend": "runpod-specialized",
+      "activation": "on_demand",
+      "status": "planned",
+      "hardware_guidance": "RTX 4090/5090 or equivalent",
+      "min_network_volume_gb": 100,
+      "queue_required": true
+    },
+    "doc-ocr": {
+      "pod": "pod-2",
+      "role": "batch_document_ocr",
+      "model_candidates": ["PaddlePaddle/PaddleOCR-VL-1.6"],
+      "backend": "paddleocr-gpu",
+      "activation": "on_demand",
+      "status": "validated_not_deployed",
+      "hardware_guidance": "A6000 48GB; benchmark resident services before enabling",
+      "min_network_volume_gb": 100,
+      "queue_required": true
+    },
+    "audio-stt": {
+      "pod": "pod-2",
+      "role": "batch_speech_to_text",
+      "model_candidates": ["Qwen/Qwen3-ASR-1.7B-hf"],
+      "backend": "faster-whisper-or-asr",
+      "activation": "on_demand",
+      "status": "planned",
+      "hardware_guidance": "A5000/4090/A6000 or equivalent",
+      "min_network_volume_gb": 100,
+      "queue_required": true
+    },
+    "voice-tts": {
+      "pod": "pod-2",
+      "role": "speech_synthesis_and_voice_clone",
+      "model_candidates": ["fishaudio/s2-pro"],
+      "backend": "fish-audio",
+      "activation": "on_demand",
+      "status": "planned",
+      "hardware_guidance": "A6000 48GB; require consent and privacy review for voice clone",
+      "min_network_volume_gb": 100,
+      "queue_required": true
+    },
+    "vector-embeddings": {
+      "pod": "pod-2",
+      "role": "large_batch_embeddings",
+      "model_candidates": ["Qwen/Qwen3-Embedding-8B"],
+      "backend": "te-embedding-or-infinity",
+      "activation": "on_demand",
+      "status": "planned",
+      "hardware_guidance": "CPU/API first; A6000 for million-document batches",
+      "min_network_volume_gb": 100,
+      "queue_required": true
+    },
+    "text-reranker": {
+      "pod": "pod-2",
+      "role": "large_batch_reranking",
+      "model_candidates": ["Qwen/Qwen3-Reranker-8B"],
+      "backend": "transformers-or-text-embeddings-inference",
+      "activation": "on_demand",
+      "status": "planned",
+      "hardware_guidance": "A6000 48GB or equivalent",
+      "min_network_volume_gb": 100,
+      "queue_required": true
+    },
+    "vision-detection": {
+      "pod": "pod-2",
+      "role": "object_detection",
+      "model_candidates": ["roboflow/rf-detr"],
+      "backend": "pytorch-vision",
+      "activation": "on_demand",
+      "status": "planned",
+      "hardware_guidance": "RTX 4090/A6000 or equivalent",
+      "min_network_volume_gb": 100,
+      "queue_required": true
+    },
+    "vision-segmentation": {
+      "pod": "pod-2",
+      "role": "image_segmentation",
+      "model_candidates": ["facebook/sam3.1"],
+      "backend": "pytorch-vision",
+      "activation": "on_demand",
+      "status": "planned",
+      "hardware_guidance": "A6000/5090 or equivalent after model benchmark",
+      "min_network_volume_gb": 100,
+      "queue_required": true
+    },
+    "qwen-text": {
+      "pod": "pod-1",
+      "role": "coding_agent_and_optional_local_batch_text",
+      "model_candidates": ["nvidia/Qwen3.8-27B-NVFP4"],
+      "backend": "vllm",
+      "activation": "on_demand",
+      "status": "planned",
+      "hardware_guidance": "RTX A6000 48GB; start at four concurrent agents and benchmark 4/6/8/12",
+      "min_network_volume_gb": 50,
+      "queue_required": true
+    }
+  }
+}

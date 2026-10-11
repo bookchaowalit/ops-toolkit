@@ -1,0 +1,31 @@
+version: '3'
+
+# Package-local commands for infra/. The repository root Taskfile.yml is the canonical entrypoint
+# (`task test`, `task typecheck`); these wrappers only run the same commands from inside infra/.
+
+tasks:
+  default:
+    desc: Show infrastructure package tasks
+    cmds:
+      - task --list
+
+  typecheck:
+    desc: Type-check the owner CLI (run `npm ci` first)
+    cmds:
+      - node node_modules/typescript/bin/tsc --noEmit
+
+  test:
+    desc: Run every offline Python test script (siblings are optional; absent ones skip)
+    # Tests never reach the production Tasks API: no client switch, no API URL.
+    env:
+      EMPIRE_CLIENT_CONFIG: /nonexistent/empire-platform/client.env
+      SOLO_EMPIRE_TASKS_BACKEND: ""
+      EMPIRE_TASKS_API: ""
+    cmds:
+      - python3 tests/run_all.py
+
+  check:
+    desc: Run the infrastructure package check
+    cmds:
+      - task: typecheck
+      - task: test

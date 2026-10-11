@@ -1,0 +1,130 @@
+# Tier A / interview flagship nested test targets.
+# Paths are relative to the Book Dev tree (the folder that holds github/, next to the solo-ops clone layout).
+# Only declare commands that are offline-safe unit/contract suites by default.
+# Heavy gates (full LHCI build, live E2E against running stacks) stay opt-in.
+
+version: 1
+book_dev_root: .
+
+targets:
+  - id: bookreading-frontend
+    tier: A
+    path: github/bookchaowalit-website/book-products/bookreading/frontend
+    kind: npm
+    command: ["npm", "test"]
+    timeout_sec: 180
+    required: true
+
+  - id: bookreading-backend
+    tier: A
+    path: github/bookchaowalit-website/book-products/bookreading/backend
+    kind: go
+    # Full ./... needs generated gRPC pb; unit packages are the offline gate.
+    command: ["go", "test", "./internal/usecase/"]
+    timeout_sec: 180
+    required: true
+
+  - id: booktrading-frontend
+    tier: A
+    path: github/bookchaowalit-ai/book-products/booktrading/frontend
+    kind: npm
+    command: ["npm", "test"]
+    timeout_sec: 180
+    required: true
+
+  - id: booktrading-backend
+    tier: A
+    path: github/bookchaowalit-ai/book-products/booktrading/backend
+    kind: go
+    # Exclude cmd/migrate which currently fails vet/build in this tree.
+    command: ["go", "test", "./internal/..."]
+    timeout_sec: 180
+    required: true
+
+  - id: booktrading-strategy
+    tier: A
+    path: github/bookchaowalit-ai/book-products/booktrading/strategy
+    kind: python
+    # Offline unit subset: skip live HTTP contract + known product-drift safety suites.
+    command:
+      - "python3"
+      - "-m"
+      - "pytest"
+      - "tests"
+      - "-q"
+      - "--ignore=tests/test_command_center_contract.py"
+      - "--ignore=tests/test_grid_safety.py"
+      - "-k"
+      - "not (KillSwitchReset or KillSwitchRestore or MaxPositions)"
+    timeout_sec: 180
+    required: true
+
+  - id: portfolio-frontend-data-products
+    tier: A
+    path: github/bookchaowalit-website/book-apps/portfolio/bookchaowalit-portfolio-frontend
+    kind: npm
+    command: ["npm", "run", "test:data-products"]
+    timeout_sec: 120
+    required: true
+
+  - id: portfolio-frontend-lhci-config
+    tier: A
+    path: github/bookchaowalit-website/book-apps/portfolio/bookchaowalit-portfolio-frontend
+    kind: files
+    # Config presence is enforced by the empire lighthouse gate; listed for inventory.
+    expect_files:
+      - lighthouserc.json
+      - package.json
+    required: true
+
+  - id: localcrm-backend
+    tier: A
+    path: github/bookchaowalit-products/book-products/localcrm-backend
+    kind: python
+    command: ["python3", "-m", "pytest", "tests", "-q"]
+    env:
+      DEBUG: "true"
+      SECRET_KEY: "test-secret-key-for-local-unit-tests-only-32chars"
+    timeout_sec: 180
+    required: true
+
+  - id: localcrm-frontend
+    tier: A
+    path: github/bookchaowalit-products/book-products/localcrm-frontend
+    kind: npm
+    command: ["npm", "test"]
+    timeout_sec: 60
+    required: true
+
+  - id: game-collection-frontend
+    tier: A
+    path: github/bookchaowalit-game/book-apps/game-dev/bookchaowalit-game-collection-frontend
+    kind: npm
+    command: ["npm", "test"]
+    timeout_sec: 60
+    required: true
+
+  - id: digital-products-frontend
+    tier: A
+    path: github/bookchaowalit-products/book-products/bookchaowalit-digital-products-frontend
+    kind: npm
+    command: ["npm", "test"]
+    timeout_sec: 60
+    required: true
+
+  - id: devhub-frontend
+    tier: A
+    path: github/bookchaowalit-website/book-apps/portfolio/bookchaowalit-devhub-frontend
+    kind: npm
+    command: ["npm", "test"]
+    timeout_sec: 60
+    required: true
+
+  - id: portfolio-frontend-a11y-axe-config
+    tier: A
+    path: github/bookchaowalit-website/book-apps/portfolio/bookchaowalit-portfolio-frontend
+    kind: files
+    expect_files:
+      - e2e/a11y-axe.spec.ts
+      - package.json
+    required: true

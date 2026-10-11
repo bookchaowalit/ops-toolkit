@@ -1,0 +1,261 @@
+#!/usr/bin/env python3
+"""Thin human-facing facade for the repository-level Task command boundary.
+
+This command deliberately contains routing only. Business logic stays in
+Taskfile.yml and in the native runtime behind each Task task.
+
+Examples:
+    ./empire status
+    ./empire doctor
+    ./empire --dry-run diary daily
+"""
+
+from __future__ import annotations
+
+import os
+import json
+import shlex
+import shutil
+import subprocess
+import sys
+from dataclasses import dataclass
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parent
+VERSION = "0.1.0"
+
+
+@dataclass(frozen=True)
+class Route:
+    words: tuple[str, ...]
+    task: str
+    description: str
+
+
+ROUTES = (
+    Route(("status",), "status", "Show the operational health summary"),
+    Route(("doctor",), "doctor", "Check the pinned toolchain"),
+    Route(("check",), "check", "Run the fast local verification gate"),
+    Route(("test",), "test", "Run the focused infrastructure smoke test"),
+    Route(("typecheck",), "typecheck", "Type-check the infrastructure code"),
+    Route(("docs", "check"), "docs:check", "Run the documentation gate"),
+    Route(("data", "check"), "data:check", "Validate data contracts and graph boundaries"),
+    Route(("crm", "sync"), "engagements:sync-tasks", "Sync engagement metadata into task projections"),
+    Route(("engagements", "sync"), "engagements:sync-tasks", "Sync engagement metadata into task projections"),
+    Route(("task", "parity"), "task:parity", "Check package-script to Task parity"),
+    Route(("task", "ownership"), "task:ownership", "Report command ownership"),
+    Route(("learning", "health"), "learning:health", "Check learning health and coverage"),
+    Route(("learning", "sync"), "learning:sync", "Validate or synchronize learning sources"),
+    Route(("seo", "report"), "seo:report", "Run the SEO reporting CLI"),
+    Route(("diary", "daily"), "diary:daily", "Record the daily diary workflow entry"),
+)
+
+
+def _route_sort_key(route: Route) -> tuple[int, tuple[str, ...]]:
+    return (-len(route.words), route.words)
+
+
+def resolve_route(words: list[str]) -> tuple[Route, list[str]] | None:
+    """Resolve the longest route prefix and return the remaining arguments."""
+
+    for route in sorted(ROUTES, key=_route_sort_key):
+        size = len(route.words)
+        if tuple(words[:size]) == route.words:
+            return route, words[size:]
+    return None
+
+
+def split_passthrough(args: list[str]) -> tuple[list[str], list[str]]:
+    """Split route words from an optional explicit Task argument separator."""
+
+    if "--" not in args:
+        return list(args), []
+    index = args.index("--")
+    return args[:index], args[index + 1 :]
+
+
+def build_task_args(route: Route, route_args: list[str], passthrough: list[str]) -> list[str]:
+    """Build a safe argv for Task without invoking a shell."""
+
+    forwarded = [*route_args, *passthrough]
+    command = ["task", route.task]
+    if forwarded:
+        command.extend(["--", *forwarded])
+    return command
+
+
+def find_task() -> str | None:
+    """Find Task, allowing a repo-local override for CI and tests."""
+
+    requested = os.environ.get("SOLO_EMPIRE_TASK")
+    candidates: list[str] = []
+    if requested:
+        candidates.append(requested)
+    discovered = shutil.which("task")
+    if discovered:
+        candidates.append(discovered)
+    candidates.extend(
+        [
+            str(Path.home() / ".local" / "bin" / "task"),
+            str(Path.home() / "go" / "bin" / "task"),
+        ]
+    )
+
+    for candidate in candidates:
+        resolved = shutil.which(candidate) if os.path.basename(candidate) == candidate else candidate
+        if resolved and Path(resolved).is_file() and os.access(resolved, os.X_OK):
+            return resolved
+    return None
+
+
+def install_target() -> Path:
+    configured = os.environ.get("SOLO_EMPIRE_BIN_DIR")
+    return Path(configured).expanduser() if configured else Path.home() / ".local" / "bin"
+
+
+def install_facade(dry_run: bool = False) -> int:
+    """Install a symlink without overwriting an unrelated user command."""
+
+    source = Path(__file__).resolve()
+    target = install_target() / "empire"
+    if dry_run:
+        print(f"install {source} -> {target}")
+        return 0
+
+    try:
+        target.parent.mkdir(parents=True, exist_ok=True)
+    except OSError as exc:
+        print_error(f"cannot create install directory {target.parent}: {exc}")
+        return 1
+
+    if target.exists() or target.is_symlink():
+        try:
+            existing = target.resolve(strict=False)
+        except OSError:
+            existing = None
+        if existing == source:
+            print(f"already installed: {target}")
+            return 0
+        print_error(f"refusing to overwrite existing path: {target}")
+        return 1
+
+    try:
+        target.symlink_to(source)
+    except OSError as exc:
+        print_error(f"cannot install {target}: {exc}")
+        return 1
+    print(f"installed: {target} -> {source}")
+    return 0
+
+
+def check_routes() -> int:
+    """Verify every facade route points to an existing root Task task."""
+
+    task = find_task()
+    if task is None:
+        return print_error("Task executable not found; cannot validate routes")
+
+    result = subprocess.run(
+        [task, "--list", "--json"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+    )
+    if result.returncode != 0:
+        print_error("Task could not list the root tasks")
+        if result.stderr:
+            print(result.stderr.rstrip(), file=sys.stderr)
+        return result.returncode or 1
+
+    try:
+        payload = json.loads(result.stdout)
+        task_names = {item["name"] for item in payload["tasks"]}
+    except (KeyError, TypeError, json.JSONDecodeError) as exc:
+        return print_error(f"could not parse Task route list: {exc}")
+
+    missing = sorted({route.task for route in ROUTES} - task_names)
+    if missing:
+        print_error("facade routes point to missing Task tasks: " + ", ".join(missing))
+        return 1
+    print(f"Empire route check passed: {len(ROUTES)} routes -> {len(task_names)} Task tasks")
+    return 0
+
+
+def print_help() -> None:
+    print("Solo Empire command facade (Task-backed; routing only)")
+    print()
+    print("Usage:")
+    print("  ./empire <command> [args...]")
+    print("  ./empire --dry-run <command> [args...]")
+    print()
+    print("Common commands:")
+    for route in sorted(ROUTES, key=_route_sort_key):
+        words = " ".join(route.words)
+        print(f"  empire {words:<24} -> task {route.task:<24} {route.description}")
+    print()
+    print("Use `--` before arguments that must be passed unchanged to the Task task.")
+    print("Use `./empire routes` to print this route table.")
+    print("Use `./empire routes --check` to validate every route against Task.")
+    print("Use `./empire install` to install a guarded symlink in ~/.local/bin.")
+
+
+def print_error(message: str) -> int:
+    print(f"empire: {message}", file=sys.stderr)
+    print("Run `./empire routes` to see supported commands.", file=sys.stderr)
+    return 2
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = list(sys.argv[1:] if argv is None else argv)
+    dry_run = False
+    if args and args[0] == "--dry-run":
+        dry_run = True
+        args = args[1:]
+
+    if not args or args[0] in {"--help", "-h", "help"}:
+        print_help()
+        return 0
+    if args[0] in {"--version", "-V"}:
+        print(f"empire {VERSION} (Task facade)")
+        return 0
+    if args[0] == "routes":
+        if args[1:] == ["--check"]:
+            return check_routes()
+        if args[1:]:
+            return print_error("routes accepts only --check")
+        print_help()
+        return 0
+    if args[0] == "install":
+        if args[1:]:
+            return print_error("install accepts no arguments")
+        return install_facade(dry_run=dry_run)
+
+    route_words, passthrough = split_passthrough(args)
+    resolved = resolve_route(route_words)
+    if resolved is None:
+        return print_error(f"unknown command: {' '.join(route_words)}")
+
+    route, route_args = resolved
+    command = build_task_args(route, route_args, passthrough)
+    if dry_run:
+        print(shlex.join(command))
+        return 0
+
+    task = find_task()
+    if task is None:
+        return print_error(
+            "Task executable not found; install the pinned version from .task-version "
+            "or set SOLO_EMPIRE_TASK"
+        )
+
+    try:
+        return subprocess.run([task, *command[1:]], cwd=ROOT, check=False).returncode
+    except KeyboardInterrupt:
+        return 130
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

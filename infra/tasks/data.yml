@@ -1,0 +1,33 @@
+version: '3'
+
+# data command adapters owned by the Solo Empire control plane.
+# Included by ../../Taskfile.yml with the repository root as working directory.
+# Product build/test implementations must stay inside their own repository.
+
+tasks:
+  test:scraping-discovery:
+    desc: Test technology-discovery capture replay and API contracts
+    cmds:
+      - bash {{.BOOK_DEV_GITHUB}}/bookchaowalit/public/book-apps/tools/book-discovery-data/scripts/test.sh
+
+  contracts:check:
+    desc: Validate frozen data-product contracts
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/utils/data_product_contract_guard.py
+
+  data:check:
+    desc: Validate contracts and metadata boundaries
+    cmds:
+      - task: contracts:check
+
+  scraping:news:schedule:plan:
+    desc: Show the News scheduler command without installing crontab
+    cmds:
+      - bash {{.BOOK_DEV_GITHUB}}/bookchaowalit/public/book-apps/tools/book-news-scraping/setup_cron.sh
+
+  test:email-pipeline:
+    desc: Test alert delivery and safe notification failure reporting offline
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/integrations/alert_delivery_test.py

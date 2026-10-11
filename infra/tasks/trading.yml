@@ -1,0 +1,71 @@
+version: '3'
+
+# Paper-trading decision pipeline adapters owned by the Solo Empire control plane.
+# Included by ../../Taskfile.yml with the repository root as working directory.
+# Flow: Binance public market data -> book-crypto-data Bronze -> shared Silver
+#       -> booktrading strategy/research (walk-forward + paper signal).
+# Research only: no credentials, no order placement, no exchange account access.
+
+# Shared settings are a YAML anchor on the first task: owner adapters may
+# only contain version and tasks (task boundaries:check).
+
+tasks:
+  trading:lake:capture:
+    desc: Capture closed OHLCV bars + funding from Binance public data into the lake (incremental; 2y backfill when empty)
+    vars: &trading_vars
+      TRADING_LAKE_URI: '{{.ROOT_DIR}}/data/lake-local/scraping-captures-v2'
+      TRADING_SYMBOLS: BTCUSDT,ETHUSDT
+      TRADING_INTERVAL: 1h
+      CRYPTO_DATA_DIR: '{{.BOOK_DEV_GITHUB}}/bookchaowalit/public/book-products/book-crypto-data'
+      TRADING_DIR: '{{.BOOK_DEV_GITHUB}}/bookchaowalit-ai/public/book-products/booktrading/strategy/research'
+    dir: '{{.CRYPTO_DATA_DIR}}'
+    env:
+      PYTHONPATH: src
+      PYTHONUTF8: '1'
+    cmds:
+      - bash {{.ROOT_DIR}}/infra/scripts/setup/run-python3.sh -m book_crypto.ohlcv --symbols {{.TRADING_SYMBOLS}} --interval {{.TRADING_INTERVAL}} --data-lake-uri "{{.TRADING_LAKE_URI}}" {{.CLI_ARGS}}
+
+  trading:lake:status:
+    desc: Show lake OHLCV coverage, gaps, and funding points per symbol
+    vars: *trading_vars
+    dir: '{{.TRADING_DIR}}'
+    env:
+      PYTHONUTF8: '1'
+    cmds:
+      - bash {{.ROOT_DIR}}/infra/scripts/setup/run-python3.sh lake_source.py --symbols {{.TRADING_SYMBOLS}} --interval {{.TRADING_INTERVAL}} --data-lake-uri "{{.TRADING_LAKE_URI}}" {{.CLI_ARGS}}
+
+  trading:walk-forward:
+    desc: Run the walk-forward validator on lake bars (example - task trading:walk-forward -- --lake-symbol BTCUSDT --mode select)
+    vars: *trading_vars
+    dir: '{{.TRADING_DIR}}'
+    env:
+      PYTHONUTF8: '1'
+    cmds:
+      - bash {{.ROOT_DIR}}/infra/scripts/setup/run-python3.sh walk_forward.py --data-lake-uri "{{.TRADING_LAKE_URI}}" {{.CLI_ARGS}}
+
+  trading:signal:
+    desc: Write the daily PAPER signal report and journal entry (data/generated/reports/trading)
+    vars: *trading_vars
+    dir: '{{.TRADING_DIR}}'
+    env:
+      PYTHONUTF8: '1'
+    cmds:
+      - bash {{.ROOT_DIR}}/infra/scripts/setup/run-python3.sh signal_report.py --symbols {{.TRADING_SYMBOLS}} --interval {{.TRADING_INTERVAL}} --data-lake-uri "{{.TRADING_LAKE_URI}}" {{.CLI_ARGS}}
+
+  trading:daily:
+    desc: Capture -> Silver -> paper signal, in order
+    cmds:
+      - task: trading:lake:capture
+      - task: trading:signal
+
+  test:trading:
+    desc: Test the trading research tools, lake bridge, paper signal report, and OHLCV lake capture
+    vars: *trading_vars
+    env:
+      PYTHONUTF8: '1'
+    cmds:
+      - bash infra/scripts/setup/run-python3.sh {{.TRADING_DIR}}/tests/futures_backtest_test.py
+      - bash infra/scripts/setup/run-python3.sh {{.TRADING_DIR}}/tests/walk_forward_test.py
+      - bash infra/scripts/setup/run-python3.sh {{.TRADING_DIR}}/tests/data_test.py
+      - bash infra/scripts/setup/run-python3.sh {{.TRADING_DIR}}/tests/lake_signal_test.py
+      - cd {{.CRYPTO_DATA_DIR}} && PYTHONPATH=src bash {{.ROOT_DIR}}/infra/scripts/setup/run-python3.sh -m unittest tests.test_ohlcv_lake

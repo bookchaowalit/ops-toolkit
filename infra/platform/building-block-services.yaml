@@ -1,0 +1,303 @@
+# Building-block services shared by every Solo Empire app.
+#
+# One catalog answers, for each horizontal capability an app may need:
+#   - build it centrally, buy it from a provider, or hybrid (our logic + provider rail)
+#   - which provider is the Solo default and which are fallbacks
+#   - how an app reaches it (central gateway route, public SDK key, edge config,
+#     platform-injected connection, or shared library)
+#   - what already exists in this repository
+#
+# Apps never embed provider secrets. Provider credentials live in Infisical and are
+# read only by the central gateway or platform layer that owns the capability.
+# This file is a routing and decision contract; it does not deploy or enable a
+# provider. Validate with `task platform:services:check`.
+
+schema_version: solo-empire.building-block-services.v1
+version: 1
+updated: 2026-10-04
+deployment_enabled: false
+related:
+  providers: infra/platform/cloud-providers.yaml
+  external_apps: bookchaowalit/solo-integrations:data/external_app_registry.ts
+  runtime_services: bookchaowalit/solo-platform-kit:infra/platform/PLATFORM-SERVICES.yaml
+  ai_gateway: systems/ai-data/central-ai-gateway.md
+  gpu_workers: infra/platform/gpu-worker-catalog.json
+
+policy:
+  rule: Build what differentiates the product; buy what is a commodity or needs regulated data, rails, or threat intelligence.
+  apps_embed_provider_secrets: false
+  regulated_requires_approval: true
+  start_small: Begin with Postgres + Redis + object storage; add Kafka, warehouses, or data lakes only with a measured need.
+  build_ceiling: A service with difficulty 4 or more is never built in-house; difficulty 5 is always bought.
+
+scales:
+  decision:
+    build: Central Solo Empire code owns the logic; at most a commodity library underneath.
+    hybrid: Central code owns the workflow and data model; a provider supplies the rail, data, or model.
+    buy: A provider owns the capability; Solo Empire owns only the adapter, contract, and audit trail.
+  difficulty:
+    1: "🟢 straightforward business code"
+    2: "🟡 buildable with a mature library; security-sensitive"
+    3: "🟠 operationally heavy; build only with a clear reason"
+    4: "🔴 needs data, rails, models, or certification we do not have"
+    5: "🔴🔴 regulated or planet-scale; never build"
+  status:
+    live: Central implementation runs and is used by at least one app.
+    partial: A central boundary exists (adapter, webhook, read-only check) but not the full capability.
+    planned: Decision and provider are set; no central implementation yet.
+    deferred: Deliberately not adopted until a product needs it.
+  phase:
+    now: Every new app should use it from day one.
+    next: Implement in the next platform increment.
+    later: Implement when two or more apps need it.
+    on_demand: Adopt only for a product that requires it.
+  access:
+    gateway: Apps call the central Solo Empire API with a scoped Bearer token.
+    sdk: Apps load a provider SDK with a public (non-secret) key only.
+    edge: Configured once at the Cloudflare edge in front of every app.
+    platform: Injected by the hosting platform (connection string or binding from Infisical).
+    library: Shared package under packages/ or a vetted open-source library.
+
+defaults:
+  status: planned
+  phase: on_demand
+  data_class: internal
+  approval: false
+
+categories:
+  - {id: identity, name: Identity / Account / Access, gateway: /api/platform/identity, access: gateway}
+  - {id: kyc, name: Identity Verification / KYC / KYB, gateway: /api/platform/kyc, access: gateway}
+  - {id: compliance, name: AML / Compliance / Risk, gateway: /api/platform/compliance, access: gateway}
+  - {id: payments, name: Payment / Money, gateway: /api/platform/payments, access: gateway}
+  - {id: communication, name: Communication, gateway: /api/platform/messages, access: gateway}
+  - {id: media, name: File / Media / Storage, gateway: /api/platform/files, access: gateway}
+  - {id: data, name: Database / Data Infrastructure, gateway: null, access: platform}
+  - {id: search, name: Search / Discovery, gateway: /api/platform/search, access: gateway}
+  - {id: location, name: Maps / Location, gateway: /api/platform/location, access: gateway}
+  - {id: analytics, name: Analytics / Product Data, gateway: null, access: sdk}
+  - {id: observability, name: Monitoring / Observability, gateway: null, access: sdk}
+  - {id: security, name: Security, gateway: null, access: edge}
+  - {id: ai, name: AI Services, gateway: /api/ai, access: gateway}
+  - {id: commerce, name: Commerce, gateway: /api/platform/commerce, access: gateway}
+  - {id: saas, name: Business / SaaS Infrastructure, gateway: /api/platform/billing, access: gateway}
+  - {id: trust, name: Legal / Trust, gateway: /api/platform/trust, access: gateway}
+  - {id: devinfra, name: Developer Infrastructure, gateway: null, access: platform}
+
+# Field order: id, category, name, decision, difficulty, primary, alternatives,
+# NOTE 2026-10-11: the local infra/api server was retired (archived in bookchaowalit/solo-platform-api), so every
+# capability whose only implementation lived there is `planned` with no impl path until a cell repo re-implements it.
+# refs (ids in cloud-providers.yaml or solo-integrations external_app_registry.ts), then overrides.
+services:
+  # 1. Identity / Account / Access
+  - {id: authentication, category: identity, name: Login / logout / sessions, decision: hybrid, difficulty: 2, primary: Clerk, alternatives: [Keycloak (self-host), Auth0, Supabase Auth], refs: [supabase], status: planned, phase: now, data_class: personal, contract: POST /api/platform/identity/verify, impl: [], note: Apps use scoped Bearer tokens; end-user OIDC session tokens (Clerk by default) are verified centrally against the issuer JWKS. Hosted login UI is the provider's.}
+  - {id: social-login, category: identity, name: Google / Apple / Facebook / LINE login, decision: buy, difficulty: 2, primary: Clerk social connections, alternatives: [Provider OAuth directly, Keycloak], refs: [line], phase: now, data_class: personal}
+  - {id: mfa, category: identity, name: OTP / TOTP / passkey second factor, decision: buy, difficulty: 2, primary: Clerk, alternatives: [Auth0, Twilio Verify], refs: [twilio], phase: next, data_class: personal}
+  - {id: authorization, category: identity, name: Roles and permissions, decision: build, difficulty: 2, primary: Central policy module, alternatives: [Cerbos, OPA, Keycloak], status: planned, phase: now, impl: [], note: "Scope model (api:read, api:write, ai:generate, finance:read) is the seed for app-level roles."}
+  - {id: sso, category: identity, name: Single sign-on across Solo apps, decision: buy, difficulty: 4, primary: Clerk, alternatives: [Keycloak, Auth0], phase: later, data_class: personal}
+  - {id: identity-federation, category: identity, name: SAML / OIDC federation, decision: buy, difficulty: 4, primary: WorkOS, alternatives: [Keycloak, Auth0], phase: on_demand}
+  - {id: user-directory, category: identity, name: User profiles and directory, decision: hybrid, difficulty: 2, primary: Clerk users + central profile table, alternatives: [Auth0, Supabase Auth], refs: [supabase], phase: now, data_class: personal}
+  - {id: passkey, category: identity, name: Passwordless passkeys, decision: buy, difficulty: 4, primary: Clerk, alternatives: [Auth0], phase: later, data_class: personal}
+  - {id: enterprise-sso, category: identity, name: Enterprise SAML SSO for B2B customers, decision: buy, difficulty: 4, primary: WorkOS, alternatives: [Auth0], phase: on_demand}
+  - {id: scim, category: identity, name: SCIM user provisioning, decision: buy, difficulty: 4, primary: WorkOS, alternatives: [Auth0], phase: on_demand}
+
+  # 2. Identity Verification / KYC / KYB
+  - {id: id-ocr, category: kyc, name: Thai ID card OCR, decision: buy, difficulty: 2, primary: iApp Technology, alternatives: [Google Document AI, AWS Textract, Pod 2 OCR worker], refs: [gcp, aws], data_class: regulated, approval: true}
+  - {id: id-verification, category: kyc, name: Document authenticity check, decision: buy, difficulty: 4, primary: Sumsub, alternatives: [Veriff, Entrust (Onfido)], data_class: regulated, approval: true}
+  - {id: face-verification, category: kyc, name: Face match against ID photo, decision: buy, difficulty: 4, primary: Sumsub, alternatives: [FaceTec, AWS Rekognition], refs: [aws], data_class: regulated, approval: true}
+  - {id: liveness, category: kyc, name: Liveness detection, decision: buy, difficulty: 4, primary: FaceTec, alternatives: [Sumsub, Veriff], data_class: regulated, approval: true}
+  - {id: ekyc, category: kyc, name: End-to-end eKYC flow, decision: buy, difficulty: 4, primary: Sumsub, alternatives: [Veriff, Thai eKYC provider], data_class: regulated, approval: true, note: "The central workflow stores only verification status, provider reference, and audit events; raw images stay with the provider."}
+  - {id: ndid, category: kyc, name: Thai NDID digital identity, decision: buy, difficulty: 5, primary: NDID member provider, alternatives: [], data_class: regulated, approval: true}
+  - {id: kyb, category: kyc, name: Know-your-business company check, decision: buy, difficulty: 4, primary: Sumsub KYB, alternatives: [Moody's Orbis, DBD data provider], data_class: regulated, approval: true}
+  - {id: ubo, category: kyc, name: Ultimate beneficial owner discovery, decision: buy, difficulty: 4, primary: Sumsub KYB, alternatives: [Moody's Orbis], data_class: regulated, approval: true}
+  - {id: document-verification, category: kyc, name: Passport / ID document verification, decision: buy, difficulty: 4, primary: Veriff, alternatives: [Entrust (Onfido), Sumsub], data_class: regulated, approval: true}
+
+  # 3. AML / Compliance / Risk
+  - {id: sanctions-screening, category: compliance, name: Sanctions list screening, decision: buy, difficulty: 4, primary: ComplyAdvantage, alternatives: [Sumsub AML], data_class: regulated, approval: true}
+  - {id: pep-screening, category: compliance, name: Politically exposed person screening, decision: buy, difficulty: 4, primary: ComplyAdvantage, alternatives: [Sumsub AML], data_class: regulated, approval: true}
+  - {id: adverse-media, category: compliance, name: Adverse media screening, decision: buy, difficulty: 4, primary: ComplyAdvantage, alternatives: [Sumsub AML], data_class: regulated, approval: true}
+  - {id: aml-screening, category: compliance, name: AML screening bundle, decision: buy, difficulty: 4, primary: Sumsub AML, alternatives: [ComplyAdvantage], data_class: regulated, approval: true}
+  - {id: transaction-monitoring, category: compliance, name: Suspicious transaction monitoring, decision: buy, difficulty: 5, primary: Flagright, alternatives: [Unit21], data_class: regulated, approval: true}
+  - {id: fraud-detection, category: compliance, name: Fraud signals and scoring, decision: buy, difficulty: 4, primary: SEON, alternatives: [Sift], data_class: sensitive, approval: true}
+  - {id: device-intelligence, category: compliance, name: Device fingerprinting, decision: buy, difficulty: 4, primary: Fingerprint, alternatives: [SEON], data_class: sensitive}
+  - {id: risk-scoring, category: compliance, name: Customer risk score, decision: hybrid, difficulty: 3, primary: Central rules engine + provider signals, alternatives: [SEON scoring], data_class: sensitive, approval: true}
+  - {id: case-management, category: compliance, name: Investigation case management, decision: hybrid, difficulty: 3, primary: Central case table + review UI, alternatives: [Unit21], data_class: regulated, approval: true}
+  - {id: ongoing-monitoring, category: compliance, name: Ongoing customer re-screening, decision: buy, difficulty: 4, primary: ComplyAdvantage monitoring, alternatives: [Sumsub], data_class: regulated, approval: true}
+
+  # 4. Payment / Money
+  - {id: payment-gateway, category: payments, name: Card and online payment acceptance, decision: buy, difficulty: 4, primary: Stripe, alternatives: [Opn Payments (Omise), PayPal], refs: [stripe, paypal], status: planned, phase: next, data_class: sensitive, approval: true, contract: POST /api/webhook/stripe, impl: [], note: Signed Stripe webhook ingress exists; charge creation is not centralized yet.}
+  - {id: card-payments, category: payments, name: Credit / debit cards, decision: buy, difficulty: 4, primary: Stripe, alternatives: [Opn Payments (Omise)], refs: [stripe], phase: next, data_class: sensitive, approval: true}
+  - {id: promptpay, category: payments, name: PromptPay QR (Thailand), decision: buy, difficulty: 4, primary: Opn Payments (Omise), alternatives: [GB Prime Pay, Stripe PromptPay, Bank API], refs: [stripe], phase: next, data_class: sensitive, approval: true}
+  - {id: qr-payment, category: payments, name: Thai QR payment, decision: buy, difficulty: 4, primary: Opn Payments (Omise), alternatives: [Bank API, GB Prime Pay], phase: next, data_class: sensitive, approval: true}
+  - {id: bank-transfer, category: payments, name: Bank transfer confirmation, decision: buy, difficulty: 4, primary: Bank API, alternatives: [Opn Payments (Omise)], data_class: sensitive, approval: true}
+  - {id: recurring-payment, category: payments, name: Recurring charges, decision: buy, difficulty: 4, primary: Stripe, alternatives: [Opn Payments (Omise), Paddle], refs: [stripe, paddle], data_class: sensitive, approval: true}
+  - {id: subscription-billing, category: payments, name: "Plans, trials, proration, dunning", decision: buy, difficulty: 3, primary: Stripe Billing, alternatives: [Paddle, Lago], refs: [stripe, paddle], phase: next, data_class: sensitive, approval: true}
+  - {id: invoice, category: payments, name: Invoices and receipts (Thai format), decision: build, difficulty: 1, primary: Central invoice generator, alternatives: [Stripe Invoicing, FlowAccount], refs: [stripe], phase: next, data_class: personal, status: planned, contract: POST /api/platform/billing/invoices/preview, impl: [], note: "Preview only (VAT, withholding, Thai baht text, tax ID check); numbering and issuing stay with the accounting partner."}
+  - {id: refund, category: payments, name: Refunds, decision: buy, difficulty: 4, primary: Stripe, alternatives: [Opn Payments (Omise)], refs: [stripe], data_class: sensitive, approval: true}
+  - {id: payout, category: payments, name: Payouts to sellers or partners, decision: buy, difficulty: 4, primary: Stripe Connect, alternatives: [Opn Payments (Omise) transfers, Wise], refs: [stripe, wise], data_class: sensitive, approval: true}
+  - {id: marketplace-payment, category: payments, name: Split payments for marketplaces, decision: buy, difficulty: 5, primary: Stripe Connect, alternatives: [Opn Payments (Omise)], refs: [stripe], data_class: sensitive, approval: true}
+  - {id: wallet, category: payments, name: Stored-value wallet, decision: buy, difficulty: 5, primary: Licensed e-money partner, alternatives: [], data_class: regulated, approval: true, note: Stored value is a regulated e-money activity in Thailand; never hold customer funds directly.}
+  - {id: ledger, category: payments, name: Double-entry money ledger, decision: hybrid, difficulty: 4, primary: Modern Treasury Ledgers, alternatives: [Central double-entry tables], status: partial, data_class: sensitive, approval: true, impl: [infra/scripts/utils/crm_ledger.py], note: "Revenue, invoices and clients live in the CRM ledger (bookchaowalit/solo-crm) and are read through crm_ledger.py since 2026-10-11; it is not a customer-funds ledger."}
+  - {id: fx, category: payments, name: Foreign exchange and multi-currency, decision: buy, difficulty: 4, primary: Wise Platform, alternatives: [Banking provider], refs: [wise], data_class: sensitive, approval: true}
+  - {id: reconciliation, category: payments, name: Payment and bank reconciliation, decision: hybrid, difficulty: 3, primary: Central reconciliation job, alternatives: [Modern Treasury], refs: [stripe], phase: later, data_class: sensitive}
+
+  # 5. Communication
+  - {id: email, category: communication, name: Email delivery, decision: buy, difficulty: 2, primary: Resend, alternatives: [Postmark, Amazon SES, Cloudflare Email Service], refs: [resend, aws, cloudflare], phase: now, data_class: personal, contract: POST /api/platform/messages/email, status: planned, impl: [], note: "Validated Resend adapter; dry-run until PLATFORM_EMAIL_SEND_ENABLED, RESEND_API_KEY, and PLATFORM_EMAIL_FROM are set."}
+  - {id: transactional-email, category: communication, name: Templated transactional email, decision: hybrid, difficulty: 2, primary: Central templates + Resend, alternatives: [Postmark], refs: [resend], phase: now, data_class: personal}
+  - {id: sms, category: communication, name: SMS, decision: buy, difficulty: 3, primary: Thai SMS gateway (ThaiBulkSMS), alternatives: [Twilio], refs: [twilio], phase: later, data_class: personal}
+  - {id: otp, category: communication, name: One-time passcode delivery and check, decision: buy, difficulty: 4, primary: Twilio Verify, alternatives: [ThaiBulkSMS OTP, Clerk], refs: [twilio], phase: later, data_class: personal}
+  - {id: whatsapp, category: communication, name: WhatsApp messaging, decision: buy, difficulty: 4, primary: Meta WhatsApp Business Platform, alternatives: [Twilio], refs: [whatsapp-business, twilio], status: partial, data_class: personal, impl: [infra/scripts/sync/whatsapp_business_readonly.py]}
+  - {id: line-messaging, category: communication, name: LINE Messaging API, decision: buy, difficulty: 2, primary: LINE Messaging API, alternatives: [], refs: [line], status: planned, phase: now, data_class: personal, contract: POST /api/webhook/line, impl: [], note: Signed inbound webhook is live; outbound send stays dry-run until approved.}
+  - {id: push-notification, category: communication, name: Mobile and web push, decision: buy, difficulty: 2, primary: Firebase Cloud Messaging, alternatives: [OneSignal], refs: [gcp], phase: later, data_class: personal}
+  - {id: in-app-notification, category: communication, name: In-app notification feed and rules, decision: build, difficulty: 1, primary: Central notification table + rules, alternatives: [Novu, Knock], status: partial, phase: now, impl: [infra/scripts/utils/notification_runner.py]}
+  - {id: chat, category: communication, name: In-app chat, decision: buy, difficulty: 3, primary: Stream Chat, alternatives: [Sendbird], data_class: personal}
+  - {id: voice-call, category: communication, name: Voice calls, decision: buy, difficulty: 4, primary: Twilio Voice, alternatives: [], refs: [twilio], data_class: personal}
+  - {id: video-call, category: communication, name: Video calls, decision: buy, difficulty: 4, primary: Daily, alternatives: [Agora, Zoom SDK], refs: [zoom], data_class: personal}
+  - {id: contact-center, category: communication, name: Contact center, decision: buy, difficulty: 4, primary: Amazon Connect, alternatives: [Twilio Flex], refs: [aws, twilio], data_class: personal}
+
+  # 6. File / Media / Storage
+  - {id: object-storage, category: media, name: Object storage, decision: buy, difficulty: 4, primary: Cloudflare R2, alternatives: [Amazon S3, Supabase Storage], refs: [cloudflare, aws, supabase], status: partial, phase: now, impl: [infra/scripts/platform/cloudflare_r2_usage.py]}
+  - {id: file-upload, category: media, name: Presigned upload and download, decision: build, difficulty: 1, primary: Central presign route over R2, alternatives: [UploadThing], refs: [cloudflare], phase: now, data_class: personal, contract: POST /api/platform/files/presign, status: planned, impl: [], note: "SigV4 presign with app-scoped keys and signed content-length; returns 503 until R2_* settings exist."}
+  - {id: image-processing, category: media, name: "Resize, crop, format conversion", decision: buy, difficulty: 3, primary: Cloudflare Images, alternatives: [Cloudinary, imgix], refs: [cloudflare], phase: later}
+  - {id: image-cdn, category: media, name: Image CDN, decision: buy, difficulty: 3, primary: Cloudflare Images, alternatives: [Cloudinary], refs: [cloudflare], phase: later}
+  - {id: video-hosting, category: media, name: Video hosting and streaming, decision: buy, difficulty: 4, primary: Cloudflare Stream, alternatives: [Mux], refs: [cloudflare]}
+  - {id: video-transcoding, category: media, name: Video transcoding, decision: buy, difficulty: 4, primary: Mux, alternatives: [AWS MediaConvert, Cloudflare Stream], refs: [aws, cloudflare]}
+  - {id: document-storage, category: media, name: Business document storage, decision: build, difficulty: 1, primary: Central metadata + R2, alternatives: [Google Drive], refs: [cloudflare, google-drive], phase: next, data_class: personal}
+  - {id: pdf-generation, category: media, name: PDF generation, decision: build, difficulty: 1, primary: Shared HTML-to-PDF renderer, alternatives: [PDF API service], status: partial, phase: next, impl: [projects/product/engineering/book-dev/github/bookchaowalit/private/book-production-platform/services/document-production-api]}
+  - {id: e-signature-media, category: media, name: Signed document storage, decision: build, difficulty: 1, primary: Central metadata + R2 with immutable versions, alternatives: [], refs: [cloudflare], phase: on_demand, data_class: personal}
+  - {id: document-conversion, category: media, name: Office / PDF conversion, decision: hybrid, difficulty: 3, primary: Self-hosted Gotenberg, alternatives: [CloudConvert], phase: later}
+
+  # 7. Database / Data Infrastructure
+  - {id: sql-database, category: data, name: PostgreSQL, decision: buy, difficulty: 3, primary: Neon, alternatives: [Supabase, Railway Postgres], refs: [neon, supabase, railway], status: live, phase: now, data_class: personal, impl: [infra/scripts/utils/cell_store.py]}
+  - {id: nosql, category: data, name: Document / key-value store, decision: buy, difficulty: 3, primary: Postgres JSONB first, alternatives: [MongoDB Atlas, DynamoDB], refs: [neon, aws], status: deferred}
+  - {id: redis, category: data, name: "Cache, locks, rate-limit counters", decision: buy, difficulty: 3, primary: Upstash Redis, alternatives: [Redis Cloud, Railway Redis], refs: [upstash, railway], phase: now}
+  - {id: vector-db, category: data, name: Vector search, decision: buy, difficulty: 3, primary: pgvector on Neon, alternatives: [Pinecone, Qdrant], refs: [neon, pinecone, qdrant], phase: next}
+  - {id: message-queue, category: data, name: Job and message queue, decision: buy, difficulty: 3, primary: Upstash QStash, alternatives: [Cloudflare Queues, Amazon SQS], refs: [upstash, cloudflare, aws], phase: next}
+  - {id: event-streaming, category: data, name: Event streaming, decision: buy, difficulty: 4, primary: Upstash Kafka-compatible / Redpanda Cloud, alternatives: [Confluent], refs: [upstash], status: deferred, note: Not needed until event volume outgrows a queue.}
+  - {id: cdc, category: data, name: Change data capture, decision: buy, difficulty: 4, primary: Debezium, alternatives: [Airbyte CDC], status: deferred}
+  - {id: data-warehouse, category: data, name: Analytics warehouse, decision: buy, difficulty: 4, primary: BigQuery, alternatives: [MotherDuck, Snowflake], refs: [gcp], status: deferred}
+  - {id: etl, category: data, name: ETL / ELT connectors, decision: buy, difficulty: 4, primary: Airbyte, alternatives: [Fivetran, dlt], status: deferred}
+  - {id: data-lake, category: data, name: Lake-first Parquet / Iceberg storage, decision: hybrid, difficulty: 4, primary: Central lake pipeline on R2, alternatives: [Amazon S3], refs: [cloudflare, aws], status: planned, phase: later, impl: [], note: "Owned by the data-engineering contracts; apps publish events, not files. Pipeline code lives in bookchaowalit/solo-data-lake (infra/scripts/data_lake/iceberg.py)."}
+  - {id: backup, category: data, name: Database and file backups, decision: buy, difficulty: 3, primary: Neon point-in-time restore + R2 snapshots, alternatives: [Supabase backups], refs: [neon, cloudflare], status: partial, phase: now, impl: [infra/scripts/platform/self_hosted_readiness.py]}
+
+  # 8. Search / Discovery
+  - {id: full-text-search, category: search, name: Full-text search, decision: hybrid, difficulty: 3, primary: Postgres full-text first, alternatives: [Typesense, Meilisearch], refs: [neon], phase: next}
+  - {id: managed-search, category: search, name: Managed hosted search, decision: buy, difficulty: 4, primary: Algolia, alternatives: [Typesense Cloud], refs: [algolia]}
+  - {id: semantic-search, category: search, name: Semantic / embedding search, decision: hybrid, difficulty: 3, primary: pgvector + gateway embeddings, alternatives: [Pinecone], refs: [neon, pinecone], phase: next}
+  - {id: recommendation, category: search, name: Recommendations, decision: hybrid, difficulty: 4, primary: Central ranking logic + embeddings, alternatives: [Recombee], note: The ranking logic is product IP; the embedding model is bought.}
+  - {id: autocomplete, category: search, name: Autocomplete, decision: hybrid, difficulty: 3, primary: Postgres trigram, alternatives: [Typesense, Algolia], refs: [algolia]}
+  - {id: product-search, category: search, name: Product search with facets, decision: buy, difficulty: 4, primary: Algolia, alternatives: [Typesense], refs: [algolia]}
+
+  # 9. Maps / Location
+  - {id: maps, category: location, name: Map tiles and display, decision: buy, difficulty: 4, primary: Google Maps Platform, alternatives: [Mapbox, Longdo Map], refs: [google-maps, mapbox]}
+  - {id: geocoding, category: location, name: Address to coordinates, decision: buy, difficulty: 4, primary: Google Maps Platform, alternatives: [Mapbox], refs: [google-maps, mapbox]}
+  - {id: address-search, category: location, name: Place and address autocomplete, decision: buy, difficulty: 4, primary: Google Places, alternatives: [Mapbox Search], refs: [google-maps, mapbox]}
+  - {id: routing, category: location, name: Route planning, decision: buy, difficulty: 4, primary: Google Routes API, alternatives: [Mapbox Directions], refs: [google-maps, mapbox]}
+  - {id: distance-matrix, category: location, name: Distance matrix, decision: buy, difficulty: 4, primary: Google Routes API, alternatives: [Mapbox Matrix], refs: [google-maps, mapbox]}
+  - {id: gps-tracking, category: location, name: Live GPS tracking backend, decision: hybrid, difficulty: 3, primary: Central location events + map provider, alternatives: [], refs: [google-maps], data_class: personal}
+  - {id: navigation, category: location, name: Turn-by-turn navigation, decision: buy, difficulty: 4, primary: Google Navigation SDK, alternatives: [Mapbox Navigation], refs: [google-maps, mapbox]}
+  - {id: thai-address, category: location, name: Thai province / district / subdistrict / postcode, decision: build, difficulty: 3, primary: Central Thai address dataset, alternatives: [Longdo address API], phase: next, note: Static open dataset served centrally so every Thai form validates addresses the same way.}
+
+  # 10. Analytics / Product Data
+  - {id: web-analytics, category: analytics, name: Web traffic analytics, decision: buy, difficulty: 1, primary: PostHog, alternatives: [Plausible, Google Analytics, Cloudflare Web Analytics], refs: [posthog, cloudflare], status: partial, phase: now, impl: [infra/scripts/sync/posthog_readonly.py]}
+  - {id: product-analytics, category: analytics, name: Product events and insights, decision: buy, difficulty: 3, primary: PostHog, alternatives: [Amplitude, Mixpanel], refs: [posthog], status: partial, phase: now, impl: [infra/scripts/sync/posthog_readonly.py]}
+  - {id: session-replay, category: analytics, name: Session replay, decision: buy, difficulty: 4, primary: PostHog, alternatives: [FullStory], refs: [posthog], phase: later, data_class: personal}
+  - {id: feature-flags, category: analytics, name: Feature flags, decision: buy, difficulty: 3, primary: PostHog, alternatives: [LaunchDarkly, Vercel Flags], refs: [posthog, vercel], phase: now}
+  - {id: ab-testing, category: analytics, name: A/B experiments, decision: buy, difficulty: 4, primary: PostHog, alternatives: [Statsig], refs: [posthog], phase: later}
+  - {id: funnel-analytics, category: analytics, name: Funnels and retention, decision: buy, difficulty: 3, primary: PostHog, alternatives: [Amplitude], refs: [posthog], phase: next}
+  - {id: attribution, category: analytics, name: Mobile install attribution, decision: buy, difficulty: 4, primary: AppsFlyer, alternatives: [Adjust], phase: on_demand}
+  - {id: cdp, category: analytics, name: Customer data platform, decision: buy, difficulty: 4, primary: RudderStack, alternatives: [Segment], status: deferred, data_class: personal}
+
+  # 11. Monitoring / Observability
+  - {id: error-tracking, category: observability, name: Error tracking, decision: buy, difficulty: 3, primary: Sentry, alternatives: [PostHog error tracking], refs: [sentry], status: partial, phase: now, impl: [infra/scripts/sync/sentry_readonly.py]}
+  - {id: logs, category: observability, name: Centralized logs, decision: buy, difficulty: 3, primary: Grafana Cloud Loki, alternatives: [Better Stack Logs, Datadog], refs: [grafana, datadog], phase: next}
+  - {id: metrics, category: observability, name: Metrics, decision: buy, difficulty: 3, primary: Grafana Cloud (Prometheus), alternatives: [Datadog], refs: [grafana, datadog], phase: next}
+  - {id: tracing, category: observability, name: Distributed tracing, decision: hybrid, difficulty: 4, primary: OpenTelemetry SDK + Grafana Tempo, alternatives: [Datadog APM], refs: [grafana], status: planned, phase: next, impl: []}
+  - {id: apm, category: observability, name: Application performance monitoring, decision: buy, difficulty: 4, primary: Sentry Performance, alternatives: [Datadog APM, Grafana], refs: [sentry, datadog], phase: later}
+  - {id: uptime-monitoring, category: observability, name: Uptime checks, decision: buy, difficulty: 1, primary: Better Stack Uptime, alternatives: [UptimeRobot], phase: now}
+  - {id: alerting, category: observability, name: Alert routing, decision: hybrid, difficulty: 3, primary: Better Stack + LINE / Telegram notify, alternatives: [Grafana alerting], refs: [line, telegram], phase: now}
+  - {id: incident-management, category: observability, name: On-call and incidents, decision: buy, difficulty: 4, primary: Better Stack Incidents, alternatives: [PagerDuty], status: deferred}
+  - {id: status-page, category: observability, name: Public status page, decision: buy, difficulty: 1, primary: Better Stack Status, alternatives: [Atlassian Statuspage], phase: later}
+
+  # 12. Security
+  - {id: waf, category: security, name: Web application firewall, decision: buy, difficulty: 4, primary: Cloudflare WAF, alternatives: [], refs: [cloudflare], phase: now}
+  - {id: ddos-protection, category: security, name: DDoS protection, decision: buy, difficulty: 5, primary: Cloudflare, alternatives: [], refs: [cloudflare], phase: now}
+  - {id: bot-protection, category: security, name: Bot management, decision: buy, difficulty: 4, primary: Cloudflare Bot Fight Mode, alternatives: [], refs: [cloudflare], phase: now}
+  - {id: captcha, category: security, name: CAPTCHA, decision: buy, difficulty: 4, primary: Cloudflare Turnstile, alternatives: [hCaptcha], refs: [cloudflare], phase: now}
+  - {id: secrets-management, category: security, name: Secrets management, decision: buy, difficulty: 3, primary: Infisical, alternatives: [Cloud provider secret manager, Vault], refs: [infisical], status: partial, phase: now, impl: [infra/scripts/platform/cloud_providers.py]}
+  - {id: vulnerability-scan, category: security, name: Code and container vulnerability scan, decision: buy, difficulty: 4, primary: GitHub code scanning, alternatives: [Snyk, Trivy], refs: [github], phase: now}
+  - {id: dependency-scan, category: security, name: Dependency scan and updates, decision: buy, difficulty: 3, primary: GitHub Dependabot, alternatives: [Snyk, Renovate], refs: [github], phase: now}
+  - {id: siem, category: security, name: Security event analytics, decision: buy, difficulty: 5, primary: Microsoft Sentinel, alternatives: [Splunk], refs: [azure], status: deferred}
+  - {id: cspm, category: security, name: Cloud security posture, decision: buy, difficulty: 4, primary: Cloud provider native posture tools, alternatives: [Wiz], status: deferred}
+  - {id: rate-limiting, category: security, name: Rate limiting, decision: build, difficulty: 1, primary: Central limiter (Upstash-backed when shared), alternatives: [Cloudflare rate limiting rules], refs: [upstash, cloudflare], status: planned, phase: now, impl: [], note: The AI gateway limiter moved to bookchaowalit/solo-ai-gateway on 2026-10-11.}
+  - {id: audit-log, category: security, name: Audit trail of sensitive actions, decision: build, difficulty: 3, primary: Central append-only audit table, alternatives: [WorkOS Audit Logs], status: planned, phase: now, impl: [], note: The finance-only audit module (infra/api/audit.ts) was removed on 2026-10-11.}
+
+  # 13. AI Services
+  - {id: llm, category: ai, name: Text generation and reasoning, decision: buy, difficulty: 5, primary: Central AI Gateway (OpenAI-compatible adapter), alternatives: [Anthropic, Google Gemini, OpenAI], refs: [anthropic, openai, google-gemini], status: planned, phase: now, impl: [], note: Generation runs in bookchaowalit/solo-ai-gateway; the local /api/ai routes were retired on 2026-10-11.}
+  - {id: embedding, category: ai, name: Text embeddings, decision: buy, difficulty: 4, primary: Gateway embedding route, alternatives: [OpenAI, Voyage, Pod 2 worker], refs: [openai, cohere], status: partial, phase: next, impl: [infra/platform/gpu-worker-catalog.json]}
+  - {id: speech-to-text, category: ai, name: Speech to text, decision: buy, difficulty: 4, primary: Gateway STT route, alternatives: [OpenAI, Deepgram, Pod 2 worker], refs: [openai], status: partial, impl: [infra/platform/gpu-worker-catalog.json]}
+  - {id: text-to-speech, category: ai, name: Text to speech, decision: buy, difficulty: 4, primary: ElevenLabs, alternatives: [OpenAI TTS], refs: [openai]}
+  - {id: ocr, category: ai, name: General OCR, decision: buy, difficulty: 4, primary: Gateway OCR route, alternatives: [Google Document AI, Azure Document Intelligence, Pod 2 worker], refs: [gcp, azure], status: partial, impl: [infra/platform/gpu-worker-catalog.json]}
+  - {id: translation, category: ai, name: Translation, decision: buy, difficulty: 4, primary: Central AI Gateway LLM, alternatives: [Google Translate, DeepL], refs: [gcp], status: planned, impl: [], note: Runs through bookchaowalit/solo-ai-gateway since 2026-10-11.}
+  - {id: moderation, category: ai, name: Content moderation, decision: buy, difficulty: 4, primary: OpenAI moderation, alternatives: [Central AI Gateway classifier], refs: [openai], phase: next}
+  - {id: image-generation, category: ai, name: Image generation, decision: buy, difficulty: 5, primary: Gateway image route, alternatives: [OpenAI Images, Replicate, Pod 3 worker], refs: [openai, replicate], status: partial, impl: [infra/platform/gpu-worker-catalog.json]}
+  - {id: ai-search, category: ai, name: AI search over app data, decision: hybrid, difficulty: 3, primary: Central RAG on pgvector + gateway, alternatives: [], refs: [neon], phase: next}
+  - {id: rag, category: ai, name: Retrieval-augmented generation, decision: build, difficulty: 3, primary: Central RAG service, alternatives: [], status: partial, phase: next, impl: [projects/product/engineering/book-dev/github/bookchaowalit/private/solo-knowledge-api/server.py]}
+  - {id: ai-agent, category: ai, name: Tool-using agents, decision: build, difficulty: 3, primary: Central agent runtime on the AI Gateway, alternatives: [], phase: next}
+
+  # 14. Commerce
+  - {id: shopping-cart, category: commerce, name: Cart, decision: build, difficulty: 1, primary: Central commerce module, alternatives: [Shopify], refs: [shopify]}
+  - {id: product-catalog, category: commerce, name: Product catalog, decision: build, difficulty: 1, primary: Central commerce module, alternatives: [Shopify], refs: [shopify]}
+  - {id: checkout, category: commerce, name: Checkout, decision: hybrid, difficulty: 3, primary: Stripe Checkout / Opn hosted page, alternatives: [Shopify Checkout], refs: [stripe, shopify], data_class: sensitive, approval: true}
+  - {id: inventory, category: commerce, name: Inventory, decision: build, difficulty: 3, primary: Central commerce module, alternatives: [ERP]}
+  - {id: order-management, category: commerce, name: Orders and fulfilment states, decision: build, difficulty: 3, primary: Central commerce module, alternatives: [], data_class: personal}
+  - {id: promotion, category: commerce, name: Promotions and pricing rules, decision: build, difficulty: 3, primary: Central pricing rules, alternatives: []}
+  - {id: coupon, category: commerce, name: Coupons, decision: build, difficulty: 1, primary: Central pricing rules, alternatives: [Stripe coupons], refs: [stripe]}
+  - {id: tax, category: commerce, name: Tax calculation (VAT / withholding), decision: hybrid, difficulty: 4, primary: Thai VAT rules + accounting partner, alternatives: [Avalara, Stripe Tax], refs: [stripe], approval: true, status: planned, contract: POST /api/platform/commerce/tax/quote, impl: [], note: Standard Thai VAT 7% and withholding rates only; filing stays with the accounting partner.}
+  - {id: shipping, category: commerce, name: Shipping labels and rates, decision: buy, difficulty: 4, primary: Thai carrier aggregator (Shippop), alternatives: [Easyship, Shippo], data_class: personal}
+  - {id: tracking, category: commerce, name: Shipment tracking, decision: buy, difficulty: 4, primary: AfterShip, alternatives: [Carrier APIs], data_class: personal}
+  - {id: returns, category: commerce, name: Returns, decision: build, difficulty: 3, primary: Central commerce module, alternatives: []}
+
+  # 15. Business / SaaS Infrastructure
+  - {id: subscription, category: saas, name: SaaS subscription management, decision: buy, difficulty: 4, primary: Stripe Billing, alternatives: [Paddle, Lago], refs: [stripe, paddle], phase: next, data_class: sensitive, approval: true}
+  - {id: metered-billing, category: saas, name: Usage-based billing, decision: buy, difficulty: 4, primary: Stripe Billing meters, alternatives: [Lago], refs: [stripe], phase: later, data_class: sensitive, approval: true}
+  - {id: usage-tracking, category: saas, name: Usage counters per tenant, decision: build, difficulty: 3, primary: Central usage table, alternatives: [Lago], status: planned, phase: next, impl: [], note: AI usage metering moved to solo-ai-gateway; no local meter remains.}
+  - {id: crm, category: saas, name: CRM, decision: hybrid, difficulty: 4, primary: Central CRM API, alternatives: [HubSpot, Pipedrive], refs: [hubspot, pipedrive], status: planned, phase: now, data_class: personal, impl: [], note: The CRM API lives in its own repository (bookchaowalit/solo-crm) since 2026-10-11.}
+  - {id: customer-support, category: saas, name: Customer support inbox, decision: buy, difficulty: 4, primary: Crisp, alternatives: [Intercom, Zendesk], refs: [intercom, zendesk], data_class: personal}
+  - {id: help-center, category: saas, name: Help center / docs, decision: hybrid, difficulty: 3, primary: Static docs site, alternatives: [GitBook, Intercom Articles], refs: [intercom]}
+  - {id: ticketing, category: saas, name: Support ticketing, decision: buy, difficulty: 4, primary: Zendesk, alternatives: [Freshdesk], refs: [zendesk, freshdesk], data_class: personal}
+  - {id: scheduling, category: saas, name: Booking and scheduling, decision: buy, difficulty: 3, primary: Cal.com, alternatives: [Calendly], refs: [cal-com, calendly], data_class: personal}
+  - {id: forms, category: saas, name: Forms, decision: build, difficulty: 1, primary: Central form schema + submissions table, alternatives: [Typeform], refs: [typeform], phase: next, data_class: personal}
+  - {id: survey, category: saas, name: Surveys, decision: build, difficulty: 1, primary: Central form schema, alternatives: [Typeform, SurveyMonkey], refs: [typeform, surveymonkey]}
+  - {id: workflow-automation, category: saas, name: No-code workflow automation, decision: buy, difficulty: 3, primary: n8n (self-host), alternatives: [Zapier, Make], phase: later}
+
+  # 16. Legal / Trust
+  - {id: e-signature, category: trust, name: Legally binding e-signature, decision: buy, difficulty: 4, primary: DocuSign, alternatives: [Dropbox Sign, Thai e-signature provider], refs: [docusign], data_class: personal, approval: true}
+  - {id: consent-management, category: trust, name: Consent records, decision: build, difficulty: 3, primary: Central consent ledger, alternatives: [OneTrust], phase: next, data_class: personal}
+  - {id: cookie-consent, category: trust, name: Cookie banner, decision: buy, difficulty: 1, primary: Cookiebot, alternatives: [Open-source banner], phase: now}
+  - {id: privacy-request, category: trust, name: Data subject requests (access / delete), decision: build, difficulty: 3, primary: Central DSR workflow, alternatives: [OneTrust], phase: next, data_class: personal}
+  - {id: terms-acceptance, category: trust, name: Terms and policy acceptance, decision: build, difficulty: 1, primary: Central consent ledger, alternatives: [], phase: now, data_class: personal}
+  - {id: audit-trail, category: trust, name: Customer-visible audit trail, decision: build, difficulty: 3, primary: Central audit table, alternatives: [WorkOS Audit Logs], status: planned, impl: [], note: The finance-only audit module (infra/api/audit.ts) was removed on 2026-10-11.}
+  - {id: age-verification, category: trust, name: Age verification, decision: buy, difficulty: 4, primary: KYC provider age check, alternatives: [Yoti], data_class: regulated, approval: true}
+  - {id: pdpa-workflow, category: trust, name: Thai PDPA compliance workflow, decision: hybrid, difficulty: 3, primary: Central consent + DSR + retention rules, alternatives: [OneTrust, Thai PDPA platform], phase: next, data_class: personal}
+
+  # 17. Developer Infrastructure
+  - {id: git, category: devinfra, name: Source control, decision: buy, difficulty: 4, primary: GitHub, alternatives: [GitLab], refs: [github, gitlab], status: live, phase: now}
+  - {id: ci-cd, category: devinfra, name: CI/CD, decision: buy, difficulty: 3, primary: GitHub Actions, alternatives: [Railway / Vercel builds], refs: [github], status: live, phase: now}
+  - {id: hosting, category: devinfra, name: App hosting, decision: buy, difficulty: 3, primary: Railway, alternatives: [Vercel, Fly.io, Cloudflare Workers], refs: [railway, vercel, fly-io, cloudflare], status: live, phase: now}
+  - {id: container-registry, category: devinfra, name: Container registry, decision: buy, difficulty: 3, primary: GitHub Container Registry, alternatives: [Amazon ECR], refs: [github, aws], status: live, phase: now}
+  - {id: dns, category: devinfra, name: DNS, decision: buy, difficulty: 4, primary: Cloudflare DNS, alternatives: [], refs: [cloudflare], status: live, phase: now, impl: [infra/scripts/platform/cloudflare_dns.py]}
+  - {id: cdn, category: devinfra, name: CDN, decision: buy, difficulty: 4, primary: Cloudflare, alternatives: [], refs: [cloudflare], status: live, phase: now}
+  - {id: tls, category: devinfra, name: TLS certificates, decision: buy, difficulty: 4, primary: Cloudflare / Let's Encrypt, alternatives: [], refs: [cloudflare], status: live, phase: now}
+  - {id: cron, category: devinfra, name: Scheduled jobs, decision: buy, difficulty: 1, primary: Railway cron, alternatives: [Cloudflare Cron Triggers, Trigger.dev], refs: [railway, cloudflare], status: live, phase: now}
+  - {id: background-jobs, category: devinfra, name: Durable background jobs, decision: buy, difficulty: 3, primary: Trigger.dev, alternatives: [Inngest, Upstash QStash], refs: [upstash], phase: next}
+  - {id: webhooks, category: devinfra, name: Inbound / outbound webhook delivery, decision: hybrid, difficulty: 3, primary: Central signed webhook ingress, alternatives: [Hookdeck, Svix], status: planned, phase: now, impl: []}
+  - {id: api-gateway, category: devinfra, name: API gateway, decision: hybrid, difficulty: 3, primary: Central Solo Empire API, alternatives: [Cloudflare API Shield, AWS API Gateway], refs: [cloudflare], status: planned, phase: now, impl: []}
+
+# Industry-specific APIs are adopted per product, not centrally in advance.
+domain_packs:
+  - {id: finance, examples: [Open banking, Credit bureau (NCB), Credit scoring, Market data, Exchange rates, Bank account verification]}
+  - {id: healthcare, examples: [Medical records, Telemedicine, Prescriptions, Lab integration, Insurance eligibility]}
+  - {id: travel, examples: [Flights, Hotels, Booking, Visa information, Travel insurance]}
+  - {id: logistics, examples: [Shipping rates, Address verification, Tracking, Warehouse, Last-mile delivery]}
+  - {id: hr, examples: [Payroll, Background check, Attendance, Benefits]}
+  - {id: government, examples: [DBD company registry, Revenue Department tax, Citizen identity, Licenses]}

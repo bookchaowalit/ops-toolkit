@@ -1,0 +1,82 @@
+version: '3'
+
+# ai command adapters owned by the Solo Empire control plane.
+# Included by ../../Taskfile.yml with the repository root as working directory.
+# Product build/test implementations must stay inside their own repository.
+
+tasks:
+  evaluation:check:
+    desc: Validate the AI document evaluation contract
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/utils/ai_doc_evaluation_guard.py
+
+  rnd:check:
+    desc: Validate the research and development pipeline
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/utils/rnd_pipeline_guard.py {{.CLI_ARGS}}
+
+  cleanup:unused:
+    desc: Report tracked files nothing references (read-only)
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/utils/unused_files.py {{.CLI_ARGS}}
+
+  agent:decision-context:
+    desc: Build an aggregate decision context pack
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/agent/decision_context.py {{.CLI_ARGS}}
+
+  ai:cycle:
+    desc: Inspect the provider-neutral AI operating cycle
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/operating_cycle.py {{.CLI_ARGS}}
+
+  ai:cycle:check:
+    desc: Check the provider-neutral AI operating cycle
+    cmds:
+      - task: operating:cycle:check
+
+  ai:cycle:report:
+    desc: Write the provider-neutral AI operating cycle report
+    cmds:
+      - task: operating:cycle:report
+
+  ai:cycle:snapshot:
+    desc: Write a provider-neutral AI operating cycle snapshot
+    cmds:
+      - task: operating:cycle:snapshot
+
+  test:ai-cycle:
+    desc: Test the AI operating cycle contract
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/agent/ai_cycle_test.py
+
+  test:skills-enrichment:
+    desc: Test skills enrichment workflows
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/learning/skills_enrichment_test.py
+
+  test:agent:
+    desc: Run the agent-adjacent test suite owned by solo-ops (harness hook tests live with the registry hub)
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/agent/unused_files_test.py
+      - bash scripts/setup/run-python3.sh tests/agent/ai_cycle_test.py
+      - bash scripts/setup/run-python3.sh tests/agent/book_dev_loop_test.py
+      - bash scripts/setup/run-python3.sh tests/agent/book_dev_execution_hook_test.py
+      - bash scripts/setup/run-python3.sh tests/agent/book_dev_ai_dispatch_test.py
+      - bash scripts/setup/run-python3.sh tests/agent/portfolio_domain_loop_test.py
+      - bash scripts/setup/run-python3.sh tests/decisions/decision_context_test.py
+      - bash scripts/setup/run-python3.sh tests/decisions/decision_brief_test.py
+
+  test:rnd:
+    desc: Test the research and development pipeline
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/rnd/rnd_pipeline_test.py

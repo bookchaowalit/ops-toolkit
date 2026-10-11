@@ -1,0 +1,164 @@
+# Domain and subdomain registry for bookchaowalit.com — single source of truth.
+#
+# Every hostname Solo Empire uses lives under one zone. This file records the
+# zone facts, the naming convention, and every platform subdomain with its
+# target runtime. The large portfolio fleet bound in Vercel is not listed by
+# hand; it is captured by `task domains:snapshot` into
+# repository-catalog/snapshots/bookchaowalit-subdomains.json and checked against
+# this file by `task domains:check` (infra/scripts/platform/domains_registry.py).
+#
+# Changing DNS or binding a domain is an external action: edit this file first,
+# get owner approval, apply through the provider, then re-run the snapshot.
+schema_version: solo-empire.domains.v1
+zone: bookchaowalit.com
+registrar_dns: cloudflare
+nameservers: [dina.ns.cloudflare.com, nico.ns.cloudflare.com]
+apex:
+  target: vercel
+  project: bookchaowalit-portfolio-frontend
+  note: apex and www are proxied by Cloudflare to the Vercel portfolio (redirects to /en)
+wildcard:
+  record: "*.bookchaowalit.com CNAME cname.vercel-dns.com"
+  meaning: >-
+    Any hostname without an explicit record resolves to Vercel. A subdomain only
+    serves after it is bound to a Vercel project. A non-Vercel target (Railway,
+    Workers, Render, Better Stack) needs an explicit Cloudflare record, which
+    overrides the wildcard.
+  observed: 2026-10-03
+
+naming:
+  rules:
+    - one hostname per product or service, lowercase kebab-case, no environment suffix in production
+    - platform services use short reserved names (api, mcp, hooks, hub, data, app)
+    - portfolio and demo frontends keep the product name (e.g. recipe, sales, regex)
+    - previews and staging use <name>-staging, never a nested subdomain
+    - admin or personal surfaces must sit behind Cloudflare Access (access: protected)
+  forbidden_prefixes: [test-, tmp-, old-]
+
+statuses:
+  live: bound, serving, and verified by the latest snapshot
+  reserved: name claimed in this registry; not bound yet
+  planned-repoint: currently serves something else; repoint only with owner approval
+  retire: scheduled for removal from the provider
+
+# Platform subdomains for the hosted control plane
+# (bookchaowalit/solo-knowledge:plans/active/hosted-control-plane-2026-10-03.md §5).
+platform:
+  - host: api.bookchaowalit.com
+    purpose: Solo Empire REST API and Central AI Gateway (/api/ai)
+    xaas: paas
+    target: railway
+    target_ref: railway project solo-ai-gateway / service ai-gateway (gateway already hosted)
+    access: public-token
+    status: live
+    phase: P2
+    note: live 2026-10-03 (Railway custom domain verified, certificate valid, /healthz 200); serves /healthz and /api/ai/* until the full API moves here
+    dns:
+      - {type: CNAME, content: 4wsqh2bq.up.railway.app, proxied: false}
+      - {type: TXT, name: _railway-verify.api.bookchaowalit.com, content: "railway-verify=8e92cafdca616c1985561df8bdcf2d4751ef9943dbba1a1d41a9ab8fb0c34cac"}
+  - host: mcp.bookchaowalit.com
+    purpose: remote MCP server for every agent and device
+    xaas: faas
+    target: cloudflare-workers
+    access: protected
+    status: reserved
+    phase: P4
+  - host: hooks.bookchaowalit.com
+    purpose: signed inbound webhooks (Stripe, LINE, GitHub, iPaaS) written to R2 first
+    xaas: faas
+    target: cloudflare-workers
+    access: public-signed
+    status: reserved
+    phase: Slice A4
+    note: Worker source in infra/hooks-worker (solo-empire-hooks, Stripe-only slice); not deployed, pending owner R2 bucket, secret, and DNS binding
+  - host: hub.bookchaowalit.com
+    purpose: Tools Hub, provider registry, and XaaS learning map
+    xaas: paas
+    target: cloudflare-pages
+    access: protected
+    status: reserved
+    phase: P2
+    note: Static site rendered from dashboard/TOOLS-HUB.md by task hub:site:build; not deployed, pending wrangler login, Cloudflare Access policy, and owner approval for task hub:site:deploy
+  - host: data.bookchaowalit.com
+    purpose: read-only job.v1 data API over the R2 lake (book-job-data)
+    xaas: paas
+    target: railway
+    access: public-token
+    status: reserved
+    phase: P2
+    note: Railway selected 2026-10-05; reserved target only, pending book-job-data migration and owner-approved DNS binding
+  - host: monitor.bookchaowalit.com
+    purpose: existing Cloudflare Worker uptime monitor (solo-empire-monitor)
+    xaas: faas
+    target: cloudflare-workers
+    access: public
+    status: reserved
+    phase: P2
+  - host: app.bookchaowalit.com
+    purpose: today-web personal operating dashboard
+    xaas: paas
+    target: vercel
+    access: protected
+    status: reserved
+    phase: P2
+  - host: crm.bookchaowalit.com
+    purpose: crm-web agency desk for Book and partner (mobile-first)
+    xaas: paas
+    target: vercel
+    target_ref: apps/crm-web → crm-api on Railway → Neon (runbook now in bookchaowalit/solo-crm)
+    access: protected
+    status: live
+    phase: Slice A3
+    note: >-
+      live 2026-10-03 — Vercel project bookchaowalit-crm-web → crm-api on Railway project agency-crm
+      (crm-api-production-a7e0.up.railway.app) → Neon project agency-crm. Owner and partner login verified;
+      partner limited to the agency workspace. Owner/partner session login until Cloudflare Access can
+      cover a DNS-only Vercel host.
+  - host: pipeline.bookchaowalit.com
+    purpose: personal income pipeline (freelance, remote contract, language-practice roles) — Book only
+    xaas: paas
+    target: vercel
+    target_ref: Vercel bookchaowalit-income-pipeline → Railway income-pipeline/crm-api → Neon income-pipeline
+    access: protected
+    status: live
+    phase: Income Engine E3
+    note: live 2026-10-04 — same crm-api/crm-web image as crm.; owner login verified; separate data from the agency
+  - host: studio.bookchaowalit.com
+    purpose: production-console-web (production tools console)
+    xaas: paas
+    target: vercel
+    access: protected
+    status: reserved
+    phase: P5
+  - host: docs.bookchaowalit.com
+    purpose: public engineering docs and case studies
+    xaas: paas
+    target: cloudflare-pages
+    access: public
+    status: reserved
+    phase: P6
+  - host: cv.bookchaowalit.com
+    purpose: resume and proof-of-work landing for job applications
+    xaas: paas
+    target: cloudflare-pages
+    access: public
+    status: reserved
+    phase: P6
+  - host: status.bookchaowalit.com
+    purpose: public uptime status page (Better Stack)
+    xaas: observability
+    target: betterstack
+    access: public
+    status: planned-repoint
+    current: vercel project bookchaowalit-status-frontend (portfolio demo)
+    note: move the demo to status-demo before repointing; owner approval required
+    phase: P6
+
+# Hostnames bound in Vercel that need follow-up after the 2026-10-03 snapshot.
+follow_up:
+  - host: personal.bookchaowalit.com
+    status: retire
+    reason: Vercel project personal returns HTTP 404
+  - host: test-123.bookchaowalit.com
+    status: retire
+    reason: test alias on bookchaowalit-portfolio-frontend; violates forbidden prefix rule

@@ -1,0 +1,200 @@
+version: '3'
+
+# runtime command adapters owned by the Solo Empire control plane.
+# Included by ../../Taskfile.yml with the repository root as working directory.
+# Product build/test implementations must stay inside their own repository.
+
+tasks:
+  status:
+    desc: Show the Solo Empire operational health summary
+    dir: infra
+    cmds:
+      - node node_modules/tsx/dist/cli.mjs cli.ts health
+
+  health:
+    desc: Alias for status
+    cmds:
+      - task: status
+
+  doctor:
+    desc: Check the pinned Task, Node, npm, Python, and Go toolchain
+    dir: infra
+    cmds:
+      - bash scripts/setup/toolchain-preflight.sh
+
+  preflight:
+    desc: Alias for doctor
+    cmds:
+      - task: doctor
+
+  preflight:production:
+    desc: Check the production-oriented local toolchain
+    dir: infra
+    cmds:
+      - bash scripts/setup/toolchain-preflight.sh --production
+
+  preflight:python:
+    desc: Check the Python runtime used by repository scripts
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py -c "import sys; print('python3 ' + sys.version.split()[0])"
+
+  test:matrix-sync:
+    desc: Test matrix synchronization
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/integrations/matrix_sync_test.py
+
+  test:matrix-targets:
+    desc: Test matrix target projections
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/integrations/matrix_targets_test.py
+
+  test:matrix:
+    desc: Run the repository test matrix
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/quality/run_test_matrix.py {{.CLI_ARGS}}
+
+  test:matrix:list:
+    desc: List available repository matrix tests
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/quality/run_test_matrix.py --list {{.CLI_ARGS}}
+
+  test:sot:
+    desc: Test source-of-truth boundaries
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/quality/source_of_truth_test.py
+
+  test:orchestration:
+    desc: Test the active orchestration guard
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/quality/active_orchestration_guard_test.py
+
+  test:python:
+    desc: Compile repository Python scripts
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh -m compileall -q scripts
+
+  lint:secrets:
+    desc: Scan for credential-shaped literals (gitleaks when installed, else tracked-file fallback; values redacted)
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/security/scan_secrets.py {{.CLI_ARGS}}
+
+  lint:paths:
+    desc: Scan scripts for stale absolute repository paths
+    dir: infra
+    cmds:
+      - >-
+        if grep -rn '/home/''bookchaowalit/solo-empire' scripts/ --include='*.py'
+        --include='*.sh'; then echo 'FAIL: stale paths'; exit 1; else echo 'OK: no stale paths'; fi
+
+  mcp:build:
+    desc: Build the MCP server package
+    cmds:
+      - task: backend:mcp:build
+
+  matrices:sync:
+    desc: Synchronize matrix projections
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/sync/matrix_sync.py {{.CLI_ARGS}}
+
+  matrices:targets:
+    desc: Refresh matrix target projections
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/sync/matrix_targets.py {{.CLI_ARGS}}
+
+  backend:typecheck:
+    desc: Type-check the infrastructure/backend package
+    cmds:
+      - task --dir infra typecheck
+
+  backend:test:
+    desc: Run the infrastructure/backend package smoke tests
+    cmds:
+      - task --dir infra test
+
+  backend:check:
+    desc: Run the infrastructure/backend package check
+    cmds:
+      - task --dir infra check
+
+  backend:mcp:build:
+    desc: Build the MCP backend package
+    cmds:
+      - task --dir infra mcp:build
+
+  monitor:
+    desc: Read central system monitoring evidence (loopback only; no external alerts)
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/monitor_health.py --json {{.CLI_ARGS}}
+
+  test:monitor:
+    desc: Verify monitor failures, freshness, coverage, privacy, and loopback boundaries
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/platform/monitor_health_test.py
+
+  dashboard:
+    desc: Show the operational dashboard through the TypeScript CLI
+    dir: infra
+    cmds:
+      - ./node_modules/.bin/tsx cli.ts dashboard {{.CLI_ARGS}}
+
+  db:oak-review:
+    desc: Open an isolated Oak review database through DBeaver
+    dir: infra
+    cmds:
+      - bash scripts/db/open-oak-review-dbeaver.sh {{.CLI_ARGS}}
+
+  postinstall:
+    desc: Apply local executable permissions after an infra package install
+    dir: infra
+    cmds:
+      - bash scripts/setup/fix-bin-permissions.sh
+
+  py:
+    desc: Run a Python command through the repository-managed Python wrapper
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh {{.CLI_ARGS}}
+
+  setup:
+    desc: "Bootstrap the local Solo Empire environment (writes .env, installs packages)"
+    cmds:
+      - cp -n infra/.env.example infra/.env 2>/dev/null || true
+      - task: preflight
+      - npm --prefix infra install
+      - task: mcp:install
+
+  test:automation:
+    desc: Test repository automation contracts
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/quality/automation_test.py
+
+  test:empire-cli:
+    desc: Test the thin root Empire-to-Task facade
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/quality/empire_cli_facade_test.py
+
+  test:all:legacy:
+    desc: Compatibility alias for the full local Task quality gate
+    cmds:
+      - task: test:all
+
+  legacy:
+    desc: "Run an explicit infra package compatibility script (example: task legacy -- docs:check)"
+    dir: infra
+    cmds:
+      - npm run {{.CLI_ARGS}}

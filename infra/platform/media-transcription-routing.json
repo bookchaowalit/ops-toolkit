@@ -1,0 +1,273 @@
+{
+  "schema_version": "solo-empire.media-transcription-routing.v1",
+  "updated_at": "2026-10-08",
+  "description": "Routing contract for remote-URL transcription and summarization. Ranks change as providers improve: edit candidates and own_eval here, never in code.",
+  "policy": {
+    "max_evaluation_age_days": 90,
+    "review_confidence_threshold": 0.6,
+    "summary_privacy_class": "internal",
+    "external_privacy_classes": [
+      "public",
+      "internal"
+    ],
+    "selection_order": "own_eval WER ascending when present, then candidate list order",
+    "own_eval_metric": "Thai uses character error rate (cer) because Thai has no word spaces; English uses word error rate (wer). Values are stored in own_eval.wer_pct with own_eval.metric naming the measure."
+  },
+  "content_kinds": {
+    "meeting": {
+      "label": "Meeting recording",
+      "required_features": [
+        "url_input",
+        "diarization",
+        "word_timestamps"
+      ],
+      "summary_profile": "meeting-minutes"
+    },
+    "video_edit": {
+      "label": "Raw footage for editing",
+      "required_features": [
+        "url_input",
+        "word_timestamps"
+      ],
+      "summary_profile": "edit-decision-list"
+    },
+    "video_content": {
+      "label": "Finished or near-finished clip",
+      "required_features": [
+        "url_input",
+        "word_timestamps"
+      ],
+      "summary_profile": "content-highlights"
+    }
+  },
+  "summary_profiles": {
+    "meeting-minutes": {
+      "gateway_route": "media-summary-meeting",
+      "prompt_version": "meeting-minutes-v1",
+      "gateway_profile": "quality",
+      "outputs": [
+        "minutes",
+        "decisions",
+        "action_items",
+        "open_questions"
+      ]
+    },
+    "edit-decision-list": {
+      "gateway_route": "media-summary-edit",
+      "prompt_version": "edit-decision-list-v1",
+      "gateway_profile": "balanced",
+      "outputs": [
+        "edl",
+        "cut_suggestions",
+        "filler_and_silence",
+        "chapters"
+      ]
+    },
+    "content-highlights": {
+      "gateway_route": "media-summary-content",
+      "prompt_version": "content-highlights-v1",
+      "gateway_profile": "balanced",
+      "outputs": [
+        "highlights",
+        "short_clip_candidates",
+        "title_ideas",
+        "description",
+        "chapters",
+        "subtitles_srt"
+      ]
+    }
+  },
+  "stt_routes": {
+    "th": [
+      "speechmatics-enhanced",
+      "azure-speech-batch",
+      "elevenlabs-scribe-v2",
+      "gladia"
+    ],
+    "en": [
+      "elevenlabs-scribe-v2",
+      "assemblyai-universal",
+      "deepgram-nova-3",
+      "speechmatics-enhanced"
+    ],
+    "mixed": [
+      "gladia",
+      "elevenlabs-scribe-v2",
+      "speechmatics-enhanced"
+    ]
+  },
+  "providers": {
+    "speechmatics-enhanced": {
+      "vendor": "speechmatics",
+      "model": "enhanced",
+      "credential_env": "SPEECHMATICS_API_KEY",
+      "languages": [
+        "th",
+        "en",
+        "mixed"
+      ],
+      "features": [
+        "url_input",
+        "diarization",
+        "word_timestamps",
+        "language_detection"
+      ],
+      "url_input_field": "fetch_data.url",
+      "public_evidence": {
+        "th_fleurs_wer_pct": 7.37,
+        "source": "https://www.speechmatics.com/speech-to-text/thai",
+        "quality": "third_party_unverified"
+      },
+      "pricing": {
+        "usd_per_hour": 0.4,
+        "free_hours_per_month": 30,
+        "source": "https://usagepricing.com/blueprint/activity/speechmatics-2026-07-06-price-change",
+        "checked_at": "2026-10-08",
+        "quality": "third_party_unverified"
+      },
+      "own_eval": null
+    },
+    "azure-speech-batch": {
+      "vendor": "microsoft",
+      "model": "batch-transcription",
+      "credential_env": "AZURE_SPEECH_KEY",
+      "languages": [
+        "th",
+        "en"
+      ],
+      "features": [
+        "url_input",
+        "diarization",
+        "word_timestamps",
+        "language_detection"
+      ],
+      "url_input_field": "contentUrls",
+      "public_evidence": {
+        "th_fleurs_wer_pct": 7.49,
+        "source": "https://www.speechmatics.com/speech-to-text/thai",
+        "quality": "third_party_unverified"
+      },
+      "pricing": {
+        "usd_per_hour": 0.18,
+        "free_hours_per_month": 0,
+        "source": "https://convertaudiototext.com/blog/transcription-pricing-comparison-2026",
+        "checked_at": "2026-10-08",
+        "quality": "third_party_unverified"
+      },
+      "own_eval": null
+    },
+    "elevenlabs-scribe-v2": {
+      "vendor": "elevenlabs",
+      "model": "scribe_v2",
+      "credential_env": "ELEVENLABS_API_KEY",
+      "languages": [
+        "th",
+        "en",
+        "mixed"
+      ],
+      "features": [
+        "url_input",
+        "diarization",
+        "word_timestamps",
+        "language_detection"
+      ],
+      "url_input_field": "cloud_storage_url",
+      "public_evidence": {
+        "source": "https://elevenlabs.io/speech-to-text/thai",
+        "quality": "vendor_claim"
+      },
+      "pricing": {
+        "usd_per_hour": 0.22,
+        "free_hours_per_month": null,
+        "source": "https://developer.puter.com/tutorials/elevenlabs-api-pricing/",
+        "checked_at": "2026-10-08",
+        "quality": "third_party_unverified"
+      },
+      "own_eval": null
+    },
+    "gladia": {
+      "vendor": "gladia",
+      "model": "default",
+      "credential_env": "GLADIA_API_KEY",
+      "languages": [
+        "th",
+        "en",
+        "mixed"
+      ],
+      "features": [
+        "url_input",
+        "diarization",
+        "word_timestamps",
+        "language_detection",
+        "code_switching"
+      ],
+      "url_input_field": "audio_url",
+      "public_evidence": {
+        "source": "https://www.gladia.io/blog/best-speech-to-text-apis",
+        "quality": "vendor_claim"
+      },
+      "pricing": {
+        "usd_per_hour": 0.61,
+        "free_hours_per_month": null,
+        "source": "https://costbench.com/software/ai-transcription-apis/gladia/",
+        "checked_at": "2026-10-08",
+        "quality": "third_party_unverified"
+      },
+      "own_eval": null
+    },
+    "assemblyai-universal": {
+      "vendor": "assemblyai",
+      "model": "universal",
+      "credential_env": "ASSEMBLYAI_API_KEY",
+      "languages": [
+        "en"
+      ],
+      "features": [
+        "url_input",
+        "diarization",
+        "word_timestamps",
+        "language_detection"
+      ],
+      "url_input_field": "audio_url",
+      "public_evidence": {
+        "source": "https://www.assemblyai.com/blog/top-tools-for-live-transcription",
+        "quality": "vendor_claim"
+      },
+      "pricing": {
+        "usd_per_hour": null,
+        "free_hours_per_month": null,
+        "source": null,
+        "checked_at": "2026-10-08",
+        "quality": "unknown"
+      },
+      "own_eval": null
+    },
+    "deepgram-nova-3": {
+      "vendor": "deepgram",
+      "model": "nova-3",
+      "credential_env": "DEEPGRAM_API_KEY",
+      "languages": [
+        "en"
+      ],
+      "features": [
+        "url_input",
+        "diarization",
+        "word_timestamps",
+        "language_detection"
+      ],
+      "url_input_field": "url",
+      "public_evidence": {
+        "source": "https://developers.deepgram.com/docs/diarization",
+        "quality": "vendor_claim"
+      },
+      "pricing": {
+        "usd_per_hour": null,
+        "free_hours_per_month": null,
+        "source": null,
+        "checked_at": "2026-10-08",
+        "quality": "unknown"
+      },
+      "own_eval": null
+    }
+  }
+}

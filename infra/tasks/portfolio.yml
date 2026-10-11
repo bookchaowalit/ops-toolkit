@@ -1,0 +1,299 @@
+version: '3'
+
+# portfolio command adapters owned by the Solo Empire control plane.
+# Included by ../../Taskfile.yml with the repository root as working directory.
+# Product build/test implementations must stay inside their own repository.
+
+tasks:
+  step:check:
+    desc: Validate the universal step visualization contract
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/utils/universal_step_contract_guard.py {{.CLI_ARGS}}
+
+  step:record:
+    desc: Explicitly append a universal step evidence revision
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/universal_step_record.py {{.CLI_ARGS}}
+
+  step:role-set:
+    desc: Inspect the effective canonical project role-set profile (read-only)
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/universal_step_role_set.py {{.CLI_ARGS}}
+
+  step:coverage:
+    desc: Show explicit universal step surface coverage (read-only)
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/universal_step_contract_guard.py --coverage {{.CLI_ARGS}}
+
+  test:step-contract:
+    desc: Test the universal step visualization contract
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/quality/universal_step_contract_test.py
+
+  docpack:check:
+    desc: Check every portfolio system's document pack against its tier
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/utils/docpack_coverage.py {{.CLI_ARGS}}
+
+  docpack:build:
+    desc: Build one system's docpack PDFs (task docpack:build -- <system-id> [glob])
+    cmds:
+      - bash infra/scripts/docpack/make_pdfs.sh {{.CLI_ARGS}}
+
+  docpack:build:stale:
+    desc: Build PDFs for every docpack with missing or stale PDFs (task docpack:build:stale -- --scope repos)
+    cmds:
+      - bash infra/scripts/docpack/build_all.sh {{.CLI_ARGS}}
+
+  docpack:cards:index:
+    desc: Regenerate the personal-repo Product Card verdict index
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/utils/docpack_coverage.py --scope repos --summary --write-cards-index
+
+  test:docpack:
+    desc: Test the docpack coverage checker
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/quality/docpack_coverage_test.py
+
+  engagements:sync-tasks:
+    desc: Sync engagement metadata into task projections
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/utils/engagement_tasks_sync.py {{.CLI_ARGS}}
+
+  engagements:review:
+    desc: Review engagement readiness and overdue work
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/engagement_review.py {{.CLI_ARGS}}
+
+  engagements:notify:
+    desc: Preview or send engagement notifications
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/engagement_notifications.py {{.CLI_ARGS}}
+
+  engagements:review:strict:
+    desc: Run the strict engagement review gate
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/utils/engagement_review.py --strict {{.CLI_ARGS}}
+
+  role-tasks:check:
+    desc: Validate atomic role and task integration
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/utils/role_task_guard.py {{.CLI_ARGS}}
+
+  role-integrations:sync:
+    desc: Synchronize role and task integration projections
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/utils/role_task_guard.py --sync {{.CLI_ARGS}}
+
+  role-integrations:report:
+    desc: Write the role and task integration report
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/role_task_guard.py --report {{.CLI_ARGS}}
+
+  portfolio:contexts:check:
+    desc: Validate portfolio context links
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/utils/portfolio_context_guard.py
+
+  portfolio:contexts:
+    desc: Project portfolio context links
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/utils/portfolio_context_seed.py {{.CLI_ARGS}}
+
+  portfolio:contexts:dry-run:
+    desc: Preview portfolio context projection
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/utils/portfolio_context_seed.py --dry-run {{.CLI_ARGS}}
+
+  portfolio:progress:
+    desc: Update portfolio progress projections
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/portfolio_progress.py --update {{.CLI_ARGS}}
+
+  portfolio:progress:dry-run:
+    desc: Preview portfolio progress projections
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/portfolio_progress.py --dry-run {{.CLI_ARGS}}
+
+  portfolio:sync:
+    desc: Refresh portfolio contexts and progress
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/portfolio_context_seed.py
+      - bash scripts/setup/run-python3.sh scripts/utils/portfolio_progress.py --update
+
+  book-dev:loop:
+    desc: Run the Book Dev operating loop
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/workflows/book_dev_loop.py {{.CLI_ARGS}}
+
+  book-dev:domain:
+    desc: Run the Book Dev portfolio domain loop
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/workflows/portfolio_domain_loop.py {{.CLI_ARGS}}
+
+  portfolio:domain-loop:
+    desc: Run the portfolio domain loop
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/workflows/portfolio_domain_loop.py {{.CLI_ARGS}}
+
+  book-dev:execution:
+    desc: Run the Book Dev execution hook
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/workflows/book_dev_execution_hook.py {{.CLI_ARGS}}
+
+  book-dev:dispatch:
+    desc: Dispatch a Book Dev AI workflow to an approved provider
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/workflows/book_dev_ai_dispatch.py {{.CLI_ARGS}}
+
+  book-dev:dispatch:grok:
+    desc: Dispatch a Book Dev AI workflow to Grok
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/workflows/book_dev_ai_dispatch.py --providers grok {{.CLI_ARGS}}
+
+  book-dev:dispatch:codex:
+    desc: Dispatch a Book Dev AI workflow to Codex
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/workflows/book_dev_ai_dispatch.py --providers codex {{.CLI_ARGS}}
+
+  book-dev:dispatch:claude:
+    desc: Dispatch a Book Dev AI workflow to Claude Code (headless, bounded tools)
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/workflows/book_dev_ai_dispatch.py --providers claude {{.CLI_ARGS}}
+
+  book-dev:dispatch:both:
+    desc: Dispatch a Book Dev AI workflow to Grok and Codex
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/workflows/book_dev_ai_dispatch.py --providers grok,codex {{.CLI_ARGS}}
+
+  role-task:map:
+    desc: Accept unambiguous role to task mappings
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/role_task_mapper.py
+
+  role-task:map:dry-run:
+    desc: Preview role to task mappings without writing
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/role_task_mapper.py --dry-run
+
+  role-task:review:
+    desc: Review active role and task workflow decisions
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/role_task_workflow.py {{.CLI_ARGS}}
+
+  role-task:queue:
+    desc: Refresh the multi-goal execution queue
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/role_task_workflow.py --queue-only {{.CLI_ARGS}}
+
+  role-practice:evidence:
+    desc: Record reviewable evidence for role practice
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/role_practice_evidence.py {{.CLI_ARGS}}
+
+  role-portfolio:seed:
+    desc: Seed missing role portfolio planning baselines
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/utils/role_portfolio_seed.py
+
+  role-portfolio:dry-run:
+    desc: Preview role portfolio planning baselines
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/utils/role_portfolio_seed.py --dry-run
+
+  portfolio:autonomous:
+    desc: Run autonomous portfolio seeding with explicit write intent
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/autonomous_portfolio_seed.py
+
+  portfolio:autonomous:dry-run:
+    desc: Preview autonomous portfolio seeding
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/autonomous_portfolio_seed.py --dry-run
+
+  test:engagements:
+    desc: Test engagement review projections
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/engagements/engagement_review_test.py
+
+  test:engagement-notifications:
+    desc: Test engagement notification boundaries
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/engagements/engagement_notifications_test.py
+
+  test:role-task-workflow:
+    desc: Test role-task workflow contracts
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/quality/role_task_workflow_test.py
+
+  test:role-practice-evidence:
+    desc: Test role practice evidence contracts
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/quality/role_practice_evidence_test.py
+
+  test:book-dev-loop:
+    desc: Test the Book Dev agent loop
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/agent/book_dev_loop_test.py
+
+  test:book-dev-domain:
+    desc: Test the Book Dev portfolio domain loop
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/agent/portfolio_domain_loop_test.py
+
+  test:book-dev-execution:
+    desc: Test the Book Dev execution hook
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/agent/book_dev_execution_hook_test.py
+
+  test:book-dev-dispatch:
+    desc: Test the Book Dev AI dispatch boundary
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/agent/book_dev_ai_dispatch_test.py

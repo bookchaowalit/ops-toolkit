@@ -1,0 +1,868 @@
+{
+  "schema_version": "solo-empire.domains-snapshot.v1",
+  "zone": "bookchaowalit.com",
+  "captured_at": "2026-10-04T03:35:13Z",
+  "source": "vercel domains inspect (read-only) + HTTPS GET probe",
+  "summary": {
+    "hosts": 142,
+    "projects": 140,
+    "http_status": {
+      "200": 141,
+      "404": 1
+    }
+  },
+  "hosts": [
+    {
+      "host": "ab-testing.bookchaowalit.com",
+      "project": "bookchaowalit-ab-testing-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "agency-renting.bookchaowalit.com",
+      "project": "agency-renting",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "agencyrenting.bookchaowalit.com",
+      "project": "bookchaowalit-agencyrenting-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "ai-art-gallery.bookchaowalit.com",
+      "project": "bookchaowalit-ai-art-gallery-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "analytics-dashboard.bookchaowalit.com",
+      "project": "bookchaowalit-analytics-dashboard-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "announcements.bookchaowalit.com",
+      "project": "bookchaowalit-announcements-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "artblog.bookchaowalit.com",
+      "project": "bookchaowalit-artblog-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "base64.bookchaowalit.com",
+      "project": "bookchaowalit-base64-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "benz-portfolio.bookchaowalit.com",
+      "project": "benz-portfolio",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "bookchaowalit.com",
+      "project": "bookchaowalit-portfolio-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "bookreading.bookchaowalit.com",
+      "project": "bookreading-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "bookreviews.bookchaowalit.com",
+      "project": "bookchaowalit-bookreviews-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "booktrading.bookchaowalit.com",
+      "project": "booktrading-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "calendar-app.bookchaowalit.com",
+      "project": "bookchaowalit-calendar-app-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "carbon.bookchaowalit.com",
+      "project": "bookchaowalit-carbon-calculator-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "certs.bookchaowalit.com",
+      "project": "bookchaowalit-certs-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "challenges.bookchaowalit.com",
+      "project": "bookchaowalit-challenges-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "changelog.bookchaowalit.com",
+      "project": "bookchaowalit-changelog-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "chat-playground.bookchaowalit.com",
+      "project": "bookchaowalit-chat-playground-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "checklists.bookchaowalit.com",
+      "project": "bookchaowalit-checklists-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "clipboard-manager.bookchaowalit.com",
+      "project": "bookchaowalit-clipboard-manager-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "collaborations.bookchaowalit.com",
+      "project": "bookchaowalit-collaborations-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "color-palettes.bookchaowalit.com",
+      "project": "bookchaowalit-color-palettes-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "colorpicker.bookchaowalit.com",
+      "project": "bookchaowalit-colorpicker-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "comments.bookchaowalit.com",
+      "project": "bookchaowalit-comments-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "community.bookchaowalit.com",
+      "project": "bookchaowalit-community-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "consulting.bookchaowalit.com",
+      "project": "booknbook",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "contact-forms.bookchaowalit.com",
+      "project": "bookchaowalit-contact-forms-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "coursenotes.bookchaowalit.com",
+      "project": "bookchaowalit-coursenotes-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "crm.bookchaowalit.com",
+      "project": "bookchaowalit-crm-web",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "cron.bookchaowalit.com",
+      "project": "bookchaowalit-cron-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "date-calculator.bookchaowalit.com",
+      "project": "bookchaowalit-date-calculator-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "deeplinks.bookchaowalit.com",
+      "project": "bookchaowalit-deeplinks-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "design-prompt-showcase.bookchaowalit.com",
+      "project": "design-prompt-showcase",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "design.bookchaowalit.com",
+      "project": "bookchaowalit-design-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "devhub.bookchaowalit.com",
+      "project": "bookchaowalit-devhub-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "diffchecker.bookchaowalit.com",
+      "project": "bookchaowalit-diffchecker-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "digital-products.bookchaowalit.com",
+      "project": "bookchaowalit-digital-products-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "donation-tip-jar.bookchaowalit.com",
+      "project": "bookchaowalit-donation-tip-jar-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "energy.bookchaowalit.com",
+      "project": "bookchaowalit-energy-dashboard-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "engineering.bookchaowalit.com",
+      "project": "bookchaowalit-engineering-calc-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "error-logs.bookchaowalit.com",
+      "project": "bookchaowalit-error-logs-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "farming.bookchaowalit.com",
+      "project": "bookchaowalit-smart-farming-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "fashion.bookchaowalit.com",
+      "project": "bookchaowalit-fashion-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "game-collection.bookchaowalit.com",
+      "project": "bookchaowalit-game-collection-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "github.bookchaowalit.com",
+      "project": "bookchaowalit-github-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "giveaways.bookchaowalit.com",
+      "project": "bookchaowalit-giveaways-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "goal-tracker.bookchaowalit.com",
+      "project": "bookchaowalit-goal-tracker-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "guestbook.bookchaowalit.com",
+      "project": "bookchaowalit-guestbook-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "habit-tracker.bookchaowalit.com",
+      "project": "bookchaowalit-habit-tracker-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "hashgen.bookchaowalit.com",
+      "project": "bookchaowalit-hashgen-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "history.bookchaowalit.com",
+      "project": "bookchaowalit-history-archive-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "ideas.bookchaowalit.com",
+      "project": "bookchaowalit-ideas-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "invoice-generator.bookchaowalit.com",
+      "project": "bookchaowalit-invoice-generator-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "journal.bookchaowalit.com",
+      "project": "bookchaowalit-journal-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "jsonconverter.bookchaowalit.com",
+      "project": "bookchaowalit-jsonconverter-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "kanban-board.bookchaowalit.com",
+      "project": "bookchaowalit-kanban-board-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "knowledgehub.bookchaowalit.com",
+      "project": "bookchaowalit-knowledgehub-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "lab.bookchaowalit.com",
+      "project": "bookchaowalit-lab-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "language.bookchaowalit.com",
+      "project": "bookchaowalit-language-forge-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "latency-test.bookchaowalit.com",
+      "project": "bookchaowalit-latency-test-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "learn.bookchaowalit.com",
+      "project": "bookchaowalit-learn-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "legal.bookchaowalit.com",
+      "project": "bookchaowalit-legal-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "linerichmenu.bookchaowalit.com",
+      "project": "bookchaowalit-linerichmenu-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "link-analytics.bookchaowalit.com",
+      "project": "bookchaowalit-link-analytics-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "linktree.bookchaowalit.com",
+      "project": "bookchaowalit-linktree-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "localcrm.bookchaowalit.com",
+      "project": "localcrm-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "lorem-ipsum.bookchaowalit.com",
+      "project": "bookchaowalit-lorem-ipsum-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "markdown-editor.bookchaowalit.com",
+      "project": "bookchaowalit-markdown-editor-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "marketing-blog.bookchaowalit.com",
+      "project": "marketing-blog",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "marketing.bookchaowalit.com",
+      "project": "bookchaowalit-bookmarketing-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "math.bookchaowalit.com",
+      "project": "bookchaowalit-math-workshop-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "mcpdocs.bookchaowalit.com",
+      "project": "bookchaowalit-mcpdocs-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "mcplist.bookchaowalit.com",
+      "project": "bookchaowalit-mcplist-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "meme-generator.bookchaowalit.com",
+      "project": "bookchaowalit-meme-generator-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "military.bookchaowalit.com",
+      "project": "bookchaowalit-military-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "minifier.bookchaowalit.com",
+      "project": "bookchaowalit-minifier-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "music-playlist.bookchaowalit.com",
+      "project": "bookchaowalit-music-playlist-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "news-aggregator.bookchaowalit.com",
+      "project": "bookchaowalit-news-aggregator-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "newsletter.bookchaowalit.com",
+      "project": "bookchaowalit-newsletter-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "notes-app.bookchaowalit.com",
+      "project": "bookchaowalit-notes-app-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "number-converter.bookchaowalit.com",
+      "project": "bookchaowalit-number-converter-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "ops.bookchaowalit.com",
+      "project": "bookchaowalit-ops-center-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "personal.bookchaowalit.com",
+      "project": "personal",
+      "provider": "vercel",
+      "http_status": 404
+    },
+    {
+      "host": "photo.bookchaowalit.com",
+      "project": "bookchaowalit-photo-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "pipeline.bookchaowalit.com",
+      "project": "bookchaowalit-income-pipeline",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "planner.bookchaowalit.com",
+      "project": "retro-planner",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "podcast.bookchaowalit.com",
+      "project": "bookchaowalit-podcast-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "pomodoro-timer.bookchaowalit.com",
+      "project": "bookchaowalit-pomodoro-timer-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "popular-pages.bookchaowalit.com",
+      "project": "bookchaowalit-popular-pages-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "portfolio-mobile.bookchaowalit.com",
+      "project": "bookchaowalit-portfolio-mobile-preview",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "portfolio.bookchaowalit.com",
+      "project": "bookchaowalit-portfolio-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "pos.bookchaowalit.com",
+      "project": "pos",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "press.bookchaowalit.com",
+      "project": "bookchaowalit-press-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "projects-showcase.bookchaowalit.com",
+      "project": "bookchaowalit-projects-showcase-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "promkub-landing-page.bookchaowalit.com",
+      "project": "promkub-landing-page",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "prompt-library.bookchaowalit.com",
+      "project": "bookchaowalit-prompt-library-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "psychology.bookchaowalit.com",
+      "project": "bookchaowalit-psychology-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "qr-generator.bookchaowalit.com",
+      "project": "bookchaowalit-qr-generator-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "quote-generator.bookchaowalit.com",
+      "project": "bookchaowalit-quote-generator-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "reading.bookchaowalit.com",
+      "project": "bookchaowalit-reading-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "real-estate.bookchaowalit.com",
+      "project": "bookchaowalit-real-estate-analyzer-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "recipe.bookchaowalit.com",
+      "project": "bookchaowalit-recipe-explorer-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "recommendation-engine.bookchaowalit.com",
+      "project": "bookchaowalit-recommendation-engine-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "redirect-manager.bookchaowalit.com",
+      "project": "bookchaowalit-redirect-manager-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "regex.bookchaowalit.com",
+      "project": "bookchaowalit-regex-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "reminders.bookchaowalit.com",
+      "project": "bookchaowalit-reminders-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "roadmaps.bookchaowalit.com",
+      "project": "bookchaowalit-roadmaps-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "sales.bookchaowalit.com",
+      "project": "bookchaowalit-sales-pipeline-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "science.bookchaowalit.com",
+      "project": "bookchaowalit-science-bench-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "semiauto-facebook-group.bookchaowalit.com",
+      "project": "semiauto-facebook-group",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "sentiment-analyzer.bookchaowalit.com",
+      "project": "bookchaowalit-sentiment-analyzer-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "seo-analyzer.bookchaowalit.com",
+      "project": "bookchaowalit-seo-analyzer-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "services.bookchaowalit.com",
+      "project": "bookchaowalit-services-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "snippets.bookchaowalit.com",
+      "project": "bookchaowalit-snippets-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "speech-to-text.bookchaowalit.com",
+      "project": "bookchaowalit-speech-to-text-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "sports.bookchaowalit.com",
+      "project": "bookchaowalit-sports-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "status.bookchaowalit.com",
+      "project": "bookchaowalit-status-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "talks.bookchaowalit.com",
+      "project": "bookchaowalit-talks-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "team.bookchaowalit.com",
+      "project": "bookchaowalit-team-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "tech-space.bookchaowalit.com",
+      "project": "tech-space",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "techblog.bookchaowalit.com",
+      "project": "bookchaowalit-techblog-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "techspace.bookchaowalit.com",
+      "project": "bookchaowalit-techspace-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "test-123.bookchaowalit.com",
+      "project": "bookchaowalit-portfolio-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "testimonials.bookchaowalit.com",
+      "project": "bookchaowalit-testimonials-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "text-summarizer.bookchaowalit.com",
+      "project": "bookchaowalit-text-summarizer-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "ticket-booking.bookchaowalit.com",
+      "project": "bookchaowalit-ticket-booking-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "time-tracker.bookchaowalit.com",
+      "project": "bookchaowalit-time-tracker-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "todo-board.bookchaowalit.com",
+      "project": "bookchaowalit-todo-board-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "tools.bookchaowalit.com",
+      "project": "bookchaowalit-tools-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "tracking.bookchaowalit.com",
+      "project": "bookchaowalit-tracking-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "translation.bookchaowalit.com",
+      "project": "bookchaowalit-translation-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "travel.bookchaowalit.com",
+      "project": "bookchaowalit-trip-atlas-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "trip.bookchaowalit.com",
+      "project": "bookchaowalit-trip",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "uptime-monitor.bookchaowalit.com",
+      "project": "bookchaowalit-uptime-monitor-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "url-encoder.bookchaowalit.com",
+      "project": "bookchaowalit-url-encoder-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "url-shortener.bookchaowalit.com",
+      "project": "bookchaowalit-url-shortener-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "video-gallery.bookchaowalit.com",
+      "project": "bookchaowalit-video-gallery-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "visitor-map.bookchaowalit.com",
+      "project": "bookchaowalit-visitor-map-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "webhook-tester.bookchaowalit.com",
+      "project": "bookchaowalit-webhook-tester-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "wiki.bookchaowalit.com",
+      "project": "bookchaowalit-wiki-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    },
+    {
+      "host": "writing.bookchaowalit.com",
+      "project": "bookchaowalit-writing-frontend",
+      "provider": "vercel",
+      "http_status": 200
+    }
+  ]
+}

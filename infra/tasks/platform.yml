@@ -1,0 +1,359 @@
+version: '3'
+
+# platform command adapters owned by the Solo Empire control plane.
+# Included by ../../Taskfile.yml with the repository root as working directory.
+# Product build/test implementations must stay inside their own repository.
+
+tasks:
+  platforms:check:
+    desc: Validate cloud providers and the building-block service catalog (platform_repository_guard lives with the registry)
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/platform/cloud_providers.py --check
+      - bash scripts/setup/run-python3.sh scripts/platform/building_block_services.py check
+
+  test:platform:
+    desc: Run the local platform test suite
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/platform/paas_control_plane_test.py
+      - bash scripts/setup/run-python3.sh tests/platform/cloud_provider_registry_test.py
+      - bash scripts/setup/run-python3.sh tests/platform/cloud_status_test.py
+      - bash scripts/setup/run-python3.sh tests/platform/cloud_tools_test.py
+      - bash scripts/setup/run-python3.sh tests/platform/cloud_read_adapters_test.py
+      - bash scripts/setup/run-python3.sh tests/platform/auth_resolver_test.py
+      - bash scripts/setup/run-python3.sh tests/platform/windows_utf8_output_test.py
+      - bash scripts/setup/run-python3.sh tests/platform/paas_inventory_test.py
+      - bash scripts/setup/run-python3.sh tests/platform/cloud_usage_test.py
+      - bash scripts/setup/run-python3.sh tests/platform/free_quota_test.py
+      - bash scripts/setup/run-python3.sh tests/platform/github_actions_usage_test.py
+      - bash scripts/setup/run-python3.sh tests/platform/cloudflare_r2_usage_test.py
+      - bash scripts/setup/run-python3.sh tests/platform/vercel_billing_test.py
+      - bash scripts/setup/run-python3.sh tests/platform/self_hosted_health_test.py
+      - bash scripts/setup/run-python3.sh tests/platform/self_hosted_readiness_test.py
+      - bash scripts/setup/run-python3.sh tests/platform/paas_action_policy_test.py
+      - bash scripts/setup/run-python3.sh tests/platform/runpod_vllm_contract_test.py
+      - bash scripts/setup/run-python3.sh tests/platform/runpod_stop_pod_hook_test.py
+      - bash scripts/setup/run-python3.sh tests/platform/llm_lab_budget_test.py
+      - bash scripts/setup/run-python3.sh tests/platform/gpu_worker_policy_test.py
+      - bash scripts/setup/run-python3.sh tests/platform/building_block_services_test.py
+
+  runpod:vllm:smoke:
+    desc: Run the synthetic RunPod vLLM and optional AI Gateway smoke test
+    dir: infra
+    cmds:
+      - bash scripts/platform/runpod_vllm_smoke.sh {{.CLI_ARGS}}
+
+  runpod:vllm:idle-guard:
+    desc: Stop vLLM after an idle or maximum runtime window
+    dir: infra
+    cmds:
+      - bash scripts/platform/runpod_vllm_idle_guard.sh {{.CLI_ARGS}}
+
+  llm:profiles:
+    desc: Show the switchable LLM lab model catalog
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/llm_lab_budget.py profiles {{.CLI_ARGS}}
+
+  llm:profile-env:
+    desc: Show safe environment values for one LLM lab profile
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/llm_lab_budget.py profile-env {{.CLI_ARGS}}
+
+  llm:budget:
+    desc: Show or check the LLM lab monthly budget
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/llm_lab_budget.py {{.CLI_ARGS}}
+
+  llm:pilot-preflight:
+    desc: Build a read-only bounded LLM pilot launch report
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/llm_lab_budget.py pilot-preflight {{.CLI_ARGS}}
+
+  platform:services:
+    desc: Show the shared building-block services catalog (build/buy decision, provider, access per capability)
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/building_block_services.py {{.CLI_ARGS | default "summary"}}
+
+  platform:services:check:
+    desc: Validate the shared building-block services catalog
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/building_block_services.py check
+
+  gpu:workers:catalog:
+    desc: Show the specialized GPU worker catalog and routing thresholds
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/gpu_worker_policy.py catalog {{.CLI_ARGS}}
+
+  gpu:workers:preflight:
+    desc: Show read-only model, source, license, and hardware gates before deployment
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/gpu_worker_policy.py preflight {{.CLI_ARGS}}
+
+  gpu:workers:route:
+    desc: Preview API versus specialized GPU routing without provider calls
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/gpu_worker_policy.py route {{.CLI_ARGS}}
+
+  gpu:workers:enqueue:
+    desc: Preview or enqueue bounded GPU job metadata (never starts a Pod)
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/gpu_worker_policy.py enqueue {{.CLI_ARGS}}
+
+  gpu:workers:status:
+    desc: Show the local specialized GPU worker queue metadata
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/gpu_worker_policy.py status {{.CLI_ARGS}}
+
+  test:gpu-workers:
+    desc: Run specialized GPU worker policy and queue contract tests
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/platform/gpu_worker_policy_test.py
+
+  test:secrets:
+    desc: Test secret resolver boundaries
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/security/secret_resolver_test.py
+      - bash scripts/setup/run-python3.sh tests/security/cloud_secrets_health_test.py
+      - bash scripts/setup/run-python3.sh tests/security/scan_secrets_test.py
+
+  domains:snapshot:
+    desc: Read bookchaowalit.com bindings from the Vercel CLI, probe them, and write the subdomain snapshot
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/platform/domains_registry.py --snapshot
+
+  domains:check:
+    desc: Validate the subdomain registry against the latest snapshot (offline)
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/platform/domains_registry.py --check
+
+  dns:plan:
+    desc: Diff Cloudflare DNS for bookchaowalit.com against domains.yaml (read-only)
+    dir: infra
+    env:
+      SECRETS_PROVIDER: infisical-cli
+      INFISICAL_CLI_ENABLED: "true"
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/platform/cloudflare_dns.py --plan
+
+  dns:apply:
+    desc: Create or update only the planned DNS records (never deletes); needs owner approval
+    dir: infra
+    env:
+      SECRETS_PROVIDER: infisical-cli
+      INFISICAL_CLI_ENABLED: "true"
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/platform/cloudflare_dns.py --apply --confirm
+
+  paas:catalog:
+    desc: Show the cloud and PaaS provider catalog
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/paas_health.py --catalog --json {{.CLI_ARGS}}
+
+  cloud:providers:check:
+    desc: Validate the cloud provider source-of-truth registry
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/platform/cloud_providers.py --check
+
+  cloud:tools:doctor:
+    desc: Check cloud CLI availability (optional --check-versions; no installs or logins)
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/platform/cloud_status.py doctor {{.CLI_ARGS}}
+
+  cloud:secrets:health:
+    desc: Check cloud secret-name presence (use --offline for catalog-only; never prints values)
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/utils/secrets_health.py --cloud {{.CLI_ARGS}}
+
+  cloud:status:
+    desc: Show normalized read-only cloud provider status
+    dir: infra
+    cmds:
+      - python3 scripts/setup/run-python3.py scripts/platform/cloud_status.py {{.CLI_ARGS}}
+
+  systems:probe:
+    desc: After a deploy, read one record per online cell as the read-only deploy-verifier (200 or expected 403)
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/cell_probe.py {{.CLI_ARGS}}
+
+  systems:coldstart:
+    desc: Cell wake time before/after a cutoff from Railway logs (pass -- --cutoff ISO_TIME)
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/cell_coldstart.py {{.CLI_ARGS}}
+
+  paas:health:
+    desc: Check PaaS health in offline mode
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/paas_health.py --offline --json {{.CLI_ARGS}}
+
+  paas:health:live:
+    desc: Check live PaaS health using provider APIs
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/paas_health.py --live --json {{.CLI_ARGS}}
+
+  paas:inventory:
+    desc: Inspect the local PaaS inventory
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/paas_inventory.py --json {{.CLI_ARGS}}
+
+  paas:inventory:live:
+    desc: Inspect live PaaS inventory using provider APIs
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/paas_inventory.py --live --json {{.CLI_ARGS}}
+
+  paas:actions:
+    desc: Show the catalog of allowed PaaS actions
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/paas_action.py catalog --json {{.CLI_ARGS}}
+
+  paas:action:propose:
+    desc: Propose a PaaS action for review
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/paas_action.py propose {{.CLI_ARGS}}
+
+  cloud:usage:
+    desc: Read the local cloud usage projection
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/cloud_usage.py --json {{.CLI_ARGS}}
+
+  cloud:usage:live:
+    desc: Read live cloud usage using provider APIs
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/cloud_usage.py --live --json {{.CLI_ARGS}}
+
+  cloud:r2:usage:
+    desc: Read the local Cloudflare R2 usage projection
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/cloudflare_r2_usage.py --json {{.CLI_ARGS}}
+
+  cloud:r2:usage:live:
+    desc: Read live Cloudflare R2 usage
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/cloudflare_r2_usage.py --live --json {{.CLI_ARGS}}
+
+  cloud:vercel:billing:
+    desc: Read the local Vercel billing projection
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/vercel_billing.py --json {{.CLI_ARGS}}
+
+  cloud:vercel:billing:live:
+    desc: Read live Vercel billing using provider APIs
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/vercel_billing.py --live --json {{.CLI_ARGS}}
+
+  cloud:github:actions:
+    desc: Read the local GitHub Actions usage projection
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/github_actions_usage.py --json {{.CLI_ARGS}}
+
+  cloud:github:actions:live:
+    desc: Read current-month GitHub Actions usage using the official billing API
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/github_actions_usage.py --live --json {{.CLI_ARGS}}
+
+  selfhosted:health:
+    desc: Check self-hosted service health
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/self_hosted_health.py --json {{.CLI_ARGS}}
+
+  selfhosted:health:docker:
+    desc: Check Docker-backed self-hosted services
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/self_hosted_health.py --docker-only --json {{.CLI_ARGS}}
+
+  selfhosted:health:k8s:
+    desc: Check Kubernetes-backed self-hosted services
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/self_hosted_health.py --k8s-only --json {{.CLI_ARGS}}
+
+  selfhosted:readiness:
+    desc: Check self-hosted deployment readiness
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/self_hosted_readiness.py --json {{.CLI_ARGS}}
+
+  selfhosted:readiness:coolify:
+    desc: Check Coolify deployment readiness
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/self_hosted_readiness.py --profile coolify --json {{.CLI_ARGS}}
+
+  selfhosted:readiness:caprover:
+    desc: Check CapRover deployment readiness
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/self_hosted_readiness.py --profile caprover --json {{.CLI_ARGS}}
+
+  selfhosted:readiness:dokku:
+    desc: Check Dokku deployment readiness
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/platform/self_hosted_readiness.py --profile dokku --json {{.CLI_ARGS}}
+
+  auth:hash-token:
+    desc: Hash an API token without echoing the raw token
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/security/hash_api_token.py {{.CLI_ARGS}}
+
+  ai-gateway:service:test:
+    desc: Test the AI gateway client token helper (the gateway service lives in bookchaowalit/solo-ai-gateway; the media router moved with solo-media-worker)
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh tests/security/provision_ai_gateway_client_test.py
+
+  ai-gateway:client:provision:
+    desc: Provision a hosted AI gateway client token; prints only the API_TOKENS_JSON hash entry
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/security/provision_ai_gateway_client.py {{.CLI_ARGS}}
+
+  auth:google-matrix:
+    desc: Store Google matrix refresh credentials through the approved resolver
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/get_google_refresh_token.py --matrix --store-infisical {{.CLI_ARGS}}
+
+  auth:google-search-console:
+    desc: Store Google Search Console refresh credentials through the approved resolver
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/utils/get_google_refresh_token.py --search-console --store-infisical {{.CLI_ARGS}}

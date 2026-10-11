@@ -1,0 +1,14 @@
+{
+  "generated": "2026-09-14T02:24:25.249588+00:00",
+  "counts": {
+    "MCP tools": 79,
+    "CLI case stmts": 25,
+    "CREATE TABLE": 142,
+    "DB tables": 142,
+    "Domains": 45,
+    "Scripts": 386,
+    "CSV files": 135,
+    "Domain markdown": 262,
+    "Dashboard files": 37
+  }
+}

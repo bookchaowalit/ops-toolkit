@@ -1,0 +1,23 @@
+{
+  "schema_version": "book-platform.contract.v1",
+  "platform_id": "__PLATFORM_ID__",
+  "repository": "__REPOSITORY__",
+  "status": "scaffolded",
+  "api_version": "v1",
+  "data_owner": "__DATA_OWNER__",
+  "capabilities": ["platform-api", "health", "contract"],
+  "depends_on": [],
+  "current_implementation": {
+    "repository": "solo-empire",
+    "source_path": "__SOURCE_PATH__",
+    "source_paths": [],
+    "source_status": "__SOURCE_STATUS__"
+  },
+  "migration": {
+    "compatibility_adapter": "required",
+    "shadow_parity": "pending",
+    "cutover": "pending",
+    "rollback": "required"
+  },
+  "interfaces": []
+}

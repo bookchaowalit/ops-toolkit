@@ -1,0 +1,62 @@
+{
+  "schema_version": "solo-empire.llm-lab-models.v1",
+  "updated": "2026-09-16",
+  "default_profile": "compact",
+  "profiles": {
+    "compact": {
+      "role": "pod_1_coding_agent",
+      "service_lane": "runpod",
+      "pod_id": "pod-1",
+      "workloads": ["coding", "agent", "batch"],
+      "activation": "on_demand",
+      "model_id": "nvidia/Qwen3.8-27B-NVFP4",
+      "model_card_url": "https://huggingface.co/nvidia/Qwen3.8-27B-NVFP4",
+      "model_id_status": "verified_official_checkpoint_blackwell_target",
+      "served_model_name": "qwen3.8-27b-nvfp4",
+      "backend": "vllm",
+      "quantization": "modelopt_fp4",
+      "quantization_display": "NVFP4/FP8 mixed",
+      "deployment_mode": "blocked_until_blackwell_or_compatibility_benchmark",
+      "gateway_profiles": ["fast", "balanced"],
+      "hardware_guidance": "Official checkpoint targets NVIDIA Blackwell; the connected RTX A6000 (Ampere/SM86) is not validated. Require a Blackwell deployment or an explicit compatibility benchmark before launch.",
+      "hardware_gate": "blackwell_required_for_official_nvfp4; a6000_ampere_not_validated",
+      "license_gate": "review_model_card_before_commercial_use",
+      "context_tokens": 32768,
+      "cost_class": "low",
+      "initial_concurrent_agents": 4,
+      "benchmark_concurrency_steps": [4, 6, 8, 12]
+    },
+    "daily": {
+      "role": "quality_worker_experiment",
+      "service_lane": "runpod",
+      "workloads": ["batch", "reasoning"],
+      "activation": "on_demand",
+      "model_id": "Qwen/Qwen3-Coder-Next",
+      "model_card_url": "https://huggingface.co/Qwen/Qwen3-Coder-Next",
+      "served_model_name": "qwen3-coder-next",
+      "backend": "vllm",
+      "quantization": "operator-selected",
+      "deployment_mode": "multi_gpu_or_offload",
+      "gateway_profiles": ["fast", "balanced", "quality"],
+      "hardware_guidance": "The total weight size, quantization, tensor parallelism, and context length must be measured together.",
+      "context_tokens": 65536,
+      "cost_class": "medium"
+    },
+    "frontier": {
+      "role": "frontier_experiment",
+      "service_lane": "runpod",
+      "workloads": ["reasoning", "batch"],
+      "activation": "burst_only",
+      "model_id": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "model_card_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+      "served_model_name": "deepseek-v4.1-flash",
+      "backend": "sglang_or_vllm",
+      "quantization": "checkpoint-dependent",
+      "deployment_mode": "rented_multi_gpu_cluster",
+      "gateway_profiles": ["quality"],
+      "hardware_guidance": "Treat this as a burst experiment; derive GPU count, VRAM, and hourly price from the exact checkpoint and provider before starting.",
+      "context_tokens": 131072,
+      "cost_class": "high"
+    }
+  }
+}

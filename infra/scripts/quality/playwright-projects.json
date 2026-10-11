@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "roots": [
+    "github"
+  ],
+  "config_names": [
+    "playwright.config.ts",
+    "playwright.config.mts",
+    "playwright.config.js",
+    "playwright.config.mjs",
+    "playwright.config.cjs"
+  ],
+  "script_priority": [
+    "test:e2e",
+    "e2e:ci",
+    "e2e",
+    "test:playwright",
+    "test:browser"
+  ]
+}

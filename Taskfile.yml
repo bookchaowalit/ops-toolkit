@@ -1,0 +1,125 @@
+version: '3'
+
+# solo-ops: operations tooling for Solo Empire (scripts, owner CLI, platform registries, tests).
+# Standalone: `task test` runs in a fresh clone; sibling repositories (solo-architecture,
+# solo-knowledge, solo-mcp, solo-skills, ...) are optional and make tests skip when absent.
+# History of everything under infra/ before 2026-10-11 lives in the solo-empire repository.
+
+x-book-dev-github: &book_dev_github '{{if env "SOLO_BOOK_DEV_GITHUB_ROOT"}}{{env "SOLO_BOOK_DEV_GITHUB_ROOT"}}{{else}}{{.ROOT_DIR}}/../../..{{end}}'
+
+includes:
+  ai:
+    taskfile: infra/tasks/ai.yml
+    dir: .
+    flatten: true
+    vars:
+      BOOK_DEV_GITHUB: *book_dev_github
+  data:
+    taskfile: infra/tasks/data.yml
+    dir: .
+    flatten: true
+    vars:
+      BOOK_DEV_GITHUB: *book_dev_github
+  governance:
+    taskfile: infra/tasks/governance.yml
+    dir: .
+    flatten: true
+    vars:
+      BOOK_DEV_GITHUB: *book_dev_github
+  integrations:
+    taskfile: infra/tasks/integrations.yml
+    dir: .
+    flatten: true
+    vars:
+      BOOK_DEV_GITHUB: *book_dev_github
+  learning:
+    taskfile: infra/tasks/learning.yml
+    dir: .
+    flatten: true
+    vars:
+      BOOK_DEV_GITHUB: *book_dev_github
+  operations:
+    taskfile: infra/tasks/operations.yml
+    dir: .
+    flatten: true
+    vars:
+      BOOK_DEV_GITHUB: *book_dev_github
+  platform:
+    taskfile: infra/tasks/platform.yml
+    dir: .
+    flatten: true
+    vars:
+      BOOK_DEV_GITHUB: *book_dev_github
+  portfolio:
+    taskfile: infra/tasks/portfolio.yml
+    dir: .
+    flatten: true
+    vars:
+      BOOK_DEV_GITHUB: *book_dev_github
+  products:
+    taskfile: infra/tasks/products.yml
+    dir: .
+    flatten: true
+    vars:
+      BOOK_DEV_GITHUB: *book_dev_github
+  runtime:
+    taskfile: infra/tasks/runtime.yml
+    dir: .
+    flatten: true
+    vars:
+      BOOK_DEV_GITHUB: *book_dev_github
+  trading:
+    taskfile: infra/tasks/trading.yml
+    dir: .
+    flatten: true
+    vars:
+      BOOK_DEV_GITHUB: *book_dev_github
+
+tasks:
+  default:
+    desc: Show the solo-ops tasks
+    cmds:
+      - task --list
+
+  install:
+    desc: Install the Node dependencies (tsx, typescript) for the owner CLI
+    dir: infra
+    cmds:
+      - npm ci
+
+  test:
+    desc: Run every Python test script under infra/tests (offline; absent siblings make tests skip)
+    env:
+      EMPIRE_CLIENT_CONFIG: /nonexistent/empire-platform/client.env
+      SOLO_EMPIRE_TASKS_BACKEND: ""
+      EMPIRE_TASKS_API: ""
+    cmds:
+      - python3 infra/tests/run_all.py {{.CLI_ARGS}}
+
+  typecheck:
+    desc: Type-check the owner CLI (needs `task install`)
+    dir: infra
+    cmds:
+      - node node_modules/typescript/bin/tsc --noEmit
+
+  check:
+    desc: Fast local verification gate (guards + tests)
+    cmds:
+      - task: docs:check
+      - task: test
+
+  docs:check:
+    desc: Run the documentation and contract guards owned by solo-ops (static; they need the sibling architecture/knowledge checkouts)
+    env:
+      # Static registry checks only: live cell/API activation checks need credentials (run the guards with --live).
+      SOLO_EMPIRE_CI: "1"
+      EMPIRE_CLIENT_CONFIG: /nonexistent/empire-platform/client.env
+    cmds:
+      - task: rnd:check
+      - task: evidence:check
+      - task: step:check
+      - task: role-tasks:check
+      - task: portfolio:contexts:check
+      - task: evaluation:check
+      - task: engagements:review:strict
+      - task: contracts:check
