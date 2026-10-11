@@ -6,6 +6,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+GITHUB_ROOT="${SOLO_BOOK_DEV_GITHUB_ROOT:-$REPO_ROOT/../../..}"
 
 DOCKER_BIN="${DOCKER_BIN:-docker}"
 DOCKER_SOCKET="${DOCKER_SOCKET:-unix:///var/run/docker.sock}"
@@ -172,19 +173,19 @@ target_config() {
     games)
       TARGET_LABEL="Oak Games Review"
       TARGET_DB="oak_games_review"
-      TARGET_DUMP="${REPO_ROOT}/projects/product/engineering/book-dev/github/bookchaowalit-freelance/oak/games/01-round-1/00-incoming/06-database-dump/aura_nua.sql"
+      TARGET_DUMP="${GITHUB_ROOT}/bookchaowalit-freelance/oak/games/01-round-1/00-incoming/06-database-dump/aura_nua.sql"
       TARGET_ENCODING="UTF-16LE"
       ;;
     wellness)
       TARGET_LABEL="Oak Wellness Review"
       TARGET_DB="oak_wellness_review"
-      TARGET_DUMP="${REPO_ROOT}/projects/product/engineering/book-dev/github/bookchaowalit-freelance/oak/wellness/02-follow-up/00-incoming/06-database-dump/livewell_dump.sql"
+      TARGET_DUMP="${GITHUB_ROOT}/bookchaowalit-freelance/oak/wellness/02-follow-up/00-incoming/06-database-dump/livewell_dump.sql"
       TARGET_ENCODING="UTF-8"
       ;;
     inful)
       TARGET_LABEL="Oak Inful Review"
       TARGET_DB="oak_inful_review"
-      TARGET_DUMP="${REPO_ROOT}/projects/product/engineering/book-dev/github/bookchaowalit-freelance/oak/inful/01-round-1/00-incoming/06-database-dump/full_database.sql"
+      TARGET_DUMP="${GITHUB_ROOT}/bookchaowalit-freelance/oak/inful/01-round-1/00-incoming/06-database-dump/full_database.sql"
       TARGET_ENCODING="UTF-8"
       ;;
     *)
