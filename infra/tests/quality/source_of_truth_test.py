@@ -3,13 +3,13 @@
 Source of Truth Cleanup Guard
 
 Fails when production/config code reintroduces:
-  - data/solo-empire.db as an application DB path
-  - legacy database/solo-empire.db (missing infra/ prefix)
+  - data/operations.db as an application DB path
+  - legacy database/operations.db (missing infra/ prefix)
   - hardcoded absolute checkout paths (/home/.../solo-empire)
   - duplicate PROJECT_ROOT / DB_PATH / BACKUP_DIR definitions
 
 Canonical Python paths live in: infra/scripts/utils/_env.py
-Canonical DB relative path:     data/runtime/solo-empire.db
+Canonical DB relative path:     data/runtime/operations.db
 Canonical env override:         SOLO_EMPIRE_DB_PATH
 
 Historical docs (CHANGELOG, sessions, archives) may mention legacy paths.
@@ -122,7 +122,7 @@ ALLOWED_DEFINITIONS = {
 
 # Patterns
 RE_DATA_DB = re.compile(r"(?<![\w./-])data/solo-empire\.db\b")
-# legacy host path: database/solo-empire.db without infra/ immediately before
+# legacy host path: database/operations.db without infra/ immediately before
 RE_LEGACY_DB = re.compile(r"(?<!infra/)(?<![\w])database/solo-empire\.db\b")
 # absolute checkout hardcodes (user home + solo-empire or book-everything path)
 RE_HARDCODE_HOME = re.compile(
@@ -240,29 +240,29 @@ def scan_legacy_paths() -> list[dict]:
             stripped = line.strip()
             # Skip pure comments that only document the forbidden pattern (except we still
             # want to catch hardcoded paths in comments of production scripts).
-            # Container mount targets /data/solo-empire.db are not data/solo-empire.db host paths.
+            # Container mount targets /data/operations.db are not data/operations.db host paths.
             if RE_DATA_DB.search(line):
                 # Allow docker volume *target* only when clearly container path after :
-                # e.g. ../database/solo-empire.db:/data/solo-empire.db:ro
+                # e.g. ../database/operations.db:/data/operations.db:ro
                 if re.search(r":/data/solo-empire\.db\b", line):
                     pass  # container FS target after host mount — OK
-                elif "data/solo-empire.db" in line and "data/runtime" not in line:
+                elif "data/operations.db" in line and "data/runtime" not in line:
                     violations.append(
                         {
-                            "kind": "data/solo-empire.db",
+                            "kind": "data/operations.db",
                             "file": r,
                             "line": i,
                             "content": stripped[:160],
                         }
                     )
             if RE_LEGACY_DB.search(line):
-                # Allow relative mount from self-hosted-stack: ../database/solo-empire.db
+                # Allow relative mount from self-hosted-stack: ../database/operations.db
                 if re.search(r"\.\./database/solo-empire\.db", line):
                     pass
                 else:
                     violations.append(
                         {
-                            "kind": "legacy database/solo-empire.db",
+                            "kind": "legacy database/operations.db",
                             "file": r,
                             "line": i,
                             "content": stripped[:160],
@@ -309,7 +309,7 @@ def scan_duplicate_definitions() -> dict[str, list[dict]]:
 def test_canonical_env_paths() -> bool:
     print("\n[1/4] Canonical path constants (_env.py)")
     ok = True
-    expected_db = (PROJECT_ROOT / "data" / "runtime" / "solo-empire.db").resolve()
+    expected_db = (PROJECT_ROOT / "data" / "runtime" / "operations.db").resolve()
     if DB_PATH.resolve() != expected_db and not (
         # allow SOLO_EMPIRE_DB_PATH override during test runs
         __import__("os").environ.get("SOLO_EMPIRE_DB_PATH")
@@ -318,7 +318,7 @@ def test_canonical_env_paths() -> bool:
         ok = False
     else:
         print(f"  ✅ DB_PATH → {DB_PATH}")
-    if DEFAULT_DB_REL.as_posix() != "data/runtime/solo-empire.db":
+    if DEFAULT_DB_REL.as_posix() != "data/runtime/operations.db":
         print(f"  ❌ DEFAULT_DB_REL wrong: {DEFAULT_DB_REL}")
         ok = False
     else:
@@ -357,7 +357,7 @@ def test_no_legacy_db_paths() -> bool:
     items = [
         v
         for v in scan_legacy_paths()
-        if v["kind"] in ("data/solo-empire.db", "legacy database/solo-empire.db")
+        if v["kind"] in ("data/operations.db", "legacy database/operations.db")
     ]
     if items:
         print(f"  ❌ {len(items)} legacy DB path reference(s)")
@@ -365,9 +365,9 @@ def test_no_legacy_db_paths() -> bool:
             print(f"     [{v['kind']}] {v['file']}:{v['line']}: {v['content']}")
         if len(items) > 20:
             print(f"     ... +{len(items) - 20} more")
-        print("     Use data/runtime/solo-empire.db or SOLO_EMPIRE_DB_PATH")
+        print("     Use data/runtime/operations.db or SOLO_EMPIRE_DB_PATH")
         return False
-    print("  ✅ No disallowed data/ or bare database/ solo-empire.db references")
+    print("  ✅ No disallowed data/ or bare database/ operations.db references")
     return True
 
 
@@ -391,7 +391,7 @@ def main() -> int:
     print("Source of Truth Cleanup Guard")
     print("=" * 70)
     print(f"Repo: {PROJECT_ROOT}")
-    print(f"Canonical DB: data/runtime/solo-empire.db")
+    print(f"Canonical DB: data/runtime/operations.db")
 
     tests = [
         test_canonical_env_paths,

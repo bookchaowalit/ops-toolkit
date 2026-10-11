@@ -33,7 +33,7 @@ def run_isolated(test_path: Path, args: list[str]) -> int:
         )
         for relative in ("data/backups", "data/generated/briefings", "home"):
             (root / relative).mkdir(parents=True, exist_ok=True)
-        db_path = root / "data/runtime/solo-empire.db"
+        db_path = root / "data/runtime/operations.db"
         db_path.parent.mkdir(parents=True, exist_ok=True)
         conn = sqlite3.connect(db_path)
         try:

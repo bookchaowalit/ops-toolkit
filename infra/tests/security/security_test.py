@@ -46,7 +46,7 @@ def test_database_permissions():
     """Verify database file has secure permissions (600 - owner read/write only)."""
     print("\n[2/4] Checking database file permissions...")
 
-    db_path = PROJECT_ROOT / 'infra' / 'database' / 'solo-empire.db'
+    db_path = PROJECT_ROOT / 'infra' / 'database' / 'operations.db'
     if not db_path.exists():
         print("  ⚠️  Database file not found (skipping)")
         return True

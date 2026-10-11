@@ -17,7 +17,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 SIBLINGS_PARENT = PROJECT_ROOT.parent
 
 # Canonical relative path from repository root
-DEFAULT_DB_REL = Path("data") / "runtime" / "solo-empire.db"
+DEFAULT_DB_REL = Path("data") / "runtime" / "operations.db"
 BACKUP_DIR = PROJECT_ROOT / "data" / "backups"
 BRIEFINGS_DIR = PROJECT_ROOT / "data" / "generated" / "briefings"
 DRAFTS_DIR = BRIEFINGS_DIR / "drafts"
@@ -143,7 +143,7 @@ def resolve_db_path(env_value: str | None = None) -> Path:
     - absolute path → used as-is (after expanduser)
     - relative path → resolved from PROJECT_ROOT (not CWD)
 
-    Default when unset: <PROJECT_ROOT>/data/runtime/solo-empire.db (nominal; no file is shipped)
+    Default when unset: <PROJECT_ROOT>/data/runtime/operations.db (nominal; no file is shipped)
     """
     if env_value is None:
         env_value = os.environ.get("SOLO_EMPIRE_DB_PATH")

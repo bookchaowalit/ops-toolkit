@@ -297,7 +297,7 @@ def test_goal_velocity():
     import sqlite3, tempfile
     support = Path(__file__).resolve().parents[1] / 'support'
     with tempfile.TemporaryDirectory() as tmp:
-        db = Path(tmp) / 'solo-empire.db'
+        db = Path(tmp) / 'operations.db'
         conn = sqlite3.connect(db)
         conn.executescript((support / 'legacy_portfolio_tables.sql').read_text(encoding='utf-8'))
         conn.commit()

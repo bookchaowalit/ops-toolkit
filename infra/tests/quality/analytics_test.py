@@ -57,7 +57,7 @@ def log_fail(msg: str):
 
 
 _HABIT_DB_DIR = tempfile.TemporaryDirectory(prefix="analytics-habits-")
-HABIT_DB = Path(_HABIT_DB_DIR.name) / "solo-empire.db"
+HABIT_DB = Path(_HABIT_DB_DIR.name) / "operations.db"
 HABIT_SCRIPTS = {"habit_analytics.py", "monthly_report.py"}
 HABIT_SCRIPTS |= {"goal_velocity.py"}  # reads goals through the cell store double
 HABIT_SCRIPTS |= {"revenue_analytics.py"}  # reads revenue through the CRM ledger double

@@ -63,11 +63,11 @@ def test_env_loader():
         assert hasattr(_env, "DB_PATH"), "_env.py missing DB_PATH"
         assert hasattr(_env, "resolve_db_path"), "_env.py missing resolve_db_path"
         assert _env.PROJECT_ROOT.exists(), f"PROJECT_ROOT {_env.PROJECT_ROOT} doesn't exist"
-        assert str(_env.DB_PATH).endswith("solo-empire.db"), f"Unexpected DB_PATH: {_env.DB_PATH}"
+        assert str(_env.DB_PATH).endswith("operations.db"), f"Unexpected DB_PATH: {_env.DB_PATH}"
         # An empty value means "unset"; passing None would read the live
         # SOLO_EMPIRE_DB_PATH override and make this check environment-dependent.
         default = _env.resolve_db_path("")
-        expected = (_env.PROJECT_ROOT / "data" / "runtime" / "solo-empire.db").resolve()
+        expected = (_env.PROJECT_ROOT / "data" / "runtime" / "operations.db").resolve()
         assert default == expected, f"default DB path {default} != {expected}"
         override = os.environ.get("SOLO_EMPIRE_DB_PATH", "").strip()
         if override:
@@ -85,7 +85,7 @@ def test_env_loader():
 def test_database_retired():
     """Test 2: the control-plane SQLite database stays retired (2026-10-11)."""
     print("\n[2/4] Retired Database")
-    default_db = PROJECT_ROOT / "data" / "runtime" / "solo-empire.db"
+    default_db = PROJECT_ROOT / "data" / "runtime" / "operations.db"
     if (PROJECT_ROOT / "infra" / "database").exists():
         log_fail("retired infra/database folder is back")
     if default_db.exists():
