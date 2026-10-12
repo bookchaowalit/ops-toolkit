@@ -326,12 +326,12 @@ def _sessions(events: list[dict[str, Any]]) -> tuple[dict[str, dict[str, Any]], 
 
 
 def _api_cost() -> dict[str, Any]:
-    """Hosted API spend is owned by solo-ai-gateway; this ledger covers GPU, subscription, and storage only."""
+    """Hosted API spend is owned by ai-gateway; this ledger covers GPU, subscription, and storage only."""
     return {
         "status": "external",
         "cost_usd": 0.0,
         "unknown_cost_events": 0,
-        "note": "API spend lives in solo-ai-gateway",
+        "note": "API spend lives in ai-gateway",
     }
 
 

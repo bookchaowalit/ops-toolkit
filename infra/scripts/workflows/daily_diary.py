@@ -39,7 +39,7 @@ from task_store import ClientConfigError, TaskStoreError, open_task_store  # noq
 
 
 CONTRACT = "solo-empire.daily-diary.v1"
-# Diary entries are private files in the solo-knowledge checkout (SOLO_KNOWLEDGE_ROOT, default ../solo-knowledge);
+# Diary entries are private files in the knowledge-base checkout (SOLO_KNOWLEDGE_ROOT, default ../knowledge-base);
 # they are git-ignored there and never committed.
 DEFAULT_ENTRIES_ROOT = KNOWLEDGE_ROOT / "diary" / "entries"
 DEFAULT_FILENAME = "auto-daily.md"
@@ -438,7 +438,7 @@ def _parser() -> argparse.ArgumentParser:
         default="",
         help="Comma-separated universal function IDs for this turn, e.g. build-creation,governance-assurance",
     )
-    parser.add_argument("--write", action="store_true", help="Write <solo-knowledge>/diary/entries/YYYY/MM/DD/auto-daily.md")
+    parser.add_argument("--write", action="store_true", help="Write <knowledge-base>/diary/entries/YYYY/MM/DD/auto-daily.md")
     parser.add_argument("--json", action="store_true", help="Print the bounded payload as JSON")
     return parser
 

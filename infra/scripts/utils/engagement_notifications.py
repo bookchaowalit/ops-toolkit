@@ -3,7 +3,7 @@
 
 The command is safe by default: it previews a digest and does not write or
 send anything. Use ``--apply`` to append one deduplicated digest to the
-notifications cell (solo-notifications). External delivery remains controlled by
+notifications cell (notifications). External delivery remains controlled by
 the configured notifier channels.
 
 Only these findings become notifications:

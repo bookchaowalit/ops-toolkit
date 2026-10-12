@@ -40,7 +40,7 @@ def shown(path: Path) -> str:
 
 
 def is_external_boundary(path: Path) -> bool:
-    """True for paths inside sibling clones (anything outside solo-ops and solo-architecture)."""
+    """True for paths inside sibling clones (anything outside ops-toolkit and architecture-docs)."""
     for root in (PROJECT_ROOT, ARCHITECTURE_ROOT):
         try:
             path.relative_to(root)
@@ -80,8 +80,8 @@ EXPECTED_PRODUCTS = [
 
 CONSUMER_SPECS = [
     {
-        "id": "solo-empire-insights",
-        "path": "projects/product/engineering/book-dev/github/bookchaowalit/public/book-products/solo-empire-insights",
+        "id": "insights-dashboard",
+        "path": "projects/product/engineering/book-dev/github/bookchaowalit/public/book-products/insights-dashboard",
         "catalog_files": [
             "src/data-products/catalog.ts",
             "js/data-products-browser.js",
@@ -97,7 +97,7 @@ CONSUMER_SPECS = [
 ]
 
 JOB_CONSUMER_FILES = (
-    "projects/product/engineering/book-dev/github/bookchaowalit/private/solo-data-lake/infra/scripts/opportunities/import_job_scraper.py",
+    "projects/product/engineering/book-dev/github/bookchaowalit/private/data-lake/infra/scripts/opportunities/import_job_scraper.py",
     "infra/scripts/workflows/dashboard.py",
     "projects/marketing/growth/book-sales/scripts/sync_leads.py",
 )
@@ -508,7 +508,7 @@ def check_job_contract(errors: list[str]) -> None:
 
 
 def main() -> int:
-    skip_without_architecture("data_product_contract_guard.py")  # standalone: no solo-architecture checkout -> SKIP, not FAIL
+    skip_without_architecture("data_product_contract_guard.py")  # standalone: no architecture-docs checkout -> SKIP, not FAIL
     errors: list[str] = []
     print("=" * 60)
     print("  Solo Empire — Data Product Contract Guard (v2 freeze)")

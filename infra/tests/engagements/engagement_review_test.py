@@ -25,9 +25,9 @@ sys.path.insert(0, str(ROOT / "tests" / "support"))
 from sqlite_task_store import sqlite_opener  # noqa: E402  (also isolates the test from the live Tasks API)
 
 
-ARCHITECTURE_ROOT = Path(os.environ.get("SOLO_ARCHITECTURE_ROOT") or ROOT.parent.parent / "solo-architecture")
+ARCHITECTURE_ROOT = Path(os.environ.get("SOLO_ARCHITECTURE_ROOT") or ROOT.parent.parent / "architecture-docs")
 REGISTRY = ARCHITECTURE_ROOT / "docs" / "registries" / "ENGAGEMENT-REGISTRY.yaml"
-needs_registry = unittest.skipUnless(REGISTRY.is_file(), "solo-architecture checkout not present (SOLO_ARCHITECTURE_ROOT)")
+needs_registry = unittest.skipUnless(REGISTRY.is_file(), "architecture-docs checkout not present (SOLO_ARCHITECTURE_ROOT)")
 
 
 @needs_registry

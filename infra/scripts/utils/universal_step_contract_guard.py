@@ -234,7 +234,7 @@ def validate_coverage_inventory(inventory: Any) -> list[str]:
 
 
 def main() -> int:
-    skip_without_architecture("universal_step_contract_guard.py")  # standalone: no solo-architecture checkout -> SKIP, not FAIL
+    skip_without_architecture("universal_step_contract_guard.py")  # standalone: no architecture-docs checkout -> SKIP, not FAIL
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--json", action="store_true", help="emit a machine-readable result")
     parser.add_argument("--coverage", action="store_true", help="emit the explicit surface coverage inventory")

@@ -29,8 +29,8 @@ FRONT_MATTER = re.compile(r"^---\n(.*?)\n---\n", re.S)
 
 
 def _under(root: Path, relative: str | Path) -> Path:
-    """Resolve a registry-relative path. The default root (solo-ops) maps legacy hub-layout paths to the
-    repositories that own them (clones next to solo-ops, SOLO_REGISTRY_DIR); any other root is used verbatim."""
+    """Resolve a registry-relative path. The default root (ops-toolkit) maps legacy hub-layout paths to the
+    repositories that own them (clones next to ops-toolkit, SOLO_REGISTRY_DIR); any other root is used verbatim."""
     return repo_file(relative) if root == PROJECT_ROOT else root / relative
 
 

@@ -80,7 +80,7 @@ def load_contract(mapping_path: Path) -> tuple[dict[str, Any], dict[str, Any], P
         local_schema_path = resolve_path(schema_value, mapping_path.parent)
         root_schema_path = resolve_path(schema_value, PROJECT_ROOT)
         schema_path = local_schema_path if local_schema_path.is_file() else root_schema_path
-        if not schema_path.is_file():  # templates live in solo-architecture
+        if not schema_path.is_file():  # templates live in architecture-docs
             schema_path = resolve_path(schema_value, ARCHITECTURE_ROOT)
     else:
         schema_path = DEFAULT_SCHEMA

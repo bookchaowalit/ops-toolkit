@@ -4,7 +4,7 @@
 The script is intentionally deterministic. It never stores prompts, model
 responses, credentials, or private payloads. Goals are the objective layer;
 ``goal_metrics`` are relational key results; ``operating`` cell cycles are short
-portfolio commitments; AI spend/usage signals live in solo-ai-gateway, so the
+portfolio commitments; AI spend/usage signals live in ai-gateway, so the
 AI KPIs report ``no_data`` here.
 
 Examples:
@@ -224,7 +224,7 @@ def derive_kpis(cycle: dict[str, Any],
                 if committed_tasks else None
             )
         ),
-        # AI usage KPIs are owned by solo-ai-gateway; no local source.
+        # AI usage KPIs are owned by ai-gateway; no local source.
         "ai-telemetry-success-rate": None,
         "ai-budget-compliance": None,
         "ai-cost-usd": None,
@@ -304,7 +304,7 @@ def report_payload(cycle: dict[str, Any]) -> dict[str, Any]:
         warnings.append("cycle is planned; no execution should start until Owner explicitly starts it")
     if summary["blocked"]:
         warnings.append(f"{summary['blocked']} committed task(s) are blocked")
-    warnings.append("AI usage lives in solo-ai-gateway; AI-specific KPIs are no_data")
+    warnings.append("AI usage lives in ai-gateway; AI-specific KPIs are no_data")
     if cycle["status"] == "closed" and review is None:
         warnings.append("closed cycle has no review record")
     return {
@@ -410,7 +410,7 @@ def markdown_report(payload: dict[str, Any]) -> str:
         )
     lines.extend([
         "",
-        "AI usage and spend are reported by solo-ai-gateway, not by this repository.",
+        "AI usage and spend are reported by ai-gateway, not by this repository.",
         "",
         "## Technology Watch",
         "",

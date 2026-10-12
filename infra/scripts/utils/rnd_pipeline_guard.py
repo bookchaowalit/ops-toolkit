@@ -354,7 +354,7 @@ def report(contract_path: Path = CONTRACT_PATH, tracker_path: Path = TRACKER_PAT
 
 
 def main() -> int:
-    skip_without_architecture("rnd_pipeline_guard.py")  # standalone: no solo-architecture checkout -> SKIP, not FAIL
+    skip_without_architecture("rnd_pipeline_guard.py")  # standalone: no architecture-docs checkout -> SKIP, not FAIL
     parser = argparse.ArgumentParser(description="Validate the central Science and R&D pipeline")
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--require-checkouts", action="store_true", default=None, help="require declared external evidence checkouts, including portable CI")

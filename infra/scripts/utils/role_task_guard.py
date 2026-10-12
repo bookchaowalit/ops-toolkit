@@ -27,7 +27,7 @@ PORTFOLIO_REPORT_PATH = REPORTS_DIR / "ROLE-PORTFOLIO.md"
 
 
 def main() -> int:
-    skip_without_architecture("role_task_guard.py")  # standalone: no solo-architecture checkout -> SKIP, not FAIL
+    skip_without_architecture("role_task_guard.py")  # standalone: no architecture-docs checkout -> SKIP, not FAIL
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sync", action="store_true", help="sync role learning links and task suggestions")
     parser.add_argument("--include-history", action="store_true", help="include historical tasks when syncing")

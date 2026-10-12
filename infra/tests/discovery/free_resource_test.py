@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "infra" / "scripts" / "discovery"))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "support"))
 from siblings import ARCHITECTURE_ROOT, exit_unless_exists, requires  # noqa: E402
-exit_unless_exists(ARCHITECTURE_ROOT / "systems" / "cloud-platform", "solo-architecture checkout (SOLO_ARCHITECTURE_ROOT)")
+exit_unless_exists(ARCHITECTURE_ROOT / "systems" / "cloud-platform", "architecture-docs checkout (SOLO_ARCHITECTURE_ROOT)")
 
 from free_resource import (  # noqa: E402
     FREE_ACCESS_MODELS,

@@ -77,9 +77,9 @@ record the result explicitly with `decision-cli.py review`.
 ## Verification commands
 
 ```bash
-# moved to bookchaowalit/solo-data-lake: python3 infra/scripts/data_lake/ingest.py --help
-# moved to bookchaowalit/solo-data-lake: python3 infra/scripts/data_lake/stream_sink.py --help
-# lake tests: run in the solo-data-lake checkout
+# moved to bookchaowalit/data-lake: python3 infra/scripts/data_lake/ingest.py --help
+# moved to bookchaowalit/data-lake: python3 infra/scripts/data_lake/stream_sink.py --help
+# lake tests: run in the data-lake checkout
 task docs:check
 ```
 

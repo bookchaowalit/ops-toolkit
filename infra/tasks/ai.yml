@@ -63,7 +63,7 @@ tasks:
       - bash scripts/setup/run-python3.sh tests/learning/skills_enrichment_test.py
 
   test:agent:
-    desc: Run the agent-adjacent test suite owned by solo-ops (harness hook tests live with the registry hub)
+    desc: Run the agent-adjacent test suite owned by ops-toolkit (harness hook tests live with the registry hub)
     dir: infra
     cmds:
       - bash scripts/setup/run-python3.sh tests/agent/unused_files_test.py

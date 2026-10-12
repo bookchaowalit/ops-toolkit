@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Weekly Life Framework check-in: ask five questions, store them in the habits cell.
 
-The answers go to the habits cell (solo-habits), not to local files:
+The answers go to the habits cell (habits), not to local files:
 
 * four weekly habits hold the counts (exercise, rest days, intentional contacts,
   client offers); each check-in upserts one log on the check-in date with
@@ -33,7 +33,7 @@ from task_store import ClientConfigError  # noqa: E402
 from _env import KNOWLEDGE_ROOT  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[3]
-# Owned by bookchaowalit/solo-knowledge (plans/decision-context/); override SOLO_KNOWLEDGE_ROOT.
+# Owned by bookchaowalit/knowledge-base (plans/decision-context/); override SOLO_KNOWLEDGE_ROOT.
 VALIDATION_LOG = KNOWLEDGE_ROOT / "plans" / "decision-context" / "LIFE-VALIDATION-LOG-2026-Q4.md"
 LOG_HEADER = "## Weekly check-ins"
 TABLE_HEAD = ("| วันที่ | mood (1-5) | sleep (ชม.) | exercise | rest days | contacts | offers | note |\n"

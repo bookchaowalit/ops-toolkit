@@ -11,7 +11,7 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "support"))
 from siblings import KNOWLEDGE_ROOT, exit_unless_exists  # noqa: E402
-exit_unless_exists(KNOWLEDGE_ROOT / "projects/workspaces.yaml", "solo-knowledge checkout (SOLO_KNOWLEDGE_ROOT)")
+exit_unless_exists(KNOWLEDGE_ROOT / "projects/workspaces.yaml", "knowledge-base checkout (SOLO_KNOWLEDGE_ROOT)")
 sys.path.insert(0, str(REPO_ROOT / "infra" / "scripts" / "utils"))
 
 from _env import KNOWLEDGE_ROOT  # noqa: E402

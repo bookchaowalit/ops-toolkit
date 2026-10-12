@@ -37,7 +37,7 @@ APPLICABILITY_VALUES = {'required', 'supporting', 'not-applicable'}
 
 def _load_yaml(relative_path):
     path = PROJECT_ROOT / relative_path
-    if not path.exists():  # architecture registries live in solo-architecture
+    if not path.exists():  # architecture registries live in architecture-docs
         path = repo_file(relative_path)
     return yaml.safe_load(path.read_text(encoding='utf-8'))
 
@@ -900,8 +900,8 @@ def venture_context(venture_slug):
     if not row or not str(row['source_path'] or '').startswith('ventures/'):
         return None
     raw_path = str(row['source_path'])
-    # ventures/ lives in solo-catalog (SOLO_CATALOG_ROOT, default ../solo-catalog).
-    catalog_root = sibling_repo_root('solo-catalog')
+    # ventures/ lives in business-catalog (SOLO_CATALOG_ROOT, default ../business-catalog).
+    catalog_root = sibling_repo_root('business-catalog')
     source_root = (catalog_root / 'ventures').resolve()
     source_path = (catalog_root / raw_path).resolve()
     return {

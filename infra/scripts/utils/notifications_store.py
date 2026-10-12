@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Notifications live in the notifications cell (solo-notifications); this is its client.
+"""Notifications live in the notifications cell (notifications); this is its client.
 
 Every reader and writer of notification rules and the notification log goes
 through ``open_notifications_store`` instead of the retired SQLite tables. The

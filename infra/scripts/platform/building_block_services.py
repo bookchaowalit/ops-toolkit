@@ -33,8 +33,8 @@ from _env import repo_file, sibling_ref_file  # noqa: E402
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 CATALOG_PATH = PROJECT_ROOT / "infra" / "platform" / "building-block-services.yaml"
 CLOUD_PROVIDERS_PATH = PROJECT_ROOT / "infra" / "platform" / "cloud-providers.yaml"
-# Canonical owner: bookchaowalit/solo-integrations (sibling checkout; override SOLO_INTEGRATIONS_ROOT).
-EXTERNAL_APPS_REF = "bookchaowalit/solo-integrations:data/external_app_registry.ts"
+# Canonical owner: bookchaowalit/integrations (sibling checkout; override SOLO_INTEGRATIONS_ROOT).
+EXTERNAL_APPS_REF = "bookchaowalit/integrations:data/external_app_registry.ts"
 EXTERNAL_APPS_PATH = sibling_ref_file(EXTERNAL_APPS_REF)
 
 SCHEMA_VERSION = "solo-empire.building-block-services.v1"

@@ -1,4 +1,4 @@
--- Legacy SQLite notification tables (retired 2026-10-10, notifications live in the solo-notifications cell).
+-- Legacy SQLite notification tables (retired 2026-10-10, notifications live in the notifications cell).
 -- Tests apply this DDL to a temporary database for SqliteNotificationsStore, production never does.
 
 CREATE TABLE IF NOT EXISTS notification_rules (

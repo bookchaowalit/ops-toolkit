@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Test double: the retired SQLite notification tables behind the ``ApiNotificationsStore`` interface.
 
-Notifications live in the notifications cell (solo-notifications) since
+Notifications live in the notifications cell (notifications) since
 2026-10-10; production code uses ``open_notifications_store`` only and must not
 import this module. It mirrors the service: queueing with a known
 ``dedupe_key`` returns the existing entry, and delivery results update an

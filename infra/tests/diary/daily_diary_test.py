@@ -115,7 +115,7 @@ class DailyDiaryTest(unittest.TestCase):
             self.assertIn("เพิ่มคำสั่งบันทึก summary", rendered)
 
 
-    @requires(ROLE_CLASSIFICATIONS, "solo-architecture role classifications")
+    @requires(ROLE_CLASSIFICATIONS, "architecture-docs role classifications")
     def test_conversation_summary_records_universal_functions(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             base = dict(

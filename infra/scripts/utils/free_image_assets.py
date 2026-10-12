@@ -43,9 +43,9 @@ UNSPLASH_SEARCH = "https://api.unsplash.com/search/photos"
 DEFAULT_LIMIT = 5
 MAX_LIMIT = 20
 MAX_DOWNLOAD_BYTES = 15 * 1024 * 1024
-# The tracked stock catalog lives in the bookchaowalit/solo-media repo (sibling checkout);
+# The tracked stock catalog lives in the bookchaowalit/media-assets repo (sibling checkout);
 # override with SOLO_MEDIA_ROOT.
-MEDIA_REPO_ROOT = sibling_repo_root("solo-media")
+MEDIA_REPO_ROOT = sibling_repo_root("media-assets")
 STOCK_ROOT = MEDIA_REPO_ROOT / "references" / "free-stock"
 CATALOG_PATH = STOCK_ROOT / "catalog.jsonl"
 DESIGN_CSV = (
@@ -639,7 +639,7 @@ def main(argv: list[str] | None = None) -> int:
         help="openverse needs no key; pexels/unsplash need API keys",
     )
     parser.add_argument("--limit", type=int, default=None)
-    parser.add_argument("--apply", action="store_true", help="Download files into solo-media references/free-stock/")
+    parser.add_argument("--apply", action="store_true", help="Download files into media-assets references/free-stock/")
     parser.add_argument("--json", dest="as_json", action="store_true")
     args = parser.parse_args(argv)
     if args.list:

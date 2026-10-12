@@ -1,11 +1,11 @@
 # infra
 
-Tooling owned by solo-ops (see the repository README for the overview, sibling variables and checks).
+Tooling owned by ops-toolkit (see the repository README for the overview, sibling variables and checks).
 
 ```text
 infra/
-  cli.ts                owner CLI; shared modules come from the solo-mcp sibling (mcp-modules.ts)
-  mcp-modules.ts        loader for ../solo-mcp/src/*.ts (override SOLO_MCP_ROOT)
+  cli.ts                owner CLI; shared modules come from the mcp-aggregator sibling (mcp-modules.ts)
+  mcp-modules.ts        loader for ../mcp-aggregator/src/*.ts (override SOLO_MCP_ROOT)
   scripts/
     utils/              _env.py (path resolver), guards, stores, reports
     platform/           cloud/PaaS/self-hosted registries, probes, status
@@ -25,12 +25,12 @@ Commands: `task --list`. Python entrypoints run through `scripts/setup/run-pytho
 
 * Dashboard pages and the scripts that only generated them (`knowledge_atlas`, `domain_scanner`,
   `data_freshness`, `doc_number_guard`, `root_structure_guard`, `operating_model_guard`,
-  `role_system_coverage_guard`): retired; `solo-web` replaces the dashboards. Remaining report writers
+  `role_system_coverage_guard`): retired; `owner-web` replaces the dashboards. Remaining report writers
   (`ai_cycle`, `role_task_*`, `portfolio_*`, `goal_portfolio_mapping`) write to `data/generated/reports`
   (override `SOLO_REPORTS_DIR`).
-* `mcp-server/` and `mcp/`: the `solo-mcp` repository. `skill_governance`: the `solo-skills` repository.
-* `matrix_template_guard`, `architecture_provider_readiness`: the `solo-architecture` repository.
-* `income_streams` and `ventures/`: the `solo-catalog` repository.
+* `mcp-server/` and `mcp/`: the `mcp-aggregator` repository. `skill_governance`: the `agent-skills` repository.
+* `matrix_template_guard`, `architecture_provider_readiness`: the `architecture-docs` repository.
+* `income_streams` and `ventures/`: the `business-catalog` repository.
 * Registry guards (`repository_catalog_guard`, `repo_roadmap_*`, `system_repository_guard`,
   `module_boundary_guard`, `platform_repository_guard`, `book_dev_structure_guard`,
   `workspace_boundary_guard`, `systems_status`) and the agent-harness hook scripts stay in

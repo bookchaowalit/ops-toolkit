@@ -17,7 +17,7 @@ from task_store import ClientConfigError, open_task_store  # noqa: E402
 
 
 ROADMAP_SOURCE = "roadmap:autonomous-systems-2026-2029"
-ROADMAP_PATH = "bookchaowalit/solo-knowledge:plans/decision-context/AUTONOMOUS-SYSTEMS-PORTFOLIO-ROADMAP-2026-2029.md"
+ROADMAP_PATH = "bookchaowalit/knowledge-base:plans/decision-context/AUTONOMOUS-SYSTEMS-PORTFOLIO-ROADMAP-2026-2029.md"
 TODAY = "2026-08-28"
 AUTOMATION_ID = "portfolio-seeder"
 
@@ -127,7 +127,7 @@ TASKS = [
         "category": "income",
         "due_date": "2026-09-10",
         "estimated_minutes": 120,
-        "evidence": "bookchaowalit/solo-catalog:docs/business/flagship-ai-trust-case-study.md",
+        "evidence": "bookchaowalit/business-catalog:docs/business/flagship-ai-trust-case-study.md",
     },
     {
         "key": "p1-offline-mvp",

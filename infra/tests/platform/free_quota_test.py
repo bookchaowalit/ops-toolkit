@@ -23,7 +23,7 @@ SPEC.loader.exec_module(free_quota)
 
 
 class FreeQuotaTest(unittest.TestCase):
-    @requires(FREE_CATALOG, "solo-architecture free-resource catalog")
+    @requires(FREE_CATALOG, "architecture-docs free-resource catalog")
     def test_catalog_is_projected_without_learning_resources(self):
         projection, errors = free_quota.build_projection(
             live=False,
@@ -39,7 +39,7 @@ class FreeQuotaTest(unittest.TestCase):
         self.assertEqual(projection["summary"]["reference_only"], projection["summary"]["total"])
         self.assertRegex(projection["catalog_updated"], r"^\d{4}-\d{2}-\d{2}$")
 
-    @requires(FREE_CATALOG, "solo-architecture free-resource catalog")
+    @requires(FREE_CATALOG, "architecture-docs free-resource catalog")
 
     def test_r2_reports_observed_usage_and_remaining_free_quota(self):
         projection, errors = free_quota.build_projection(
@@ -59,7 +59,7 @@ class FreeQuotaTest(unittest.TestCase):
         self.assertEqual(r2["observed"]["remaining"], 6.5)
         self.assertEqual(r2["quota"]["limit"], 10)
 
-    @requires(FREE_CATALOG, "solo-architecture free-resource catalog")
+    @requires(FREE_CATALOG, "architecture-docs free-resource catalog")
 
     def test_failed_r2_never_becomes_zero_usage(self):
         projection, errors = free_quota.build_projection(
@@ -74,7 +74,7 @@ class FreeQuotaTest(unittest.TestCase):
         self.assertIsNone(r2["observed"])
         self.assertEqual(r2["status_reason"], "http_404")
 
-    @requires(FREE_CATALOG, "solo-architecture free-resource catalog")
+    @requires(FREE_CATALOG, "architecture-docs free-resource catalog")
 
     def test_github_actions_reports_minutes_without_guessing_unknown_plan(self):
         projection, errors = free_quota.build_projection(

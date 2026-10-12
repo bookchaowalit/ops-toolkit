@@ -1,5 +1,5 @@
 # Tier A / interview flagship nested test targets.
-# Paths are relative to the Book Dev tree (the folder that holds github/, next to the solo-ops clone layout).
+# Paths are relative to the Book Dev tree (the folder that holds github/, next to the ops-toolkit clone layout).
 # Only declare commands that are offline-safe unit/contract suites by default.
 # Heavy gates (full LHCI build, live E2E against running stacks) stay opt-in.
 

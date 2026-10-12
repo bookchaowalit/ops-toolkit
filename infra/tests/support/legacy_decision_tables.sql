@@ -1,4 +1,4 @@
--- Legacy SQLite decision tables (retired 2026-10-10; decisions live in the solo-decisions cell).
+-- Legacy SQLite decision tables (retired 2026-10-10; decisions live in the decisions cell).
 -- Tests apply this DDL to a temporary database for SqliteDecisionStore; production never does.
 
 CREATE TABLE IF NOT EXISTS decision_records (

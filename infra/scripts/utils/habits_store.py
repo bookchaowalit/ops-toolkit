@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Habits live in the habits cell (solo-habits); this is its client.
+"""Habits live in the habits cell (habits); this is its client.
 
 Every reader and writer of habits, habit logs, routines and routine logs goes
 through ``open_habits_store`` instead of the retired SQLite tables. The API URL

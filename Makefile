@@ -1,9 +1,9 @@
-# solo-ops — thin Makefile; the canonical commands are Task tasks (see `task --list`).
+# ops-toolkit — thin Makefile; the canonical commands are Task tasks (see `task --list`).
 #
 # Usage:
 #   make setup   — copy infra/.env.example to infra/.env when missing
 #   make test    — offline Python test scripts (task test)
-#   make health  — operational health through the owner CLI (needs `task install`, solo-mcp sibling)
+#   make health  — operational health through the owner CLI (needs `task install`, mcp-aggregator sibling)
 #   make lint    — hardcoded secret / stale path scan of infra/scripts
 #   make clean   — remove generated state
 
@@ -13,7 +13,7 @@ PYTHON  := python3
 SCRIPTS := infra/scripts
 
 setup: check-env
-	@echo "✅ solo-ops setup complete"
+	@echo "✅ ops-toolkit setup complete"
 
 check-env:
 	@if [ ! -f infra/.env ]; then \

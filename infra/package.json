@@ -205,10 +205,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bookchaowalit/solo-ops.git"
+    "url": "git+https://github.com/bookchaowalit/ops-toolkit.git"
   },
   "bugs": {
-    "url": "https://github.com/bookchaowalit/solo-ops/issues"
+    "url": "https://github.com/bookchaowalit/ops-toolkit/issues"
   },
-  "homepage": "https://github.com/bookchaowalit/solo-ops#readme"
+  "homepage": "https://github.com/bookchaowalit/ops-toolkit#readme"
 }

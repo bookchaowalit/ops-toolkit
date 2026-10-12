@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tests" / "support"))
 from siblings import ARCHITECTURE_ROOT  # noqa: E402
 
-# The launcher runbook asset is owned by solo-architecture (SOLO_ARCHITECTURE_ROOT).
+# The launcher runbook asset is owned by architecture-docs (SOLO_ARCHITECTURE_ROOT).
 LAUNCHER = ARCHITECTURE_ROOT / "operations" / "runbooks" / "assets" / "runpod-vllm" / "llm-coder.sh"
 TUNNEL = ROOT / "scripts" / "platform" / "runpod_vllm_tunnel.sh"
 SMOKE = ROOT / "scripts" / "platform" / "runpod_vllm_smoke.sh"
@@ -102,7 +102,7 @@ class RunpodVllmContractTest(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, f"{STOP_HOOK}: {result.stderr}")
 
-    @unittest.skipUnless(LAUNCHER.is_file(), "solo-architecture checkout not present (SOLO_ARCHITECTURE_ROOT)")
+    @unittest.skipUnless(LAUNCHER.is_file(), "architecture-docs checkout not present (SOLO_ARCHITECTURE_ROOT)")
     def test_launcher_is_loopback_and_restart_safe(self):
         content = LAUNCHER.read_text(encoding="utf-8")
         for required in (

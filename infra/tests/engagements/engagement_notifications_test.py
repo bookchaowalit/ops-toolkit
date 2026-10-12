@@ -98,7 +98,7 @@ class EngagementNotificationsTest(unittest.TestCase):
         categories = {item["category"] for item in findings}
         self.assertEqual(categories, {"blocked", "overdue_task"})
 
-    @requires(ENGAGEMENT_REGISTRY, "solo-architecture engagement registry")
+    @requires(ENGAGEMENT_REGISTRY, "architecture-docs engagement registry")
     def test_cli_dry_run_never_queues(self) -> None:
         result = self.run_bridge("--dry-run", "--json", "--as-of", "2026-08-11")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)

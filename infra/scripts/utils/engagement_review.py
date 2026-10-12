@@ -297,7 +297,7 @@ def render(report: dict) -> str:
 
 
 def main() -> int:
-    skip_without_architecture("engagement_review.py")  # standalone: no solo-architecture checkout -> SKIP, not FAIL
+    skip_without_architecture("engagement_review.py")  # standalone: no architecture-docs checkout -> SKIP, not FAIL
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--strict", action="store_true", help="fail when task-link integrity errors are found")
     parser.add_argument("--json", action="store_true", help="emit a machine-readable JSON report")

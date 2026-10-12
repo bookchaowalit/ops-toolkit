@@ -27,7 +27,7 @@ def load_yaml(path: Path) -> dict:
 
 
 def main() -> int:
-    skip_without_architecture("portfolio_context_guard.py")  # standalone: no solo-architecture checkout -> SKIP, not FAIL
+    skip_without_architecture("portfolio_context_guard.py")  # standalone: no architecture-docs checkout -> SKIP, not FAIL
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--report", action="store_true", help="write the generated context dashboard")
     args = parser.parse_args()

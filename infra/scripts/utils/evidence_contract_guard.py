@@ -573,7 +573,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
-    skip_without_architecture("evidence_contract_guard.py")  # standalone: no solo-architecture checkout -> SKIP, not FAIL
+    skip_without_architecture("evidence_contract_guard.py")  # standalone: no architecture-docs checkout -> SKIP, not FAIL
     args = parse_args()
     should_audit = args.audit or args.strict or args.write or not args.check
     try:

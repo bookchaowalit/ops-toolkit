@@ -18,7 +18,7 @@ from cell_store import open_cell_store
 from habits_store import completed_today, open_habits_store
 
 
-# Tracking views live in the solo-knowledge repository (SOLO_KNOWLEDGE_ROOT).
+# Tracking views live in the knowledge-base repository (SOLO_KNOWLEDGE_ROOT).
 GOALS_DIR = KNOWLEDGE_ROOT / "goals"
 HABITS_DIR = KNOWLEDGE_ROOT / "habits"
 ROUTINES_DIR = KNOWLEDGE_ROOT / "routines"

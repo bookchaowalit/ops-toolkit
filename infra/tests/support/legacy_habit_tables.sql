@@ -1,4 +1,4 @@
--- Legacy SQLite habit tables (retired 2026-10-10, habits live in the solo-habits cell).
+-- Legacy SQLite habit tables (retired 2026-10-10, habits live in the habits cell).
 -- Tests apply this DDL to a temporary database for SqliteHabitsStore, production never does.
 
 CREATE TABLE IF NOT EXISTS habits (

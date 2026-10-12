@@ -33,7 +33,7 @@ Options:
   --python       Only validate python3 resolution
   --strict       Treat missing optional tools (go) as failure
   --production   Validate production API, service, and worker configuration
-  --data-lake    (moved to bookchaowalit/solo-data-lake; prints a pointer only)
+  --data-lake    (moved to bookchaowalit/data-lake; prints a pointer only)
   --quiet        Print only failures
   -h, --help     Show this help
 
@@ -451,7 +451,7 @@ fi
 if [[ "$DATA_LAKE" -eq 1 ]]; then
   log ""
   log "Data Lake runtime"
-  warn "The data-lake runtime moved to bookchaowalit/solo-data-lake; run its preflight there"
+  warn "The data-lake runtime moved to bookchaowalit/data-lake; run its preflight there"
 fi
 
 log ""

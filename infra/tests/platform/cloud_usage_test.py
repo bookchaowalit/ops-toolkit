@@ -24,7 +24,7 @@ SPEC.loader.exec_module(cloud_usage)
 
 
 class CloudUsageTest(unittest.TestCase):
-    @requires(FREE_CATALOG, "solo-architecture free-resource catalog")
+    @requires(FREE_CATALOG, "architecture-docs free-resource catalog")
     def test_snapshot_is_read_only_and_does_not_return_provider_payloads(self):
         runner = Mock(
             return_value={
@@ -237,7 +237,7 @@ class CloudUsageTest(unittest.TestCase):
         self.assertEqual(payload["summary"]["vercel_billing_status"], "healthy")
         self.assertEqual(payload["usage"]["vercel_billing"]["service_breakdown"][0]["service_name"], "Vercel Functions")
 
-    @requires(FREE_CATALOG, "solo-architecture free-resource catalog")
+    @requires(FREE_CATALOG, "architecture-docs free-resource catalog")
     def test_snapshot_includes_sanitized_github_actions_usage_and_free_quota(self):
         runner = Mock(
             return_value={

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Keep isolated (Z3) social identities and account secrets out of Git.
 
-The account registry under ``accounts/`` in the solo-accounts repository may describe public (Z1), business
+The account registry under ``accounts/`` in the accounts repository may describe public (Z1), business
 (Z2) and separated faceless brands (Z2-separated). A strictly isolated persona
 (Z3, legacy ``identity_layer: anonymous``) must live only in its own private
 vault: a Git record would itself prove who owns it. This guard fails on any new
@@ -21,9 +21,9 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[3]
 ACCOUNTS_DIR = "accounts"
-# The account metadata lives in the bookchaowalit/solo-accounts repository
-# (sibling checkout, ../solo-accounts); override with SOLO_ACCOUNTS_ROOT.
-ACCOUNTS_REPO = Path(os.environ.get("SOLO_ACCOUNTS_ROOT") or ROOT.parent / "solo-accounts")
+# The account metadata lives in the bookchaowalit/accounts repository
+# (sibling checkout, ../accounts); override with SOLO_ACCOUNTS_ROOT.
+ACCOUNTS_REPO = Path(os.environ.get("SOLO_ACCOUNTS_ROOT") or ROOT.parent / "accounts")
 TRUST_ZONES = {"z0-root", "z1-public", "z2-business", "z2-separated", "z3-isolated"}
 ISOLATED_ZONES = {"z3-isolated", "z0-root"}
 ISOLATED_LAYERS = {"anonymous"}

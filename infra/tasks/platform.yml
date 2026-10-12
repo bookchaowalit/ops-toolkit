@@ -335,7 +335,7 @@ tasks:
       - bash scripts/setup/run-python3.sh scripts/security/hash_api_token.py {{.CLI_ARGS}}
 
   ai-gateway:service:test:
-    desc: Test the AI gateway client token helper (the gateway service lives in bookchaowalit/solo-ai-gateway; the media router moved with solo-media-worker)
+    desc: Test the AI gateway client token helper (the gateway service lives in bookchaowalit/ai-gateway; the media router moved with media-worker)
     dir: infra
     cmds:
       - bash scripts/setup/run-python3.sh tests/security/provision_ai_gateway_client_test.py

@@ -37,7 +37,7 @@ class JobClientTests(unittest.TestCase):
         self.assertEqual(result.source, "none")
         self.assertEqual(result.data_status, "unavailable")
 
-    @requires(JOB_CONTRACT, "solo-architecture job data contract")
+    @requires(JOB_CONTRACT, "architecture-docs job data contract")
     def test_track_b_files_have_no_capture_csv_dependency(self):
         errors: list[str] = []
         guard.check_job_contract(errors)

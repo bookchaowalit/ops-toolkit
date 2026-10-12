@@ -1,4 +1,4 @@
-# solo-ops tests
+# ops-toolkit tests
 
 Offline test scripts grouped by the boundary they protect. Every `*_test.py` is a stand-alone script
 (plain asserts or `unittest`); `run_all.py` runs them all, each in its own interpreter with the production
@@ -26,10 +26,10 @@ tests/
 └── fixtures/     # sanitized fixtures
 ```
 
-Tests that need a sibling repository (`solo-architecture`, `solo-knowledge`, `solo-skills`, ...) look it up
+Tests that need a sibling repository (`architecture-docs`, `knowledge-base`, `agent-skills`, ...) look it up
 through `support/siblings.py` (`SOLO_<NAME>_ROOT` or `../<repo>`) and print `SKIP` / `skipped` when it is absent,
 so a fresh clone passes with `task test`. No test reads a registry-hub checkout.
 
 The agent-harness hook tests and the registry guard tests live in `bookchaowalit/solo-empire`;
-skill governance tests live in `bookchaowalit/solo-skills`; the solo-mcp tests (including the three that drive
-`infra/cli.ts` from this repository) live in `bookchaowalit/solo-mcp`.
+skill governance tests live in `bookchaowalit/agent-skills`; the mcp-aggregator tests (including the three that drive
+`infra/cli.ts` from this repository) live in `bookchaowalit/mcp-aggregator`.

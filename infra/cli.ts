@@ -17,17 +17,17 @@ import { existsSync, readdirSync, statSync } from 'fs';
 import { join, basename, dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
-// solo-ops checkout (SOLO_OPS_ROOT overrides it, e.g. for tests); siblings come from env vars or ../<repo>.
+// ops-toolkit checkout (SOLO_OPS_ROOT overrides it, e.g. for tests); siblings come from env vars or ../<repo>.
 const REPO_ROOT = process.env.SOLO_OPS_ROOT || resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sibling = (envName: string, repo: string) =>
   process.env[envName] ? resolve(process.env[envName] as string) : resolve(REPO_ROOT, '..', repo);
-const KNOWLEDGE_ROOT = sibling('SOLO_KNOWLEDGE_ROOT', 'solo-knowledge');
+const KNOWLEDGE_ROOT = sibling('SOLO_KNOWLEDGE_ROOT', 'knowledge-base');
 // The folder that holds the repository clones: <github>/<owner>/<visibility>/<repo>.
 const BOOK_DEV_GITHUB_ROOT = process.env.SOLO_BOOK_DEV_GITHUB_ROOT
   ? resolve(process.env.SOLO_BOOK_DEV_GITHUB_ROOT)
   : (['private', 'public'].includes(basename(dirname(REPO_ROOT))) ? resolve(REPO_ROOT, '..', '..', '..') : '');
 
-// Shared with the MCP server: the same module instances solo-mcp's tests override.
+// Shared with the MCP server: the same module instances mcp-aggregator's tests override.
 type TaskUpdateFields = Record<string, any>;
 const { taskStatusSchema, updateTask } = await mcp('task-state');
 const { compareValues, legacyTaskRow, openTaskStore } = await mcp('task-store');
@@ -461,7 +461,7 @@ async function main() {
     case 'review': {
       console.log('\n📋 WEEKLY REVIEW CHECKLIST');
       console.log('═'.repeat(50));
-      console.log('  See template: templates/ in the solo-architecture repository');
+      console.log('  See template: templates/ in the architecture-docs repository');
       console.log('');
       console.log('  Steps:');
       console.log('  1. Run: npx tsx infra/cli.ts health');

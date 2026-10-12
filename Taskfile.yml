@@ -1,8 +1,8 @@
 version: '3'
 
-# solo-ops: operations tooling for Solo Empire (scripts, owner CLI, platform registries, tests).
-# Standalone: `task test` runs in a fresh clone; sibling repositories (solo-architecture,
-# solo-knowledge, solo-mcp, solo-skills, ...) are optional and make tests skip when absent.
+# ops-toolkit: operations tooling for Solo Empire (scripts, owner CLI, platform registries, tests).
+# Standalone: `task test` runs in a fresh clone; sibling repositories (architecture-docs,
+# knowledge-base, mcp-aggregator, agent-skills, ...) are optional and make tests skip when absent.
 # History of everything under infra/ before 2026-10-11 lives in the solo-empire repository.
 
 x-book-dev-github: &book_dev_github '{{if env "SOLO_BOOK_DEV_GITHUB_ROOT"}}{{env "SOLO_BOOK_DEV_GITHUB_ROOT"}}{{else}}{{.ROOT_DIR}}/../../..{{end}}'
@@ -77,7 +77,7 @@ includes:
 
 tasks:
   default:
-    desc: Show the solo-ops tasks
+    desc: Show the ops-toolkit tasks
     cmds:
       - task --list
 
@@ -109,7 +109,7 @@ tasks:
       - task: test
 
   docs:check:
-    desc: Run the documentation and contract guards owned by solo-ops (static; they need the sibling architecture/knowledge checkouts)
+    desc: Run the documentation and contract guards owned by ops-toolkit (static; they need the sibling architecture/knowledge checkouts)
     env:
       # Static registry checks only: live cell/API activation checks need credentials (run the guards with --live).
       SOLO_EMPIRE_CI: "1"

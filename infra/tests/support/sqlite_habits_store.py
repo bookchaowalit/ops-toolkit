@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Test double: the retired SQLite habit tables behind the ``ApiHabitsStore`` interface.
 
-Habits live in the habits cell (solo-habits) since 2026-10-10; production code
+Habits live in the habits cell (habits) since 2026-10-10; production code
 uses ``open_habits_store`` only and must not import this module. Behaviour
 tests patch ``open_habits_store`` to return this double over a temporary SQLite
 database. It mirrors the service: logs are upserts on (habit, day), and every
@@ -38,7 +38,7 @@ def apply_legacy_habit_tables(conn: sqlite3.Connection) -> None:
 
 
 def streak(completed_days: set[date], schedule_days: list[str] | None, today: date) -> int:
-    """The service's rule (solo-habits app.streak), mirrored for tests."""
+    """The service's rule (habits app.streak), mirrored for tests."""
     scheduled = {WEEKDAYS[d.lower()] for d in (schedule_days or []) if d.lower() in WEEKDAYS} or set(range(7))
     count, day = 0, today
     for _ in range(366):

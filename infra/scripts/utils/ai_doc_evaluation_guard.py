@@ -46,7 +46,7 @@ def sha256(path: Path) -> str:
 
 
 def check() -> int:
-    skip_without_architecture("ai_doc_evaluation_guard.py")  # standalone: no solo-architecture checkout -> SKIP, not FAIL
+    skip_without_architecture("ai_doc_evaluation_guard.py")  # standalone: no architecture-docs checkout -> SKIP, not FAIL
     print("=" * 70)
     print("Solo Empire — AI Doc Assistant Evaluation Guard")
     print("=" * 70)

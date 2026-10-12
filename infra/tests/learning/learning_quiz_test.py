@@ -12,7 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "support"))
 from siblings import KNOWLEDGE_ROOT, exit_unless_exists  # noqa: E402
-exit_unless_exists(KNOWLEDGE_ROOT / "quiz", "solo-knowledge checkout (SOLO_KNOWLEDGE_ROOT)")
+exit_unless_exists(KNOWLEDGE_ROOT / "quiz", "knowledge-base checkout (SOLO_KNOWLEDGE_ROOT)")
 RUNNER = ROOT / "infra" / "scripts" / "learning" / "quiz.py"
 
 

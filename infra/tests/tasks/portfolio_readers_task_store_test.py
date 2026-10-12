@@ -24,7 +24,7 @@ for sub in ("utils", "workflows"):
 
 from _env import skip_without_knowledge  # noqa: E402
 
-skip_without_knowledge("portfolio_readers_task_store_test.py")  # needs solo-knowledge; skipped in CI when absent
+skip_without_knowledge("portfolio_readers_task_store_test.py")  # needs knowledge-base; skipped in CI when absent
 
 # cron_jobs and the operating tables left schema.sql (migration 085); their legacy DDL serves the tests.
 LEGACY_OIA = Path(__file__).resolve().parents[1] / "support" / "legacy_operating_intake_automation_tables.sql"
@@ -114,7 +114,7 @@ def build_db() -> sqlite3.Connection:
 
 def first_role_id() -> str:
     path = ARCHITECTURE_ROOT / "docs" / "registries" / "ROLE-CATALOG.yaml"
-    if not path.is_file():  # solo-architecture checkout absent: any role id satisfies the fixture
+    if not path.is_file():  # architecture-docs checkout absent: any role id satisfies the fixture
         return "fixture-role"
     catalog = yaml.safe_load((ARCHITECTURE_ROOT / "docs" / "registries" / "ROLE-CATALOG.yaml").read_text(encoding="utf-8"))
     return str(next(role["id"] for role in catalog["roles"] if isinstance(role, dict) and role.get("id")))

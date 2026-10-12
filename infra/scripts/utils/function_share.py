@@ -31,9 +31,9 @@ for _stream in (sys.stdout, sys.stderr):
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _env import KNOWLEDGE_ROOT, sibling_repo_root  # noqa: E402
 
-# The role registries live in bookchaowalit/solo-architecture (override SOLO_ARCHITECTURE_ROOT);
-# diary entries live in the solo-knowledge checkout (SOLO_KNOWLEDGE_ROOT).
-ARCHITECTURE_ROOT = sibling_repo_root("solo-architecture")
+# The role registries live in bookchaowalit/architecture-docs (override SOLO_ARCHITECTURE_ROOT);
+# diary entries live in the knowledge-base checkout (SOLO_KNOWLEDGE_ROOT).
+ARCHITECTURE_ROOT = sibling_repo_root("architecture-docs")
 
 ROLE_CLASSIFICATIONS = ARCHITECTURE_ROOT / "docs" / "registries" / "ROLE-CLASSIFICATIONS.yaml"
 ROLE_ECONOMIC_ALIGNMENT = ARCHITECTURE_ROOT / "docs" / "registries" / "ROLE-ECONOMIC-ALIGNMENT.yaml"

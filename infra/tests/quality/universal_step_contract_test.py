@@ -15,7 +15,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "support"))
 from siblings import ARCHITECTURE_ROOT, exit_unless_exists  # noqa: E402
-exit_unless_exists(ARCHITECTURE_ROOT / "systems/architecture", "solo-architecture checkout (SOLO_ARCHITECTURE_ROOT)")
+exit_unless_exists(ARCHITECTURE_ROOT / "systems/architecture", "architecture-docs checkout (SOLO_ARCHITECTURE_ROOT)")
 sys.path.insert(0, str(ROOT / "infra" / "scripts" / "utils"))
 sys.path.insert(0, str(ROOT / "infra" / "tests" / "support"))
 

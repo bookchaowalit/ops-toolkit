@@ -35,7 +35,7 @@ INFRA_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "utils"))
 from _env import book_dev_tree  # noqa: E402
 
-# Workspace root = the Book Dev tree that holds `github/<owner>/<visibility>/<repo>` clones (siblings of solo-ops).
+# Workspace root = the Book Dev tree that holds `github/<owner>/<visibility>/<repo>` clones (siblings of ops-toolkit).
 REPO_ROOT = book_dev_tree() or INFRA_ROOT.parent
 DEFAULT_MANIFEST = Path(__file__).resolve().with_name("playwright-projects.json")
 DEFAULT_OUTPUT_ROOT = INFRA_ROOT / "test-results" / "playwright"

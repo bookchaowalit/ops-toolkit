@@ -18,8 +18,8 @@ updated: 2026-10-04
 deployment_enabled: false
 related:
   providers: infra/platform/cloud-providers.yaml
-  external_apps: bookchaowalit/solo-integrations:data/external_app_registry.ts
-  runtime_services: bookchaowalit/solo-platform-kit:infra/platform/PLATFORM-SERVICES.yaml
+  external_apps: bookchaowalit/integrations:data/external_app_registry.ts
+  runtime_services: bookchaowalit/platform-kit:infra/platform/PLATFORM-SERVICES.yaml
   ai_gateway: systems/ai-data/central-ai-gateway.md
   gpu_workers: infra/platform/gpu-worker-catalog.json
 
@@ -84,7 +84,7 @@ categories:
   - {id: devinfra, name: Developer Infrastructure, gateway: null, access: platform}
 
 # Field order: id, category, name, decision, difficulty, primary, alternatives,
-# NOTE 2026-10-11: the local infra/api server was retired (archived in bookchaowalit/solo-platform-api), so every
+# NOTE 2026-10-11: the local infra/api server was retired (archived in bookchaowalit/platform-api-archive), so every
 # capability whose only implementation lived there is `planned` with no impl path until a cell repo re-implements it.
 # refs (ids in cloud-providers.yaml or solo-integrations external_app_registry.ts), then overrides.
 services:
@@ -136,7 +136,7 @@ services:
   - {id: payout, category: payments, name: Payouts to sellers or partners, decision: buy, difficulty: 4, primary: Stripe Connect, alternatives: [Opn Payments (Omise) transfers, Wise], refs: [stripe, wise], data_class: sensitive, approval: true}
   - {id: marketplace-payment, category: payments, name: Split payments for marketplaces, decision: buy, difficulty: 5, primary: Stripe Connect, alternatives: [Opn Payments (Omise)], refs: [stripe], data_class: sensitive, approval: true}
   - {id: wallet, category: payments, name: Stored-value wallet, decision: buy, difficulty: 5, primary: Licensed e-money partner, alternatives: [], data_class: regulated, approval: true, note: Stored value is a regulated e-money activity in Thailand; never hold customer funds directly.}
-  - {id: ledger, category: payments, name: Double-entry money ledger, decision: hybrid, difficulty: 4, primary: Modern Treasury Ledgers, alternatives: [Central double-entry tables], status: partial, data_class: sensitive, approval: true, impl: [infra/scripts/utils/crm_ledger.py], note: "Revenue, invoices and clients live in the CRM ledger (bookchaowalit/solo-crm) and are read through crm_ledger.py since 2026-10-11; it is not a customer-funds ledger."}
+  - {id: ledger, category: payments, name: Double-entry money ledger, decision: hybrid, difficulty: 4, primary: Modern Treasury Ledgers, alternatives: [Central double-entry tables], status: partial, data_class: sensitive, approval: true, impl: [infra/scripts/utils/crm_ledger.py], note: "Revenue, invoices and clients live in the CRM ledger (bookchaowalit/crm) and are read through crm_ledger.py since 2026-10-11; it is not a customer-funds ledger."}
   - {id: fx, category: payments, name: Foreign exchange and multi-currency, decision: buy, difficulty: 4, primary: Wise Platform, alternatives: [Banking provider], refs: [wise], data_class: sensitive, approval: true}
   - {id: reconciliation, category: payments, name: Payment and bank reconciliation, decision: hybrid, difficulty: 3, primary: Central reconciliation job, alternatives: [Modern Treasury], refs: [stripe], phase: later, data_class: sensitive}
 
@@ -176,7 +176,7 @@ services:
   - {id: cdc, category: data, name: Change data capture, decision: buy, difficulty: 4, primary: Debezium, alternatives: [Airbyte CDC], status: deferred}
   - {id: data-warehouse, category: data, name: Analytics warehouse, decision: buy, difficulty: 4, primary: BigQuery, alternatives: [MotherDuck, Snowflake], refs: [gcp], status: deferred}
   - {id: etl, category: data, name: ETL / ELT connectors, decision: buy, difficulty: 4, primary: Airbyte, alternatives: [Fivetran, dlt], status: deferred}
-  - {id: data-lake, category: data, name: Lake-first Parquet / Iceberg storage, decision: hybrid, difficulty: 4, primary: Central lake pipeline on R2, alternatives: [Amazon S3], refs: [cloudflare, aws], status: planned, phase: later, impl: [], note: "Owned by the data-engineering contracts; apps publish events, not files. Pipeline code lives in bookchaowalit/solo-data-lake (infra/scripts/data_lake/iceberg.py)."}
+  - {id: data-lake, category: data, name: Lake-first Parquet / Iceberg storage, decision: hybrid, difficulty: 4, primary: Central lake pipeline on R2, alternatives: [Amazon S3], refs: [cloudflare, aws], status: planned, phase: later, impl: [], note: "Owned by the data-engineering contracts; apps publish events, not files. Pipeline code lives in bookchaowalit/data-lake (infra/scripts/data_lake/iceberg.py)."}
   - {id: backup, category: data, name: Database and file backups, decision: buy, difficulty: 3, primary: Neon point-in-time restore + R2 snapshots, alternatives: [Supabase backups], refs: [neon, cloudflare], status: partial, phase: now, impl: [infra/scripts/platform/self_hosted_readiness.py]}
 
   # 8. Search / Discovery
@@ -228,20 +228,20 @@ services:
   - {id: dependency-scan, category: security, name: Dependency scan and updates, decision: buy, difficulty: 3, primary: GitHub Dependabot, alternatives: [Snyk, Renovate], refs: [github], phase: now}
   - {id: siem, category: security, name: Security event analytics, decision: buy, difficulty: 5, primary: Microsoft Sentinel, alternatives: [Splunk], refs: [azure], status: deferred}
   - {id: cspm, category: security, name: Cloud security posture, decision: buy, difficulty: 4, primary: Cloud provider native posture tools, alternatives: [Wiz], status: deferred}
-  - {id: rate-limiting, category: security, name: Rate limiting, decision: build, difficulty: 1, primary: Central limiter (Upstash-backed when shared), alternatives: [Cloudflare rate limiting rules], refs: [upstash, cloudflare], status: planned, phase: now, impl: [], note: The AI gateway limiter moved to bookchaowalit/solo-ai-gateway on 2026-10-11.}
+  - {id: rate-limiting, category: security, name: Rate limiting, decision: build, difficulty: 1, primary: Central limiter (Upstash-backed when shared), alternatives: [Cloudflare rate limiting rules], refs: [upstash, cloudflare], status: planned, phase: now, impl: [], note: The AI gateway limiter moved to bookchaowalit/ai-gateway on 2026-10-11.}
   - {id: audit-log, category: security, name: Audit trail of sensitive actions, decision: build, difficulty: 3, primary: Central append-only audit table, alternatives: [WorkOS Audit Logs], status: planned, phase: now, impl: [], note: The finance-only audit module (infra/api/audit.ts) was removed on 2026-10-11.}
 
   # 13. AI Services
-  - {id: llm, category: ai, name: Text generation and reasoning, decision: buy, difficulty: 5, primary: Central AI Gateway (OpenAI-compatible adapter), alternatives: [Anthropic, Google Gemini, OpenAI], refs: [anthropic, openai, google-gemini], status: planned, phase: now, impl: [], note: Generation runs in bookchaowalit/solo-ai-gateway; the local /api/ai routes were retired on 2026-10-11.}
+  - {id: llm, category: ai, name: Text generation and reasoning, decision: buy, difficulty: 5, primary: Central AI Gateway (OpenAI-compatible adapter), alternatives: [Anthropic, Google Gemini, OpenAI], refs: [anthropic, openai, google-gemini], status: planned, phase: now, impl: [], note: Generation runs in bookchaowalit/ai-gateway; the local /api/ai routes were retired on 2026-10-11.}
   - {id: embedding, category: ai, name: Text embeddings, decision: buy, difficulty: 4, primary: Gateway embedding route, alternatives: [OpenAI, Voyage, Pod 2 worker], refs: [openai, cohere], status: partial, phase: next, impl: [infra/platform/gpu-worker-catalog.json]}
   - {id: speech-to-text, category: ai, name: Speech to text, decision: buy, difficulty: 4, primary: Gateway STT route, alternatives: [OpenAI, Deepgram, Pod 2 worker], refs: [openai], status: partial, impl: [infra/platform/gpu-worker-catalog.json]}
   - {id: text-to-speech, category: ai, name: Text to speech, decision: buy, difficulty: 4, primary: ElevenLabs, alternatives: [OpenAI TTS], refs: [openai]}
   - {id: ocr, category: ai, name: General OCR, decision: buy, difficulty: 4, primary: Gateway OCR route, alternatives: [Google Document AI, Azure Document Intelligence, Pod 2 worker], refs: [gcp, azure], status: partial, impl: [infra/platform/gpu-worker-catalog.json]}
-  - {id: translation, category: ai, name: Translation, decision: buy, difficulty: 4, primary: Central AI Gateway LLM, alternatives: [Google Translate, DeepL], refs: [gcp], status: planned, impl: [], note: Runs through bookchaowalit/solo-ai-gateway since 2026-10-11.}
+  - {id: translation, category: ai, name: Translation, decision: buy, difficulty: 4, primary: Central AI Gateway LLM, alternatives: [Google Translate, DeepL], refs: [gcp], status: planned, impl: [], note: Runs through bookchaowalit/ai-gateway since 2026-10-11.}
   - {id: moderation, category: ai, name: Content moderation, decision: buy, difficulty: 4, primary: OpenAI moderation, alternatives: [Central AI Gateway classifier], refs: [openai], phase: next}
   - {id: image-generation, category: ai, name: Image generation, decision: buy, difficulty: 5, primary: Gateway image route, alternatives: [OpenAI Images, Replicate, Pod 3 worker], refs: [openai, replicate], status: partial, impl: [infra/platform/gpu-worker-catalog.json]}
   - {id: ai-search, category: ai, name: AI search over app data, decision: hybrid, difficulty: 3, primary: Central RAG on pgvector + gateway, alternatives: [], refs: [neon], phase: next}
-  - {id: rag, category: ai, name: Retrieval-augmented generation, decision: build, difficulty: 3, primary: Central RAG service, alternatives: [], status: partial, phase: next, impl: [projects/product/engineering/book-dev/github/bookchaowalit/private/solo-knowledge-api/server.py]}
+  - {id: rag, category: ai, name: Retrieval-augmented generation, decision: build, difficulty: 3, primary: Central RAG service, alternatives: [], status: partial, phase: next, impl: [projects/product/engineering/book-dev/github/bookchaowalit/private/knowledge-api/server.py]}
   - {id: ai-agent, category: ai, name: Tool-using agents, decision: build, difficulty: 3, primary: Central agent runtime on the AI Gateway, alternatives: [], phase: next}
 
   # 14. Commerce
@@ -261,7 +261,7 @@ services:
   - {id: subscription, category: saas, name: SaaS subscription management, decision: buy, difficulty: 4, primary: Stripe Billing, alternatives: [Paddle, Lago], refs: [stripe, paddle], phase: next, data_class: sensitive, approval: true}
   - {id: metered-billing, category: saas, name: Usage-based billing, decision: buy, difficulty: 4, primary: Stripe Billing meters, alternatives: [Lago], refs: [stripe], phase: later, data_class: sensitive, approval: true}
   - {id: usage-tracking, category: saas, name: Usage counters per tenant, decision: build, difficulty: 3, primary: Central usage table, alternatives: [Lago], status: planned, phase: next, impl: [], note: AI usage metering moved to solo-ai-gateway; no local meter remains.}
-  - {id: crm, category: saas, name: CRM, decision: hybrid, difficulty: 4, primary: Central CRM API, alternatives: [HubSpot, Pipedrive], refs: [hubspot, pipedrive], status: planned, phase: now, data_class: personal, impl: [], note: The CRM API lives in its own repository (bookchaowalit/solo-crm) since 2026-10-11.}
+  - {id: crm, category: saas, name: CRM, decision: hybrid, difficulty: 4, primary: Central CRM API, alternatives: [HubSpot, Pipedrive], refs: [hubspot, pipedrive], status: planned, phase: now, data_class: personal, impl: [], note: The CRM API lives in its own repository (bookchaowalit/crm) since 2026-10-11.}
   - {id: customer-support, category: saas, name: Customer support inbox, decision: buy, difficulty: 4, primary: Crisp, alternatives: [Intercom, Zendesk], refs: [intercom, zendesk], data_class: personal}
   - {id: help-center, category: saas, name: Help center / docs, decision: hybrid, difficulty: 3, primary: Static docs site, alternatives: [GitBook, Intercom Articles], refs: [intercom]}
   - {id: ticketing, category: saas, name: Support ticketing, decision: buy, difficulty: 4, primary: Zendesk, alternatives: [Freshdesk], refs: [zendesk, freshdesk], data_class: personal}

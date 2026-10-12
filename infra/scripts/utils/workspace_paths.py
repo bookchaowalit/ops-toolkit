@@ -17,7 +17,7 @@ except ImportError as exc:  # pragma: no cover - covered by environment setup
 from _env import KNOWLEDGE_ROOT, PROJECT_ROOT, book_dev_github_root
 
 
-# Workspace docs live in the solo-knowledge repository (SOLO_KNOWLEDGE_ROOT).
+# Workspace docs live in the knowledge-base repository (SOLO_KNOWLEDGE_ROOT).
 REGISTRY_PATH = KNOWLEDGE_ROOT / "projects" / "workspaces.yaml"
 # Workspaces whose checkout is a local-only (gitignored) tree owned by solo-empire.
 EXTERNAL_WORKSPACE_PATHS = frozenset({"projects/product/engineering/book-dev"})
@@ -87,7 +87,7 @@ def load_workspace_registry(registry_path: Path | None = None) -> tuple[dict[str
 _load_registry = load_workspace_registry
 
 def _load_or_empty() -> tuple[dict[str, str], ...]:
-    # The registry lives in solo-knowledge (optional sibling): without it no workspace resolves.
+    # The registry lives in knowledge-base (optional sibling): without it no workspace resolves.
     return load_workspace_registry() if REGISTRY_PATH.is_file() else ()
 
 
@@ -118,7 +118,7 @@ def repo_path(*parts: str) -> Path:
 
 
 def knowledge_path(*parts: str) -> Path:
-    """Return a path rooted at the solo-knowledge repository."""
+    """Return a path rooted at the knowledge-base repository."""
 
     return KNOWLEDGE_ROOT.joinpath(*parts)
 

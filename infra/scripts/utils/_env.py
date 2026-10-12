@@ -9,10 +9,10 @@ Usage in scripts:
 import os
 from pathlib import Path
 
-# solo-ops root: _env.py -> utils -> scripts -> infra -> <solo-ops checkout>
+# ops-toolkit root: _env.py -> utils -> scripts -> infra -> <ops-toolkit checkout>
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 # Sibling repositories live next to this checkout (same parent folder) unless a
-# SOLO_<NAME>_ROOT variable points elsewhere. solo-ops never depends on the
+# SOLO_<NAME>_ROOT variable points elsewhere. ops-toolkit never depends on the
 # solo-empire hub: it has no path back to it.
 SIBLINGS_PARENT = PROJECT_ROOT.parent
 
@@ -28,23 +28,82 @@ REPORTS_DIR = Path(os.environ.get(
 ))
 
 
+# Repositories lost their `solo-` prefix on 2026-10-12. The override variables keep their
+# historical names: new repository name -> NAME in SOLO_<NAME>_ROOT.
+LEGACY_ENV_NAMES = {
+    "business-catalog": "CATALOG",
+    "agent-skills": "SKILLS",
+    "architecture-docs": "ARCHITECTURE",
+    "mcp-aggregator": "MCP",
+    "ops-toolkit": "OPS",
+    "time-tracking": "TIME",
+    "roles-skills": "ROLES_SKILLS",
+    "projects-cell": "PROJECTS",
+    "opportunities": "OPPORTUNITIES",
+    "operating-cycles": "OPERATING",
+    "learning-cell": "LEARNING",
+    "intake": "INTAKE",
+    "health-metrics": "HEALTH",
+    "diary": "DIARY",
+    "content-cell": "CONTENT",
+    "automation-cell": "AUTOMATION",
+    "accounts": "ACCOUNTS",
+    "goals": "GOALS",
+    "knowledge-base": "KNOWLEDGE",
+    "notifications": "NOTIFICATIONS",
+    "integrations": "INTEGRATIONS",
+    "saas-catalog": "SAAS_CATALOG",
+    "knowledge-api": "KNOWLEDGE_API",
+    "ai-gateway": "AI_GATEWAY",
+    "crm": "CRM",
+    "decisions": "DECISIONS",
+    "habits": "HABITS",
+    "owner-web": "WEB",
+    "hooks-worker": "HOOKS_WORKER",
+    "data-lake": "DATA_LAKE",
+    "browser-extension": "BROWSER_EXTENSION",
+    "platform-api-archive": "PLATFORM_API",
+    "ai-usage": "AI_USAGE",
+    "mcp-remote": "MCP_REMOTE",
+    "cloud-api": "CLOUD_API",
+    "platform-kit": "PLATFORM_KIT",
+    "homelab": "HOMELAB",
+    "mlops": "MLOPS",
+    "event-hub": "EVENT_HUB",
+    "data-lake-core": "EMPIRE_DATA_LAKE",
+    "media-worker": "MEDIA_WORKER",
+    "media-assets": "MEDIA",
+    "insights-worker": "INSIGHTS_WORKER",
+    "service-auth": "SERVICE_AUTH",
+    "rag-demo-cf": "RAG_DEMO_CF",
+    "cloud-monitor": "CLOUD_MONITOR",
+    "insights-dashboard": "EMPIRE_INSIGHTS",
+    "backstage-portal": "EMPIRE_BACKSTAGE",
+}
+
+
+def legacy_env_name(repo: str) -> str:
+    """NAME of the SOLO_<NAME>_ROOT override variable for a repository folder name."""
+    name = repo.split("/")[-1]
+    return LEGACY_ENV_NAMES.get(name) or (name[len("solo-"):] if name.startswith("solo-") else name).upper().replace("-", "_")
+
+
 def sibling_repo_root(repo: str) -> Path:
     """Checkout root of `bookchaowalit/<repo>` (override: SOLO_<NAME>_ROOT, default ../<repo>)."""
     name = repo.split("/")[-1]
-    short = name[len("solo-"):] if name.startswith("solo-") else name
-    override = os.environ.get(f"SOLO_{short.upper().replace('-', '_')}_ROOT")
+    override = os.environ.get(f"SOLO_{legacy_env_name(name)}_ROOT")
     return Path(override).expanduser() if override else SIBLINGS_PARENT / name
 
 
 # Workspace documentation (projects/, knowledge/, roles/, learning/, quiz/, goals/ ...)
-# lives in bookchaowalit/solo-knowledge (SOLO_KNOWLEDGE_ROOT, default ../solo-knowledge).
-KNOWLEDGE_ROOT = sibling_repo_root("solo-knowledge")
+# lives in bookchaowalit/knowledge-base (SOLO_KNOWLEDGE_ROOT, default ../knowledge-base).
+KNOWLEDGE_ROOT = sibling_repo_root("knowledge-base")
 KNOWLEDGE_BASE = KNOWLEDGE_ROOT / "knowledge"
-# Architecture docs, systems, operations, templates: bookchaowalit/solo-architecture
-# (SOLO_ARCHITECTURE_ROOT, default ../solo-architecture).
-ARCHITECTURE_ROOT = sibling_repo_root("solo-architecture")
-# Agent skills: bookchaowalit/solo-skills (SOLO_SKILLS_ROOT, default ../solo-skills).
-SKILLS_ROOT = sibling_repo_root("solo-skills")
+# Architecture docs, systems, operations, templates: bookchaowalit/architecture-docs
+# (SOLO_ARCHITECTURE_ROOT, default ../architecture-docs).
+ARCHITECTURE_ROOT = sibling_repo_root("architecture-docs")
+# Agent skills: bookchaowalit/agent-skills (SOLO_SKILLS_ROOT, default ../agent-skills).
+SKILLS_ROOT = sibling_repo_root("agent-skills")
 # Registry of repositories/systems (the `repository-catalog` folder). It is owned by
 # the registry repository; there is no default. Tools that need it take SOLO_REGISTRY_DIR
 # (or an argument) and skip clearly when it is unset.
@@ -59,7 +118,7 @@ def registry_file(relative) -> Path:
 
 
 class RegistryUnavailable(RuntimeError):
-    """SOLO_REGISTRY_DIR is unset (the registry is not part of solo-ops)."""
+    """SOLO_REGISTRY_DIR is unset (the registry is not part of ops-toolkit)."""
 
 
 def skip_without_registry(tool: str) -> None:
@@ -78,7 +137,7 @@ def book_dev_tree() -> Path | None:
 def book_dev_github_root() -> Path | None:
     """The `.../book-dev/github` folder holding the owner clones (SOLO_BOOK_DEV_GITHUB_ROOT).
 
-    When solo-ops is checked out as `<github>/<owner>/<visibility>/solo-ops` the folder is
+    When ops-toolkit is checked out as `<github>/<owner>/<visibility>/ops-toolkit` the folder is
     derived from that layout; otherwise it is None and callers skip.
     """
     override = os.environ.get("SOLO_BOOK_DEV_GITHUB_ROOT")
@@ -244,7 +303,7 @@ def get_binance_th_creds():
     )
 
 
-# Top-level folders that moved to the solo-knowledge repository (2026-10-11).
+# Top-level folders that moved to the knowledge-base repository (2026-10-11).
 KNOWLEDGE_DIRS = frozenset({
     "projects", "knowledge", "roles", "learning", "quiz", "routines", "goals",
     "habits", "decisions", "tasks", "sessions", "documentation-assets", "diary",
@@ -257,8 +316,8 @@ _BOOK_DEV_PREFIX = ("projects", "product", "engineering", "book-dev", "github")
 def repo_file(relative) -> Path:
     """Resolve a legacy repository-relative path to the repository that owns it now.
 
-    knowledge folders -> solo-knowledge, docs/systems/operations/templates ->
-    solo-architecture, skills -> solo-skills, repository-catalog -> SOLO_REGISTRY_DIR
+    knowledge folders -> knowledge-base, docs/systems/operations/templates ->
+    architecture-docs, skills -> agent-skills, repository-catalog -> SOLO_REGISTRY_DIR
     (non-existent path when unset), everything else -> this repository.
     """
     rel = Path(relative)
@@ -301,28 +360,28 @@ def repo_rel(path) -> str:
 
 
 def knowledge_checkout_missing() -> bool:
-    """True when the solo-knowledge checkout is absent."""
+    """True when the knowledge-base checkout is absent."""
     return not KNOWLEDGE_ROOT.is_dir()
 
 
 def skip_without_knowledge(guard: str) -> None:
-    """Exit 0 with a WARN when solo-knowledge is absent AND SOLO_EMPIRE_CI=1.
+    """Exit 0 with a WARN when knowledge-base is absent AND SOLO_EMPIRE_CI=1.
 
     CI checks out only this repository (the sibling is private); locally a missing
     checkout is unexpected, so the guard continues and fails on its own.
     """
     if knowledge_checkout_missing() and os.environ.get("SOLO_EMPIRE_CI") == "1":
         print(
-            f"WARN: {guard} skipped: solo-knowledge checkout not found at "
+            f"WARN: {guard} skipped: knowledge-base checkout not found at "
             f"{KNOWLEDGE_ROOT} (SOLO_EMPIRE_CI=1)"
         )
         raise SystemExit(0)
 
 
 def skip_without_architecture(tool: str) -> None:
-    """Exit 0 with a clear SKIP line when the solo-architecture checkout is absent."""
+    """Exit 0 with a clear SKIP line when the architecture-docs checkout is absent."""
     if not ARCHITECTURE_ROOT.is_dir():
-        print(f"SKIP: {tool}: solo-architecture checkout not found at {ARCHITECTURE_ROOT} (set SOLO_ARCHITECTURE_ROOT)")
+        print(f"SKIP: {tool}: architecture-docs checkout not found at {ARCHITECTURE_ROOT} (set SOLO_ARCHITECTURE_ROOT)")
         raise SystemExit(0)
 
 

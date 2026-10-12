@@ -1,12 +1,12 @@
 #!/bin/bash
-# solo-ops — idempotent local setup (safe to run repeatedly).
+# ops-toolkit — idempotent local setup (safe to run repeatedly).
 #
-# Usage (from the solo-ops checkout):
+# Usage (from the ops-toolkit checkout):
 #   bash infra/scripts/setup/setup.sh
 #
 # What it does: verifies the toolchain, creates infra/.env from the template (never overwrites),
 # and installs the Node dependencies of the owner CLI. MCP server registration belongs to the
-# solo-mcp repository (see its README); nothing here writes outside this checkout.
+# mcp-aggregator repository (see its README); nothing here writes outside this checkout.
 
 set -e
 set -o pipefail
@@ -15,7 +15,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # setup.sh is at infra/scripts/setup/setup.sh: setup -> scripts -> infra -> checkout root
 PROJECT_DIR="$( cd "$SCRIPT_DIR/../../.." && pwd )"
 
-echo "solo-ops setup — checkout: $PROJECT_DIR"
+echo "ops-toolkit setup — checkout: $PROJECT_DIR"
 
 if [ ! -f "$PROJECT_DIR/infra/package.json" ]; then
     echo "Error: cannot find infra/package.json" >&2
@@ -41,4 +41,4 @@ else
 fi
 
 echo "Done. Next: task test   (offline checks)   |   task --list"
-echo "Siblings (optional): solo-mcp, solo-architecture, solo-knowledge, solo-skills next to this checkout."
+echo "Siblings (optional): mcp-aggregator, architecture-docs, knowledge-base, agent-skills next to this checkout."

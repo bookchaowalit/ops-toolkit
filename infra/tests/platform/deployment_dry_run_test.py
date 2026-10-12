@@ -25,8 +25,8 @@ from datetime import datetime
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'scripts' / 'utils'))
 from _env import PROJECT_ROOT, sibling_repo_root
 
-# The MCP server lives in the solo-mcp repository (SOLO_MCP_ROOT, default ../solo-mcp); optional here.
-MCP_ROOT = sibling_repo_root('solo-mcp')
+# The MCP server lives in the mcp-aggregator repository (SOLO_MCP_ROOT, default ../mcp-aggregator); optional here.
+MCP_ROOT = sibling_repo_root('mcp-aggregator')
 
 
 def test_setup_script_exists():
@@ -111,7 +111,7 @@ def test_mcp_server_package():
     mcp_package = MCP_ROOT / 'package.json'
 
     if not mcp_package.exists():
-        print(f"  SKIP: solo-mcp checkout not found at {MCP_ROOT} (set SOLO_MCP_ROOT)")
+        print(f"  SKIP: mcp-aggregator checkout not found at {MCP_ROOT} (set SOLO_MCP_ROOT)")
         return True
 
     try:

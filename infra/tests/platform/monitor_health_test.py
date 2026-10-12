@@ -79,7 +79,7 @@ class MonitorHealthTest(unittest.TestCase):
         self.assertEqual((cron["status"], cron["metrics"]), ("error", {"total": 1, "failed": 1}))
         with patch.object(monitor, "open_cell_store", side_effect=monitor.ClientConfigError("off")):
             self.assertEqual(monitor.cron_check(self.now)["status"], "unavailable")
-        self.assertNotIn("ai", {c["id"] for c in report["checks"]})  # AI telemetry lives in solo-ai-gateway
+        self.assertNotIn("ai", {c["id"] for c in report["checks"]})  # AI telemetry lives in ai-gateway
         for retired in ("backups", "integrations", "security"):
             self.assertNotIn(retired, {c["id"] for c in report["checks"]})
 

@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "support"))
 from siblings import ARCHITECTURE_ROOT, exit_unless_exists  # noqa: E402
-exit_unless_exists(ARCHITECTURE_ROOT / "docs/registries", "solo-architecture checkout (SOLO_ARCHITECTURE_ROOT)")
+exit_unless_exists(ARCHITECTURE_ROOT / "docs/registries", "architecture-docs checkout (SOLO_ARCHITECTURE_ROOT)")
 sys.path.insert(0, str(ROOT / "infra" / "scripts" / "utils"))
 
 from evidence_contract_guard import (  # noqa: E402

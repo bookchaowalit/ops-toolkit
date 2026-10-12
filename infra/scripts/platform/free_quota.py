@@ -16,8 +16,8 @@ from typing import Any
 
 
 SCHEMA_VERSION = "solo-empire.free-quota.v1"
-# The free-resource catalog lives in solo-architecture (SOLO_ARCHITECTURE_ROOT, default ../solo-architecture).
-ARCHITECTURE_ROOT = Path(os.environ.get("SOLO_ARCHITECTURE_ROOT") or Path(__file__).resolve().parents[3].parent / "solo-architecture")
+# The free-resource catalog lives in architecture-docs (SOLO_ARCHITECTURE_ROOT, default ../architecture-docs).
+ARCHITECTURE_ROOT = Path(os.environ.get("SOLO_ARCHITECTURE_ROOT") or Path(__file__).resolve().parents[3].parent / "architecture-docs")
 CATALOG_PATH = ARCHITECTURE_ROOT / "systems" / "cloud-platform" / "free-resource-index.json"
 FREE_ACCESS_MODELS = {"free-forever", "free-quota"}
 

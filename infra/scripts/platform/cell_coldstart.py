@@ -21,10 +21,14 @@ import json
 import os
 import statistics
 import subprocess
+import sys
 from datetime import datetime
 from pathlib import Path
 
 import yaml
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "utils"))
+from _env import legacy_env_name  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[3]
 # The systems registry belongs to the registry repository: point SOLO_REGISTRY_DIR at its
@@ -36,8 +40,7 @@ REGISTRY = Path(_REGISTRY_DIR or "/nonexistent-solo-registry") / "registries" / 
 def checkout_for_repo(repo_path: str) -> Path:
     """Sibling clone of the repository named by a registry `repo.path` (SOLO_<NAME>_ROOT or ../<repo>)."""
     name = Path(repo_path).name
-    short = name[len("solo-"):] if name.startswith("solo-") else name
-    override = os.environ.get(f"SOLO_{short.upper().replace('-', '_')}_ROOT")
+    override = os.environ.get(f"SOLO_{legacy_env_name(name)}_ROOT")
     return Path(override) if override else ROOT.parent / name
 
 

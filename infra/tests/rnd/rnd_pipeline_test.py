@@ -18,11 +18,11 @@ import yaml
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "support"))
 from siblings import ARCHITECTURE_ROOT, exit_unless_exists  # noqa: E402
-exit_unless_exists(ARCHITECTURE_ROOT / "systems/research-and-development", "solo-architecture checkout (SOLO_ARCHITECTURE_ROOT)")
+exit_unless_exists(ARCHITECTURE_ROOT / "systems/research-and-development", "architecture-docs checkout (SOLO_ARCHITECTURE_ROOT)")
 sys.path.insert(0, str(ROOT / "infra" / "scripts" / "utils"))
 from _env import repo_file, skip_without_knowledge  # noqa: E402
 
-skip_without_knowledge("rnd_pipeline_test.py")  # needs solo-knowledge; skipped in CI when absent
+skip_without_knowledge("rnd_pipeline_test.py")  # needs knowledge-base; skipped in CI when absent
 
 from rnd_pipeline_guard import CONTRACT_PATH, TRACKER_PATH, load_contract, validate  # noqa: E402
 

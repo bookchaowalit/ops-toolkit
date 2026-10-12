@@ -1,7 +1,7 @@
 """Locations of sibling repositories for tests; absent siblings make tests skip, never fail.
 
 Resolution mirrors scripts/utils/_env.py: SOLO_<NAME>_ROOT, else ../<repo> next to the
-solo-ops checkout. solo-ops has no path back to the registry hub.
+ops-toolkit checkout. ops-toolkit has no path back to the registry hub.
 """
 
 from __future__ import annotations
@@ -11,17 +11,18 @@ import sys
 from pathlib import Path
 
 OPS_ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(OPS_ROOT / "infra" / "scripts" / "utils"))
+from _env import legacy_env_name  # noqa: E402
 
 
 def sibling(repo: str) -> Path:
-    short = repo[len("solo-"):] if repo.startswith("solo-") else repo
-    override = os.environ.get(f"SOLO_{short.upper().replace('-', '_')}_ROOT")
+    override = os.environ.get(f"SOLO_{legacy_env_name(repo)}_ROOT")
     return Path(override).expanduser() if override else OPS_ROOT.parent / repo
 
 
-ARCHITECTURE_ROOT = sibling("solo-architecture")
-KNOWLEDGE_ROOT = sibling("solo-knowledge")
-SKILLS_ROOT = sibling("solo-skills")
+ARCHITECTURE_ROOT = sibling("architecture-docs")
+KNOWLEDGE_ROOT = sibling("knowledge-base")
+SKILLS_ROOT = sibling("agent-skills")
 
 
 def exit_unless_exists(path: Path, label: str) -> None:

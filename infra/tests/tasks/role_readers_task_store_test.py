@@ -17,12 +17,12 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "support"))
 from siblings import ARCHITECTURE_ROOT, exit_unless_exists  # noqa: E402
-exit_unless_exists(ARCHITECTURE_ROOT / "docs/registries", "solo-architecture checkout (SOLO_ARCHITECTURE_ROOT)")
+exit_unless_exists(ARCHITECTURE_ROOT / "docs/registries", "architecture-docs checkout (SOLO_ARCHITECTURE_ROOT)")
 sys.path.insert(0, str(ROOT / "infra" / "scripts" / "utils"))
 
 from _env import skip_without_knowledge  # noqa: E402
 
-skip_without_knowledge("role_readers_task_store_test.py")  # needs solo-knowledge; skipped in CI when absent
+skip_without_knowledge("role_readers_task_store_test.py")  # needs knowledge-base; skipped in CI when absent
 
 # The goals, projects and roles-skills tables left schema.sql (migration 084); fixtures still seed them.
 LEGACY_PORTFOLIO = Path(__file__).resolve().parents[1] / "support" / "legacy_portfolio_tables.sql"

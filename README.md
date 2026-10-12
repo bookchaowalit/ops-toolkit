@@ -1,4 +1,4 @@
-# solo-ops
+# ops-toolkit
 
 Operations tooling for Solo Empire: the Python scripts behind the daily workflows, the owner CLI
 (`infra/cli.ts`), platform registries, integration clients and their offline tests.
@@ -12,7 +12,7 @@ agent-harness hooks; it is **not** a dependency of this repository.
 ## Run the checks
 
 ```bash
-cd solo-ops
+cd ops-toolkit
 task test              # every infra/tests/**/*_test.py script, offline (EMPIRE_CLIENT_CONFIG=/nonexistent)
 task docs:check        # contract guards that read the sibling architecture/knowledge checkouts
 task check             # docs:check + test:strict (skips block)
@@ -35,16 +35,16 @@ task quality:core -- --only solo-web,empire-platform
 task quality:core -- --require-clean   # additionally refuses dirty release candidates
 ```
 
-The core targets are `solo-ops`, `solo-mcp`, `empire-platform` and `solo-web`.
+The core targets are `solo-ops`, `solo-mcp`, `empire-platform` and `solo-web` (target ids of the core quality gate).
 Resolution is `SOLO_OPS_ROOT`, `SOLO_MCP_ROOT`, `SOLO_PLATFORM_ROOT`, `SOLO_CELL_KIT_ROOT`,
 `SOLO_WEB_ROOT`, otherwise `../<repository>`. Missing checkouts/dependencies never pass.
 The runner installs nothing and performs no deployment or live API/credential lookup.
 
 - Ops runs its entire offline suite in strict mode. Missing ImageMagick/FFmpeg or sibling tests remain visible blockers.
 - MCP runs typecheck and its real in-memory MCP/CLI contract tests, with a command/process-tree deadline.
-- Platform runs the full suite against disposable local PostgreSQL, including the real HTTP adapter contract with `solo-ops`.
+- Platform runs the full suite against disposable local PostgreSQL, including the real HTTP adapter contract with `ops-toolkit`.
 - Cell kit runs its full generated-cell contract. Exactly two named resource-specific non-applicable cases are reported explicitly; no dependency skip is waived.
-- Web runs `check:release`: typecheck, all unit/script tests, installed Python auth parity, build, and managed local browser journeys. Provide `SERVICE_AUTH_PYTHON` (a test Python with `solo-service-auth` installed) and Playwright's Chromium/system libraries. Tests use synthetic local services, not real owner login.
+- Web runs `check:release`: typecheck, all unit/script tests, installed Python auth parity, build, and managed local browser journeys. Provide `SERVICE_AUTH_PYTHON` (a test Python with `service-auth` installed) and Playwright's Chromium/system libraries. Tests use synthetic local services, not real owner login.
 
 Evidence defaults to `.runtime/quality/core-latest.json` (ignored). It contains commands,
 statuses, explicit skipped cases, timestamp, each HEAD/dirty flag and a checkout fingerprint
@@ -71,22 +71,22 @@ or flaky cases stay blocked; never add retries/exclusions merely to make them gr
 | `infra/tests/` | offline tests; `infra/tests/run_all.py` runs them all |
 | `infra/tasks/*.yml` | Task adapters (flattened into the root `Taskfile.yml`) |
 | `infra/platform/` | cloud-provider, domain and building-block registries owned by ops |
-| `infra/cli.ts` | owner CLI (`task tasks`, `task status`); loads shared modules from the `solo-mcp` sibling |
+| `infra/cli.ts` | owner CLI (`task tasks`, `task status`); loads shared modules from the `mcp-aggregator` sibling |
 | `empire`, `Makefile` | thin facades over Task |
 
 ## Sibling repositories (no path back to the hub)
 
 Siblings are looked up as `../<repo>` next to this checkout, or through `SOLO_<NAME>_ROOT`
-(name without the `solo-` prefix, upper-cased, dashes to underscores).
+(the historical name without the `solo-` prefix, upper-cased, dashes to underscores; `ops-toolkit` is still `SOLO_OPS_ROOT`).
 
 | Variable | Default | Used for |
 |---|---|---|
-| `SOLO_KNOWLEDGE_ROOT` | `../solo-knowledge` | diary entries (`diary/entries`), roles, goals, learning, quiz |
-| `SOLO_ARCHITECTURE_ROOT` | `../solo-architecture` | docs, systems, operations, templates read by the contract guards |
-| `SOLO_SKILLS_ROOT` | `../solo-skills` | skill packages |
-| `SOLO_MCP_ROOT` | `../solo-mcp` | `infra/cli.ts` imports `src/*.ts` from here (same module instances as the MCP server) |
+| `SOLO_KNOWLEDGE_ROOT` | `../knowledge-base` | diary entries (`diary/entries`), roles, goals, learning, quiz |
+| `SOLO_ARCHITECTURE_ROOT` | `../architecture-docs` | docs, systems, operations, templates read by the contract guards |
+| `SOLO_SKILLS_ROOT` | `../agent-skills` | skill packages |
+| `SOLO_MCP_ROOT` | `../mcp-aggregator` | `infra/cli.ts` imports `src/*.ts` from here (same module instances as the MCP server) |
 | `SOLO_REGISTRY_DIR` | *(none)* | the registry repository's `repository-catalog` folder; tools that read `online-systems.yaml`, `runtime-boundaries.yaml`, `docpack-coverage.yaml` need it and skip clearly when unset |
-| `SOLO_BOOK_DEV_GITHUB_ROOT` | derived from `.../github/<owner>/private/solo-ops` | the folder that holds the repository clones |
+| `SOLO_BOOK_DEV_GITHUB_ROOT` | derived from `.../github/<owner>/private/ops-toolkit` | the folder that holds the repository clones |
 | `SOLO_ACCOUNTS_ROOT`, `SOLO_MEDIA_ROOT`, `SOLO_INTEGRATIONS_ROOT`, ... | `../<repo>` | per-repository lookups |
 
 `infra/scripts/utils/_env.py` is the single resolver (`PROJECT_ROOT` = this checkout, `repo_file()`,
@@ -98,7 +98,7 @@ owning checkout.
 
 `task diary -- --record-conversation --topic ... --question-summary ... --outcome-summary ... --functions ...`
 writes the private daily diary under `$SOLO_KNOWLEDGE_ROOT/diary/entries/YYYY/MM/DD/` (git-ignored in
-solo-knowledge, never committed).
+knowledge-base, never committed).
 
 ## Secrets
 
