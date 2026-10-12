@@ -15,14 +15,53 @@ agent-harness hooks; it is **not** a dependency of this repository.
 cd solo-ops
 task test              # every infra/tests/**/*_test.py script, offline (EMPIRE_CLIENT_CONFIG=/nonexistent)
 task docs:check        # contract guards that read the sibling architecture/knowledge checkouts
-task check             # docs:check + test
+task check             # docs:check + test:strict (skips block)
 task install           # npm ci for the owner CLI (tsx, typescript)
 task typecheck         # tsc --noEmit for infra/cli.ts (after task install)
 task --list            # all other tasks (platform, integrations, learning, portfolio, ...)
 ```
 
 `task test` passes in a fresh clone: tests that need a sibling repository skip with a clear `SKIP`
-line when it is not checked out. No CI workflow is configured (Actions quota); run the commands locally.
+line when it is not checked out. The result is `partial`, not a fully verified pass.
+No CI workflow is configured (Actions quota); run the commands locally.
+
+## Quality gate (not just a green unit-test count)
+
+```bash
+task test:strict                  # blocks skips, partial runs, failures, timeouts and no tests
+task quality:core -- --list       # explicit core scope, not every registered product
+task quality:core                 # required owning suites + revision-bound JSON evidence
+task quality:core -- --only solo-web,empire-platform
+task quality:core -- --require-clean   # additionally refuses dirty release candidates
+```
+
+The core targets are `solo-ops`, `solo-mcp`, `empire-platform` and `solo-web`.
+Resolution is `SOLO_OPS_ROOT`, `SOLO_MCP_ROOT`, `SOLO_PLATFORM_ROOT`, `SOLO_CELL_KIT_ROOT`,
+`SOLO_WEB_ROOT`, otherwise `../<repository>`. Missing checkouts/dependencies never pass.
+The runner installs nothing and performs no deployment or live API/credential lookup.
+
+- Ops runs its entire offline suite in strict mode. Missing ImageMagick/FFmpeg or sibling tests remain visible blockers.
+- MCP runs typecheck and its real in-memory MCP/CLI contract tests, with a command/process-tree deadline.
+- Platform runs the full suite against disposable local PostgreSQL, including the real HTTP adapter contract with `solo-ops`.
+- Cell kit runs its full generated-cell contract. Exactly two named resource-specific non-applicable cases are reported explicitly; no dependency skip is waived.
+- Web runs `check:release`: typecheck, all unit/script tests, installed Python auth parity, build, and managed local browser journeys. Provide `SERVICE_AUTH_PYTHON` (a test Python with `solo-service-auth` installed) and Playwright's Chromium/system libraries. Tests use synthetic local services, not real owner login.
+
+Evidence defaults to `.runtime/quality/core-latest.json` (ignored). It contains commands,
+statuses, explicit skipped cases, timestamp, each HEAD/dirty flag and a checkout fingerprint
+before/after. Changing a checkout while testing blocks the result. `--only` is explicitly a
+subset, never a full-core pass. Reports contain no raw test logs or environment values.
+Older evidence is not reused. The script-runner JSON is machine-only (`--json`); timeout
+kills descendants, not just the test leader. Full pytest runs clear ambient `PYTEST_ADDOPTS`
+and configured `addopts`; deselected tests do not count as a full pass. A stand-alone
+assertion script must execute its assertions and print completion evidence (or use unittest);
+a silent empty module cannot pass. The normal `task check` now uses `test:strict`.
+
+**A passing local gate is not release approval.** Hosted real OIDC login, production
+post-deploy smoke, business UAT and products outside these five targets are always marked
+unverified. Do not deploy merely because `task test` or this gate exits zero. For every
+escaped defect: record its flow/preconditions, reproduce with a failing regression first,
+fix the cause, then run the affected journey and the owning gate before release. Unknown
+or flaky cases stay blocked; never add retries/exclusions merely to make them green.
 
 ## Where things are
 

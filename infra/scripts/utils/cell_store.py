@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""One client for every cell made with solo-cell-kit (goals, projects, roles-skills, ...).
+"""One client for every generic cell API (goals, projects, roles-skills, ...).
 
 Each kit cell serves the same routes for every resource, so one client covers
 them all::
