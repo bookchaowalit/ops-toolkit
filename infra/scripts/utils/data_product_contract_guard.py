@@ -97,7 +97,7 @@ CONSUMER_SPECS = [
 ]
 
 JOB_CONSUMER_FILES = (
-    "projects/product/engineering/book-dev/github/bookchaowalit/private/data-lake/infra/scripts/opportunities/import_job_scraper.py",
+    "projects/product/engineering/book-dev/github/bookchaowalit/private/data-lake-pipelines/infra/scripts/opportunities/import_job_scraper.py",
     "infra/scripts/workflows/dashboard.py",
     "projects/marketing/growth/book-sales/scripts/sync_leads.py",
 )
@@ -462,7 +462,7 @@ def check_job_contract(errors: list[str]) -> None:
             if needle not in text:
                 fail(errors, f"job-data contract missing {needle!r}")
 
-    # Checkout of the public source of record bookchaowalit/book-job-data.
+    # Checkout of the public source of record bookchaowalit/career-job-market-data.
     root = PRODUCER_ROOT / "book-job-data-public"
     if not root.is_dir():
         report_missing(errors, f"producer missing: {shown(root)}", root)

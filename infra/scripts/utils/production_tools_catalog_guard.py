@@ -142,7 +142,7 @@ def contained_path(value: str) -> Path | None:
 
 
 CATALOG_REPO = "book-production-platform"
-CATALOG_REPO_URL = "https://github.com/bookchaowalit/book-production-platform/blob/main"
+CATALOG_REPO_URL = "https://github.com/bookchaowalit/content-production/blob/main"
 
 
 def is_schema_path(value: str) -> bool:
