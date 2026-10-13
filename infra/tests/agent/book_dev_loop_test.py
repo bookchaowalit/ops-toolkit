@@ -46,17 +46,17 @@ def repo(ref: str, state: str = "clean", dirty: bool = False) -> dict:
 
 
 def main() -> int:
-    assert extract_repo_ref("[Book Dev] bookchaowalit/book-job-scraping — review dirty changes") == "bookchaowalit/book-job-scraping"
+    assert extract_repo_ref("[Book Dev] bookchaowalit/career-job-scraper — review dirty changes") == "bookchaowalit/career-job-scraper"
     assert extract_repo_ref("[Book Dev] missing mapping") is None
 
     report = build_report(
         [
-            task(1, "[Book Dev] bookchaowalit/book-job-scraping — review dirty changes"),
+            task(1, "[Book Dev] bookchaowalit/career-job-scraper — review dirty changes"),
             task(2, "[Book Dev] bookchaowalit/bookreading — verify tests", priority=3),
             task(3, "[Book Dev] bookchaowalit/blocked — needs approval", status="blocked"),
         ],
         [
-            repo("bookchaowalit/book-job-scraping", state="dirty", dirty=True),
+            repo("bookchaowalit/career-job-scraper", state="dirty", dirty=True),
             repo("bookchaowalit/bookreading"),
             repo("bookchaowalit/untracked", state="dirty", dirty=True),
         ],

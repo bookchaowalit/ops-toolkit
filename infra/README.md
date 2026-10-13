@@ -5,7 +5,7 @@ Tooling owned by ops-toolkit (see the repository README for the overview, siblin
 ```text
 infra/
   cli.ts                owner CLI; shared modules come from the mcp-aggregator sibling (mcp-modules.ts)
-  mcp-modules.ts        loader for ../mcp-aggregator/src/*.ts (override SOLO_MCP_ROOT)
+  mcp-modules.ts        loader for ../platform-mcp-aggregator/src/*.ts (override SOLO_MCP_ROOT)
   scripts/
     utils/              _env.py (path resolver), guards, stores, reports
     platform/           cloud/PaaS/self-hosted registries, probes, status

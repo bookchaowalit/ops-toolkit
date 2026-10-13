@@ -2,7 +2,7 @@
 """Client of the CRM ledger (revenue, invoices, clients) on the owner's income-pipeline CRM.
 
 Revenue, invoices and clients left the control plane on 2026-10-11 for the CRM
-(bookchaowalit/crm, instance income-pipeline). Readers and the ledger CLI
+(bookchaowalit/sales-crm, instance income-pipeline). Readers and the ledger CLI
 use this client instead of SQL:
 
     ledger = open_crm_ledger()

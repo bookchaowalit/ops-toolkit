@@ -16,7 +16,7 @@ tasks:
       TRADING_LAKE_URI: '{{.ROOT_DIR}}/data/lake-local/scraping-captures-v2'
       TRADING_SYMBOLS: BTCUSDT,ETHUSDT
       TRADING_INTERVAL: 1h
-      CRYPTO_DATA_DIR: '{{.BOOK_DEV_GITHUB}}/bookchaowalit/public/book-products/book-crypto-data'
+      CRYPTO_DATA_DIR: '{{.BOOK_DEV_GITHUB}}/bookchaowalit/public/book-products/market-crypto-data'
       TRADING_DIR: '{{.BOOK_DEV_GITHUB}}/bookchaowalit-ai/public/book-products/booktrading/strategy/research'
     dir: '{{.CRYPTO_DATA_DIR}}'
     env:

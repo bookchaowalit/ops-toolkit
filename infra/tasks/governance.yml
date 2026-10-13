@@ -44,7 +44,7 @@ tasks:
   production-hub:check:
     desc: Check the Production Hub artifact contract and handoff registries
     vars:
-      HUB_DIR: '{{.BOOK_DEV_GITHUB}}/bookchaowalit/private/book-production-platform/services/production-hub'
+      HUB_DIR: '{{.BOOK_DEV_GITHUB}}/bookchaowalit/private/content-production/services/production-hub'
     cmds:
       - |
         if [ -d "{{.HUB_DIR}}" ]; then

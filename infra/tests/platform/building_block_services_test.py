@@ -56,7 +56,7 @@ class BuildingBlockCatalogTest(unittest.TestCase):
 
     def test_existing_central_boundaries_are_recorded(self):
         services = {s["id"]: s for s in bbs.resolve(self.catalog)}
-        self.assertEqual(services["llm"]["status"], "planned")  # generation runs in bookchaowalit/ai-gateway
+        self.assertEqual(services["llm"]["status"], "planned")  # generation runs in bookchaowalit/platform-ai-gateway-api
         self.assertEqual(services["line-messaging"]["impl"], [])  # infra/api retired 2026-10-11 (archived in solo-platform-api)
 
     def test_build_ceiling_is_enforced(self):
@@ -85,7 +85,7 @@ class BuildingBlockCatalogTest(unittest.TestCase):
 
     def test_unknown_provider_ref_and_missing_impl_are_rejected(self):
         if self.refs is None:
-            self.skipTest("bookchaowalit/integrations checkout absent (SOLO_INTEGRATIONS_ROOT)")
+            self.skipTest("bookchaowalit/platform-integrations-api checkout absent (SOLO_INTEGRATIONS_ROOT)")
         def break_refs(catalog):
             self.service(catalog, "email")["refs"] = ["not-a-provider"]
             self.service(catalog, "llm")["impl"] = ["infra/api/missing.ts"]

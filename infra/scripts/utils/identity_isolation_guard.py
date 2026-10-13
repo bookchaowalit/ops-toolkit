@@ -21,8 +21,8 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[3]
 ACCOUNTS_DIR = "accounts"
-# The account metadata lives in the bookchaowalit/accounts repository
-# (sibling checkout, ../accounts); override with SOLO_ACCOUNTS_ROOT.
+# The account metadata lives in the bookchaowalit/platform-accounts-api repository
+# (sibling checkout, ../platform-accounts-api); override with SOLO_ACCOUNTS_ROOT.
 ACCOUNTS_REPO = Path(os.environ.get("SOLO_ACCOUNTS_ROOT") or ROOT.parent / "accounts")
 TRUST_ZONES = {"z0-root", "z1-public", "z2-business", "z2-separated", "z3-isolated"}
 ISOLATED_ZONES = {"z3-isolated", "z0-root"}

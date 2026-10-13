@@ -105,7 +105,7 @@ platform:
     purpose: crm-web agency desk for Book and partner (mobile-first)
     xaas: paas
     target: vercel
-    target_ref: apps/crm-web → crm-api on Railway → Neon (runbook now in bookchaowalit/crm)
+    target_ref: apps/crm-web → crm-api on Railway → Neon (runbook now in bookchaowalit/sales-crm)
     access: protected
     status: live
     phase: Slice A3

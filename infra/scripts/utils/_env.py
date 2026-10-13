@@ -102,7 +102,7 @@ KNOWLEDGE_BASE = KNOWLEDGE_ROOT / "knowledge"
 # Architecture docs, systems, operations, templates: bookchaowalit/architecture-docs
 # (SOLO_ARCHITECTURE_ROOT, default ../architecture-docs).
 ARCHITECTURE_ROOT = sibling_repo_root("architecture-docs")
-# Agent skills: bookchaowalit/agent-skills (SOLO_SKILLS_ROOT, default ../agent-skills).
+# Agent skills: bookchaowalit/platform-agent-skills (SOLO_SKILLS_ROOT, default ../platform-agent-skills).
 SKILLS_ROOT = sibling_repo_root("agent-skills")
 # Registry of repositories/systems (the `repository-catalog` folder). It is owned by
 # the registry repository; there is no default. Tools that need it take SOLO_REGISTRY_DIR
@@ -149,8 +149,8 @@ def book_dev_github_root() -> Path | None:
     return None
 
 
-# The production tools catalog is owned by bookchaowalit/book-production-platform.
-PRODUCTION_TOOLS_REF = "bookchaowalit/book-production-platform:catalog/production-tools.yaml"
+# The production tools catalog is owned by bookchaowalit/content-production.
+PRODUCTION_TOOLS_REF = "bookchaowalit/content-production:catalog/production-tools.yaml"
 
 
 def production_tools_catalog() -> Path:
