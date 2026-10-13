@@ -38,6 +38,19 @@ uv pip install --python .runtime/quality/auth-venv/bin/python ../platform-auth-s
 export SERVICE_AUTH_PYTHON="$PWD/.runtime/quality/auth-venv/bin/python"
 ```
 
+The operations suite also needs its declared Python development dependencies,
+including Markdown, pypdf and the Python Playwright adapter used by offline
+docpack regression fixtures. Keep them in an isolated test environment:
+
+```bash
+uv venv .runtime/quality/ops-venv --python 3.12 --system-site-packages
+uv pip install --python .runtime/quality/ops-venv/bin/python -r infra/requirements-dev.txt
+export PATH="$PWD/.runtime/quality/ops-venv/bin:$PATH"
+```
+
+The platform/cell-kit use their own development environments; the web's
+authorization parity interpreter remains the separate `SERVICE_AUTH_PYTHON`.
+
 On this Ubuntu 24.04 workstation, the missing media tools and browser libraries
 were prepared in the ignored `.runtime/quality/` directory without administrator
 access. Reuse them with:
@@ -74,6 +87,14 @@ the affected check; do not waive it or add retries solely to obtain green output
 
 The cell kit has two explicitly named resource-specific not-applicable cases;
 they remain visible in its report and are not missing-dependency exceptions.
+
+The added portfolio manifest acceptance test requires three explicit inputs:
+`--manifest`, `--commercial-catalog` and `--clone-root`. The standard operations
+runner currently does not forward those arguments. Without them that script
+reports partial coverage and blocks the complete core gate. Do not fabricate
+inputs, remove its case or report a green core result. A separately invoked
+manifest test is separate evidence until the runner has a supported way to pass
+the declared inputs; checking every portfolio product also requires its own scope.
 
 For a release candidate, also run `task quality:core -- --require-clean` after
 all intended changes have been reviewed and committed. Other sessions' dirty

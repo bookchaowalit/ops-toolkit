@@ -5,3 +5,8 @@ requests>=2.34.2
 PyYAML>=6.0.3
 # OAuth helper used by get_google_refresh_token.py --send-only
 google-auth-oauthlib>=1.4.1
+
+# Offline docpack HTML/PDF and browser-adapter regression fixtures
+Markdown>=3.11,<4
+pypdf>=6.20.1,<7
+playwright>=1.63.0,<2
