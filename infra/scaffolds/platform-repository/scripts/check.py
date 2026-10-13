@@ -61,7 +61,7 @@ def main() -> int:
             fail(f"{key} must be a non-empty string")
     if not re.fullmatch(r"[a-z0-9][a-z0-9-]{1,62}", contract["platform_id"]):
         fail("platform_id has an invalid slug")
-    if not re.fullmatch(r"book-[a-z0-9][a-z0-9-]{1,62}", contract["repository"]):
+    if not re.fullmatch(r"platform-[a-z0-9][a-z0-9-]{1,62}", contract["repository"]):
         fail("repository has an invalid slug")
     for key in ("capabilities", "depends_on"):
         if not isinstance(contract[key], list) or not all(

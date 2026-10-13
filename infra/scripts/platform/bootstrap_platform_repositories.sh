@@ -20,19 +20,19 @@ fi
 # repository-catalog/registries/platforms.yaml (checked by
 # the platform_repository_guard tests in the registry repository).
 platforms=(
-  "api-gateway|book-api-gateway|API Gateway|routing, request identity, rate limiting, ingress policy|infra/api/server.ts;infra/api/rate_limit.ts|current-implementation-in-solo-empire|none"
-  "identity|book-identity-platform|Identity|authentication, tenant, membership, RBAC, API keys|infra/api/server.ts;infra/api/auth.ts|current-implementation-in-solo-empire|book-identity-platform"
-  "payment|book-payment-platform|Payment|payment intent, checkout, billing, ledger, reconciliation|infra/api/stripe.ts;infra/api/server.ts|current-implementation-in-solo-empire|book-payment-platform"
-  "commerce|book-commerce-platform|Commerce|catalog, cart, pricing, order, promotion|projects/product/engineering/book-dev/github/bookchaowalit/public/book-apps/tools/commerce-product-scraper|adjacent-domain-repository|book-commerce-platform"
-  "logistics|book-logistics-platform|Logistics|carrier adapters, shipment, shipping rates, labels, tracking|none|new-boundary|book-logistics-platform"
-  "communication|book-communication-platform|Communication|email, SMS, push, templates, delivery status|bookchaowalit/platform-notifications-api|adjacent-domain-repository|book-communication-platform"
-  "media|book-media-platform|Media|signed upload, file metadata, object storage, image processing|book_media_platform/graphics|implemented-in-this-repository|book-media-platform"
-  "data|book-data-platform|Data|event ingress, lake contract, query, analytics, lineage|infra/scripts/data_lake;systems/ai-data/data-lake-architecture.md|current-implementation-in-solo-empire|book-data-platform"
-  "ai|book-ai-platform|AI|LLM gateway, model routing, budget, prompt policy, RAG|bookchaowalit/platform-ai-gateway-api|adjacent-domain-repository|book-ai-platform"
-  "workflow|book-workflow-platform|Workflow|jobs, queues, schedules, retries, approvals, execution history|infra/tasks;infra/scripts|current-implementation-in-solo-empire|book-workflow-platform"
-  "security|book-security-platform|Security|secret references, policy, audit, WAF controls, privacy|infra/platform;infra/scripts/utils/secret_resolver.py|current-implementation-in-solo-empire|book-security-platform"
-  "observability|book-observability-platform|Observability|logs, metrics, traces, alerts, status|infra/self-hosted-stack;infra/tests/platform|current-implementation-in-solo-empire|book-observability-platform"
-  "developer|book-developer-platform|Developer|repository templates, CI/CD, config, feature flags|.github;infra/tasks|current-implementation-in-solo-empire|none"
+  "api-gateway|platform-api-gateway|API Gateway|routing, request identity, rate limiting, ingress policy|infra/api/server.ts;infra/api/rate_limit.ts|current-implementation-in-solo-empire|none"
+  "identity|platform-identity|Identity|authentication, tenant, membership, RBAC, API keys|infra/api/server.ts;infra/api/auth.ts|current-implementation-in-solo-empire|platform-identity"
+  "payment|platform-payment|Payment|payment intent, checkout, billing, ledger, reconciliation|infra/api/stripe.ts;infra/api/server.ts|current-implementation-in-solo-empire|platform-payment"
+  "commerce|platform-commerce|Commerce|catalog, cart, pricing, order, promotion|projects/product/engineering/book-dev/github/bookchaowalit/public/book-apps/tools/commerce-product-scraper|adjacent-domain-repository|platform-commerce"
+  "logistics|platform-logistics|Logistics|carrier adapters, shipment, shipping rates, labels, tracking|none|new-boundary|platform-logistics"
+  "communication|platform-communication|Communication|email, SMS, push, templates, delivery status|bookchaowalit/platform-notifications-api|adjacent-domain-repository|platform-communication"
+  "media|platform-media|Media|signed upload, file metadata, object storage, image processing|book_media_platform/graphics|implemented-in-this-repository|platform-media"
+  "data|platform-data|Data|event ingress, lake contract, query, analytics, lineage|infra/scripts/data_lake;systems/ai-data/data-lake-architecture.md|current-implementation-in-solo-empire|platform-data"
+  "ai|platform-ai|AI|LLM gateway, model routing, budget, prompt policy, RAG|bookchaowalit/platform-ai-gateway-api|adjacent-domain-repository|platform-ai"
+  "workflow|platform-workflow|Workflow|jobs, queues, schedules, retries, approvals, execution history|infra/tasks;infra/scripts|current-implementation-in-solo-empire|platform-workflow"
+  "security|platform-security|Security|secret references, policy, audit, WAF controls, privacy|infra/platform;infra/scripts/utils/secret_resolver.py|current-implementation-in-solo-empire|platform-security"
+  "observability|platform-observability|Observability|logs, metrics, traces, alerts, status|infra/self-hosted-stack;infra/tests/platform|current-implementation-in-solo-empire|platform-observability"
+  "developer|platform-developer|Developer|repository templates, CI/CD, config, feature flags|.github;infra/tasks|current-implementation-in-solo-empire|none"
 )
 
 escape_sed() {
