@@ -81,7 +81,7 @@ EXPECTED_PRODUCTS = [
 CONSUMER_SPECS = [
     {
         "id": "insights-dashboard",
-        "path": "projects/product/engineering/book-dev/github/bookchaowalit/public/book-products/insights-dashboard",
+        "path": "projects/product/engineering/book-dev/github/bookchaowalit/public/book-products/market-insights-web",
         "catalog_files": [
             "src/data-products/catalog.ts",
             "js/data-products-browser.js",
@@ -90,7 +90,7 @@ CONSUMER_SPECS = [
     },
     {
         "id": "bookchaowalit-portfolio-frontend",
-        "path": "projects/product/engineering/book-dev/github/bookchaowalit-website/public/book-apps/portfolio/portfolio-portfolio-web",
+        "path": "projects/product/engineering/book-dev/github/bookchaowalit-website/public/book-apps/portfolio/portfolio-site-web",
         "catalog_files": ["src/lib/data-products/catalog.ts"],
         "ports": list(range(8101, 8108)),
     },
