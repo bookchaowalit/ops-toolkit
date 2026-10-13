@@ -23,7 +23,7 @@ def test_no_hardcoded_passwords():
     print("\n[1/4] Checking for hardcoded passwords...")
 
     test_files = [
-        PROJECT_ROOT / 'projects/product/engineering/book-dev/github/bookchaowalit-ai/public/book-products/booktrading/strategy/scripts/backfill_journal.py',
+        PROJECT_ROOT / 'projects/product/engineering/book-dev/github/bookchaowalit-ai/public/book-products/finance-booktrading/strategy/scripts/backfill_journal.py',
     ]
 
     for file_path in test_files:

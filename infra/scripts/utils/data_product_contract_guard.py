@@ -90,7 +90,7 @@ CONSUMER_SPECS = [
     },
     {
         "id": "bookchaowalit-portfolio-frontend",
-        "path": "projects/product/engineering/book-dev/github/bookchaowalit-website/public/book-apps/portfolio/bookchaowalit-portfolio-frontend",
+        "path": "projects/product/engineering/book-dev/github/bookchaowalit-website/public/book-apps/portfolio/portfolio-portfolio-web",
         "catalog_files": ["src/lib/data-products/catalog.ts"],
         "ports": list(range(8101, 8108)),
     },
