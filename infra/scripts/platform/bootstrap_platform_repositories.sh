@@ -21,7 +21,7 @@ fi
 # the platform_repository_guard tests in the registry repository).
 platforms=(
   "api-gateway|platform-api-gateway|API Gateway|routing, request identity, rate limiting, ingress policy|infra/api/server.ts;infra/api/rate_limit.ts|current-implementation-in-solo-empire|none"
-  "identity|platform-identity|Identity|authentication, tenant, membership, RBAC, API keys|infra/api/server.ts;infra/api/auth.ts|current-implementation-in-solo-empire|platform-identity"
+  "identity|platform-identity|Identity|authentication, tenant, membership, RBAC, API keys|services/platform/platform_api/routes.py;src/empire_platform/jwks.py;services/platform/migrations/0001_platform_core.sql;services/platform/migrations/0003_authorization_decision_point.sql|adjacent-domain-repository|platform-identity"
   "payment|platform-payment|Payment|payment intent, checkout, billing, ledger, reconciliation|infra/api/stripe.ts;infra/api/server.ts|current-implementation-in-solo-empire|platform-payment"
   "commerce|platform-commerce|Commerce|catalog, cart, pricing, order, promotion|projects/product/engineering/book-dev/github/bookchaowalit/public/book-apps/tools/commerce-product-scraper|adjacent-domain-repository|platform-commerce"
   "logistics|platform-logistics|Logistics|carrier adapters, shipment, shipping rates, labels, tracking|none|new-boundary|platform-logistics"
