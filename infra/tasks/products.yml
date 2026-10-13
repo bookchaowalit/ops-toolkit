@@ -98,15 +98,15 @@ tasks:
   test:finance-core:
     desc: Run the check entrypoint owned by the BookFinance Core repository
     cmds:
-      - bash {{.BOOK_DEV_GITHUB}}/bookchaowalit/private/book-products/finance-ledger-core/scripts/check.sh
+      - bash {{.BOOK_DEV_GITHUB}}/bookchaowalit/private/book-products/book-finance-core/scripts/check.sh
 
   test:book-portfolio:
     desc: Run the check entrypoint owned by the BookPortfolio frontend repository
     cmds:
-      - bash {{.BOOK_DEV_GITHUB}}/bookchaowalit/private/book-products/finance-portfolio-web/scripts/check.sh
+      - bash {{.BOOK_DEV_GITHUB}}/bookchaowalit/private/book-products/book-portfolio/scripts/check.sh
 
   test:book-production-platform:
     desc: Run the check entrypoint owned by the shared Book Production Platform repository
     cmds:
-      - python {{.BOOK_DEV_GITHUB}}/bookchaowalit/private/content-production/scripts/check.py
+      - python {{.BOOK_DEV_GITHUB}}/bookchaowalit/private/book-production-platform/scripts/check.py
 

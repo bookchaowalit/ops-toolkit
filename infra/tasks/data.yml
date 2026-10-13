@@ -8,7 +8,7 @@ tasks:
   test:scraping-discovery:
     desc: Test technology-discovery capture replay and API contracts
     cmds:
-      - bash {{.BOOK_DEV_GITHUB}}/bookchaowalit/public/book-apps/tools/tech-discovery-data/scripts/test.sh
+      - bash {{.BOOK_DEV_GITHUB}}/bookchaowalit/public/book-apps/tools/book-discovery-data/scripts/test.sh
 
   contracts:check:
     desc: Validate frozen data-product contracts
@@ -24,7 +24,7 @@ tasks:
   scraping:news:schedule:plan:
     desc: Show the News scheduler command without installing crontab
     cmds:
-      - bash {{.BOOK_DEV_GITHUB}}/bookchaowalit/public/book-apps/tools/content-news-scraper/setup_cron.sh
+      - bash {{.BOOK_DEV_GITHUB}}/bookchaowalit/public/book-apps/tools/book-news-scraping/setup_cron.sh
 
   test:email-pipeline:
     desc: Test alert delivery and safe notification failure reporting offline

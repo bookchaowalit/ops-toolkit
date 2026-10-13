@@ -39,7 +39,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from hash_api_token import token_hash  # noqa: E402
 
-# Keep these in sync with the AI gateway auth (bookchaowalit/platform-ai-gateway-api; formerly infra/api/auth.ts).
+# Keep these in sync with the AI gateway auth (bookchaowalit/ai-gateway; formerly infra/api/auth.ts).
 SUBJECT_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,99}$")
 SCOPE_PATTERN = re.compile(r"^[a-z][a-z0-9:_-]{1,63}$")
 ENV_NAME_PATTERN = re.compile(r"^[A-Z][A-Z0-9_]{0,127}$")

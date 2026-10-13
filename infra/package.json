@@ -205,10 +205,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bookchaowalit/platform-ops-cli.git"
+    "url": "git+https://github.com/bookchaowalit/ops-toolkit.git"
   },
   "bugs": {
-    "url": "https://github.com/bookchaowalit/platform-ops-cli/issues"
+    "url": "https://github.com/bookchaowalit/ops-toolkit/issues"
   },
-  "homepage": "https://github.com/bookchaowalit/platform-ops-cli#readme"
+  "homepage": "https://github.com/bookchaowalit/ops-toolkit#readme"
 }

@@ -62,7 +62,7 @@ TABLES_LIST = (
     "content_calendar", "content_series_episodes", "content_series_episode_metrics", "learning_challenges",
     "learning_challenge_assignments", "health_metrics", "time_entries", "time_logs", "business_kpis",
     "business_health_snapshots",
-    # The CRM, finance and revenue (bookchaowalit/sales-crm; ledger via infra/scripts/utils/crm_ledger.py), 087.
+    # The CRM, finance and revenue (bookchaowalit/crm; ledger via infra/scripts/utils/crm_ledger.py), 087.
     "clients", "revenue", "invoices", "crm_deals", "crm_activities", "crm_agency_bookings", "crm_agency_consents",
     "crm_agency_deal_state", "crm_agency_documents", "crm_agency_invoice_links", "crm_agency_notifications",
     "crm_agency_offers", "crm_agency_slots", "crm_workflow_evidence", "niches", "outreach_logs", "job_leads",

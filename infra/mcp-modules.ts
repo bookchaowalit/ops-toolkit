@@ -1,6 +1,6 @@
 /**
  * Loader for the mcp-aggregator modules the owner CLI shares (task state/store, habits, cells, CRM ledger,
- * portfolio reads). They live in the mcp-aggregator repository (SOLO_MCP_ROOT, default ../platform-mcp-aggregator), so the
+ * portfolio reads). They live in the mcp-aggregator repository (SOLO_MCP_ROOT, default ../mcp-aggregator), so the
  * CLI and the MCP server (and its tests) load the very same module instances.
  */
 import { existsSync } from 'node:fs';

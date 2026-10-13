@@ -83,10 +83,10 @@ Siblings are looked up as `../<repo>` next to this checkout, or through `SOLO_<N
 |---|---|---|
 | `SOLO_KNOWLEDGE_ROOT` | `../knowledge-base` | diary entries (`diary/entries`), roles, goals, learning, quiz |
 | `SOLO_ARCHITECTURE_ROOT` | `../architecture-docs` | docs, systems, operations, templates read by the contract guards |
-| `SOLO_SKILLS_ROOT` | `../platform-agent-skills` | skill packages |
-| `SOLO_MCP_ROOT` | `../platform-mcp-aggregator` | `infra/cli.ts` imports `src/*.ts` from here (same module instances as the MCP server) |
+| `SOLO_SKILLS_ROOT` | `../agent-skills` | skill packages |
+| `SOLO_MCP_ROOT` | `../mcp-aggregator` | `infra/cli.ts` imports `src/*.ts` from here (same module instances as the MCP server) |
 | `SOLO_REGISTRY_DIR` | *(none)* | the registry repository's `repository-catalog` folder; tools that read `online-systems.yaml`, `runtime-boundaries.yaml`, `docpack-coverage.yaml` need it and skip clearly when unset |
-| `SOLO_BOOK_DEV_GITHUB_ROOT` | derived from `.../github/<owner>/private/platform-ops-cli` | the folder that holds the repository clones |
+| `SOLO_BOOK_DEV_GITHUB_ROOT` | derived from `.../github/<owner>/private/ops-toolkit` | the folder that holds the repository clones |
 | `SOLO_ACCOUNTS_ROOT`, `SOLO_MEDIA_ROOT`, `SOLO_INTEGRATIONS_ROOT`, ... | `../<repo>` | per-repository lookups |
 
 `infra/scripts/utils/_env.py` is the single resolver (`PROJECT_ROOT` = this checkout, `repo_file()`,

@@ -31,5 +31,5 @@ through `support/siblings.py` (`SOLO_<NAME>_ROOT` or `../<repo>`) and print `SKI
 so a fresh clone passes with `task test`. No test reads a registry-hub checkout.
 
 The agent-harness hook tests and the registry guard tests live in `bookchaowalit/solo-empire`;
-skill governance tests live in `bookchaowalit/platform-agent-skills`; the mcp-aggregator tests (including the three that drive
-`infra/cli.ts` from this repository) live in `bookchaowalit/platform-mcp-aggregator`.
+skill governance tests live in `bookchaowalit/agent-skills`; the mcp-aggregator tests (including the three that drive
+`infra/cli.ts` from this repository) live in `bookchaowalit/mcp-aggregator`.
