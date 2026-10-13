@@ -60,7 +60,7 @@ from vercel_billing import run_billing as run_vercel_billing  # noqa: E402
 
 SCHEMA_VERSION = "solo-empire.cloud-usage.v1"
 # Account metadata lives in the bookchaowalit/platform-accounts-api repository (sibling checkout).
-ACCOUNT_ROOT = Path(os.environ.get("SOLO_ACCOUNTS_ROOT") or PROJECT_ROOT.parent / "accounts") / "accounts" / "cloud"
+ACCOUNT_ROOT = Path(os.environ.get("SOLO_ACCOUNTS_ROOT") or PROJECT_ROOT.parent / "platform-accounts-api") / "accounts" / "cloud"
 VERCEL_SECRET_NAMES = secret_names(get_provider("vercel"))
 GITHUB_SECRET_NAMES = secret_names(get_provider("github"))
 SAFE_ERROR_PATTERN = re.compile(r"^[A-Za-z0-9_.-]{1,80}$")

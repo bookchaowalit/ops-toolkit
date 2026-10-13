@@ -25,8 +25,8 @@ from datetime import datetime
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'scripts' / 'utils'))
 from _env import PROJECT_ROOT, sibling_repo_root
 
-# The MCP server lives in the mcp-aggregator repository (SOLO_MCP_ROOT, default ../mcp-aggregator); optional here.
-MCP_ROOT = sibling_repo_root('mcp-aggregator')
+# The MCP server lives in the mcp-aggregator repository (SOLO_MCP_ROOT, default ../platform-mcp-aggregator); optional here.
+MCP_ROOT = sibling_repo_root('platform-mcp-aggregator')
 
 
 def test_setup_script_exists():

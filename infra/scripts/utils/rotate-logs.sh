@@ -12,13 +12,13 @@ DATE=$(date +%Y%m%d)
 
 # Canonical scraping-family project paths.
 CANDIDATES=(
-  "$GITHUB_ROOT/bookchaowalit/public/book-apps/tools/book-job-scraping/data/logs"
-  "$GITHUB_ROOT/bookchaowalit/public/book-apps/tools/book-ecommerce-scraping/data/logs"
-  "$GITHUB_ROOT/bookchaowalit/public/book-apps/tools/book-news-scraping/data/logs"
-  "$GITHUB_ROOT/bookchaowalit/public/book-apps/tools/book-property-scraping/data/logs"
-  "$GITHUB_ROOT/bookchaowalit/public/book-apps/tools/book-restaurant-scraping/data/logs"
-  "$GITHUB_ROOT/bookchaowalit/public/book-apps/tools/book-directory-scraping/data/logs"
-  "$GITHUB_ROOT/bookchaowalit/public/book-apps/tools/book-opportunity-scraping/data/logs"
+  "$GITHUB_ROOT/bookchaowalit/public/book-apps/tools/career-job-scraper/data/logs"
+  "$GITHUB_ROOT/bookchaowalit/public/book-apps/tools/commerce-product-scraper/data/logs"
+  "$GITHUB_ROOT/bookchaowalit/public/book-apps/tools/content-news-scraper/data/logs"
+  "$GITHUB_ROOT/bookchaowalit/public/book-apps/tools/realestate-property-scraper/data/logs"
+  "$GITHUB_ROOT/bookchaowalit/public/book-apps/tools/food-restaurant-scraper/data/logs"
+  "$GITHUB_ROOT/bookchaowalit/public/book-apps/tools/sales-business-directory-scraper/data/logs"
+  "$GITHUB_ROOT/bookchaowalit/public/book-apps/tools/opportunity-listing-scraper/data/logs"
 )
 
 LOG_DIR=""

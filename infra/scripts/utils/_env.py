@@ -79,6 +79,51 @@ LEGACY_ENV_NAMES = {
     "cloud-monitor": "CLOUD_MONITOR",
     "insights-dashboard": "EMPIRE_INSIGHTS",
     "backstage-portal": "EMPIRE_BACKSTAGE",
+    # Domain-first folder names (2026-10-13) keep the same override variables.
+    "content-production": "BOOK_PRODUCTION_PLATFORM",
+    "ai-rag-demo-worker": "RAG_DEMO_CF",
+    "content-media-worker": "MEDIA_WORKER",
+    "data-lake-pipelines": "DATA_LAKE",
+    "data-mlops-pipeline": "MLOPS",
+    "life-content-api": "CONTENT",
+    "life-dashboard-web": "WEB",
+    "life-decisions-api": "DECISIONS",
+    "life-diary-api": "DIARY",
+    "life-goals-api": "GOALS",
+    "life-habits-api": "HABITS",
+    "life-health-api": "HEALTH",
+    "life-learning-api": "LEARNING",
+    "life-operating-cycles-api": "OPERATING",
+    "life-opportunities-api": "OPPORTUNITIES",
+    "life-projects-api": "PROJECTS",
+    "life-roles-skills-api": "ROLES_SKILLS",
+    "life-time-api": "TIME",
+    "market-insights-web": "EMPIRE_INSIGHTS",
+    "market-insights-worker": "INSIGHTS_WORKER",
+    "platform-accounts-api": "ACCOUNTS",
+    "platform-agent-skills": "SKILLS",
+    "platform-ai-gateway-api": "AI_GATEWAY",
+    "platform-ai-usage-api": "AI_USAGE",
+    "platform-auth-sdk": "SERVICE_AUTH",
+    "platform-automation-api": "AUTOMATION",
+    "platform-cloud-api": "CLOUD_API",
+    "platform-developer-portal": "EMPIRE_BACKSTAGE",
+    "platform-event-hub-api": "EVENT_HUB",
+    "platform-homelab-infra": "HOMELAB",
+    "platform-infra-kit": "PLATFORM_KIT",
+    "platform-intake-api": "INTAKE",
+    "platform-integrations-api": "INTEGRATIONS",
+    "platform-knowledge-api": "KNOWLEDGE_API",
+    "platform-legacy-api-archive": "PLATFORM_API",
+    "platform-mcp-aggregator": "MCP",
+    "platform-mcp-remote-worker": "MCP_REMOTE",
+    "platform-notifications-api": "NOTIFICATIONS",
+    "platform-ops-cli": "OPS",
+    "platform-saas-catalog-api": "SAAS_CATALOG",
+    "platform-uptime-worker": "CLOUD_MONITOR",
+    "platform-webhooks-worker": "HOOKS_WORKER",
+    "realestate-lead-extension": "BROWSER_EXTENSION",
+    "sales-crm": "CRM",
 }
 
 
@@ -102,8 +147,8 @@ KNOWLEDGE_BASE = KNOWLEDGE_ROOT / "knowledge"
 # Architecture docs, systems, operations, templates: bookchaowalit/architecture-docs
 # (SOLO_ARCHITECTURE_ROOT, default ../architecture-docs).
 ARCHITECTURE_ROOT = sibling_repo_root("architecture-docs")
-# Agent skills: bookchaowalit/platform-agent-skills (SOLO_SKILLS_ROOT, default ../agent-skills).
-SKILLS_ROOT = sibling_repo_root("agent-skills")
+# Agent skills: bookchaowalit/platform-agent-skills (SOLO_SKILLS_ROOT, default ../platform-agent-skills).
+SKILLS_ROOT = sibling_repo_root("platform-agent-skills")
 # Registry of repositories/systems (the `repository-catalog` folder). It is owned by
 # the registry repository; there is no default. Tools that need it take SOLO_REGISTRY_DIR
 # (or an argument) and skip clearly when it is unset.
@@ -154,7 +199,7 @@ PRODUCTION_TOOLS_REF = "bookchaowalit/content-production:catalog/production-tool
 
 
 def production_tools_catalog() -> Path:
-    """Catalog path in the book-production-platform checkout (override: SOLO_BOOK_PRODUCTION_PLATFORM_ROOT)."""
+    """Catalog path in the content-production checkout (override: SOLO_BOOK_PRODUCTION_PLATFORM_ROOT)."""
     return sibling_ref_file(PRODUCTION_TOOLS_REF)
 
 

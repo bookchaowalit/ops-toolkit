@@ -17,7 +17,7 @@ if str(PLATFORM_SCRIPTS) not in sys.path:
 
 import cell_probe  # noqa: E402
 
-AUTOMATIONS = (ROOT.parent.parent / "empire-platform"
+AUTOMATIONS = (ROOT.parent.parent / "platform-empire"
                / "contracts/automations/v1/automations.json")
 
 

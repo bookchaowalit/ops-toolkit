@@ -22,7 +22,7 @@ def sibling(repo: str) -> Path:
 
 ARCHITECTURE_ROOT = sibling("architecture-docs")
 KNOWLEDGE_ROOT = sibling("knowledge-base")
-SKILLS_ROOT = sibling("agent-skills")
+SKILLS_ROOT = sibling("platform-agent-skills")
 
 
 def exit_unless_exists(path: Path, label: str) -> None:

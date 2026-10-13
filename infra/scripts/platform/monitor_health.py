@@ -277,7 +277,7 @@ def build_report(root=ROOT, *, now=None, probe=True):
         checks.append(item("scraping", "Scraping / lake / collection readiness", "data-products", SCRAPING_SOURCE, now=now, status=status, coverage="observed", observed_at=scraping["generated_at"], metrics=metrics, message="ใช้รายงาน collection-health เดิม; ไม่ติดตั้ง scheduler", next_action="ตรวจ coverage gaps และรัน scraping:monitor เพื่ออัปเดตหลักฐาน"))
     else:
         checks.append(item("scraping", "Scraping / lake / collection readiness", "data-products", SCRAPING_SOURCE, now=now, status="unavailable", message="รายงาน collection-health หายหรือรูปแบบไม่รองรับ", next_action="รัน scraping:monitor เพื่อสร้างรายงานที่ตรวจสอบแล้ว"))
-    tools, valid_tools = read_inventory(sibling_repo_root("book-production-platform"), "catalog/production-tools.yaml", "tools", require_name=True)
+    tools, valid_tools = read_inventory(sibling_repo_root("content-production"), "catalog/production-tools.yaml", "tools", require_name=True)
     if valid_tools and all(isinstance(tool.get("owning_repo"), str) and tool["owning_repo"] for tool in tools):
         missing = 0
         try:
