@@ -10,7 +10,7 @@
  *   npx tsx infra/cli.ts goals              — ดู goals
  */
 
-import { mcp } from './mcp-modules.js';
+import { mcp, MCP_ROOT } from './mcp-modules.js';
 import { createHash } from 'node:crypto';
 import { execFileSync, execSync } from 'child_process';
 import { existsSync, readdirSync, statSync } from 'fs';
@@ -88,6 +88,31 @@ function runPortfolioProgress() {
 
 async function main() {
   switch (command) {
+    case 'delivery': {
+      // Static architecture context shares the MCP adapter; no live cell or task access.
+      let DeliveryContextError: any;
+      try {
+        if (!existsSync(join(MCP_ROOT, 'src', 'delivery-context.ts'))) throw new Error('delivery_adapter_missing');
+        const adapter = await mcp('delivery-context');
+        DeliveryContextError = adapter.DeliveryContextError;
+        const { getDeliveryContext, parseDeliveryCliArgs } = adapter;
+        const result = await getDeliveryContext(parseDeliveryCliArgs(args.slice(1)));
+        console.log(JSON.stringify(result, null, 2));
+        if (result.status !== 'ready') process.exitCode = 2;
+      } catch (error) {
+        const code = DeliveryContextError && error instanceof DeliveryContextError
+          ? (error as { code: string }).code : 'delivery_cli_failure';
+        console.log(JSON.stringify({
+          contract: 'solo-empire.delivery-context.v1', status: 'invalid',
+          capabilities: { definition_available: false, runtime_integrated: false },
+          authority: { content_truth: 'not_verified', live_readiness: 'not_verified',
+            business_acceptance: 'not_verified', release_authorization: 'not_verified' },
+          errors: [{ code }],
+        }, null, 2));
+        process.exitCode = 2;
+      }
+      break;
+    }
     case 'dashboard': {
       const rolesSkills = cellStore('roles-skills');
       const allSkills = await rolesSkills.list('skills');
@@ -662,6 +687,7 @@ async function main() {
 Usage: npx tsx infra/cli.ts <command> [options]
 
 Core Commands:
+  delivery [view] [--role ID] [--step ID] อ่าน role/docs/refinement กลางเป็น JSON
   dashboard                              ดูภาพรวมทั้งหมด
   health                                 Business health score
   audit                                  Scan all repos + folders for status

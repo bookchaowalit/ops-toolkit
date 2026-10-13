@@ -94,6 +94,36 @@ Siblings are looked up as `../<repo>` next to this checkout, or through `SOLO_<N
 `repository-catalog/` and `projects/product/engineering/book-dev/github/...` are translated to the
 owning checkout.
 
+## Delivery definitions and role documentation
+
+The read-only `delivery` command shares `src/delivery-context.ts` with the MCP
+aggregator. It reads validated sources from `SOLO_ARCHITECTURE_ROOT` or the
+`../architecture-docs` sibling; no hub paths, live task stores or production API
+are used. Keep the MCP and architecture checkouts updated with this CLI.
+
+```bash
+./infra/node_modules/.bin/tsx infra/cli.ts delivery overview --json
+./infra/node_modules/.bin/tsx infra/cli.ts delivery role --role product-manager --json
+./infra/node_modules/.bin/tsx infra/cli.ts delivery refinement --step BA03 --json
+./infra/node_modules/.bin/tsx infra/cli.ts delivery documents --step QA11 --json
+```
+
+`overview` maps all registered roles; `role` distinguishes dedicated/family
+templates and direct delivery steps. `workflow`, `documents` and `refinement`
+allow role/step filters. `artifact --artifact-id <returned-id> --offset 0
+--limit 8000 --json` reads a paged registered policy/template artifact. IDs come
+from the overview/role context; callers cannot supply a file path or root.
+Known role-family policies resolve through `SOLO_KNOWLEDGE_ROOT` or the
+knowledge-base sibling. Missing references remain unavailable; private diary,
+records, pilot evidence and arbitrary files are not exposed.
+
+Results include source versions/hashes and definition availability. They do not
+certify project facts, approvals or live workflow readiness; runtime integration
+remains false. Invalid input, missing checkouts and malformed results return
+bounded JSON failures with a nonzero exit. The corresponding MCP tool is
+`get_delivery_context`; an existing server/client must reload its updated tool
+registration before it can expose the tool.
+
 ## Diary
 
 `task diary -- --record-conversation --topic ... --question-summary ... --outcome-summary ... --functions ...`
