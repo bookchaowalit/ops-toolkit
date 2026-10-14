@@ -1,0 +1,114 @@
+{
+  "contract": "tracker-linkage-evidence.v1",
+  "recorded_at_utc": "2026-10-14 15:47:01 UTC",
+  "lifecycle": "historical-snapshot",
+  "mode": "one-shot-linkage",
+  "live_task_authority": "Tasks API",
+  "source_key": "trello:69b6b2394811358126a19b4d",
+  "source": {
+    "provider": "trello",
+    "object_id": "69b6b2394811358126a19b4d",
+    "url": "https://trello.com/c/aj3gvoZe/8-create-rudimentary-ui-for-the-website",
+    "title": "Create rudimentary UI for the website",
+    "state": "Backlog",
+    "complete": false
+  },
+  "tasks_api": {
+    "number": 177,
+    "id": "01a13b0d-976a-7a17-94f8-2b95bb175612",
+    "status": "todo",
+    "version": 3,
+    "phase": "Backlog",
+    "readiness": "needs-product-scope-and-repository"
+  },
+  "linear": {
+    "id": "BOO-27",
+    "uuid": "a2456197-4e66-40ed-ba42-a1510fce65ad",
+    "url": "https://linear.app/bookchaowalit/issue/BOO-27/หลกฐานความสามารถ-product-engineering",
+    "status": "Backlog",
+    "role": "evidence-parent",
+    "original_scope_preserved": true
+  },
+  "jira": {
+    "id": "10000",
+    "key": "KAN-1",
+    "url": "https://bookchaowalit.atlassian.net/browse/KAN-1",
+    "status": "To Do",
+    "role": "execution-mirror"
+  },
+  "repository": {
+    "evidence": "bookchaowalit/platform-ops-cli",
+    "product": null,
+    "product_resolution": "unresolved",
+    "evidence_url": "https://github.com/bookchaowalit/platform-ops-cli/blob/main/docs/operations/task-tracker-pilot-2026-10-14.md"
+  },
+  "verification": {
+    "tasks_api": {
+      "identity_matches": true,
+      "linked_notes_match": true,
+      "replay_outcome": "unchanged",
+      "same_task_number": true,
+      "same_task_uuid": true,
+      "version_unchanged_on_replay": true,
+      "stale_version_http_status": 412,
+      "state_unchanged_after_conflict": true,
+      "source_status": "todo",
+      "version": 3
+    },
+    "trello": {
+      "id": "ari:cloud:trello::card/workspace/605e3dd7400b1620126cb080/69b6b2394811358126a19b4d",
+      "title": "Create rudimentary UI for the website",
+      "list": "Backlog",
+      "complete": false,
+      "sourceKeyPresent": true,
+      "taskUuidPresent": true,
+      "linearPresent": true,
+      "jiraPresent": true
+    },
+    "linear": {
+      "id": "BOO-27",
+      "title": "หลักฐานความสามารถ — Product Engineering",
+      "status": "Backlog",
+      "sourceKeyPresent": true,
+      "taskUuidPresent": true,
+      "jiraPresent": true
+    },
+    "jira": {
+      "id": "10000",
+      "key": "KAN-1",
+      "status": "To Do",
+      "sourceKeyPresent": true,
+      "taskUuidPresent": true,
+      "linearPresent": true
+    },
+    "preservation": {
+      "linearOriginalDescriptionPreserved": true,
+      "linearTitlePreserved": true,
+      "linearStatusPreserved": true,
+      "trelloTitlePreserved": true,
+      "trelloListPreserved": true,
+      "trelloCompletionPreserved": true
+    },
+    "repository": {
+      "focused_checks": "passed",
+      "test_scripts_passed": 118,
+      "test_scripts_total": 120,
+      "skipped_scripts": 1,
+      "partial_scripts": 1,
+      "failed_scripts": 0,
+      "status": "partial",
+      "limitations": [
+        "art_pipeline_test.py: ImageMagick unavailable",
+        "portfolio_l3_test.py: actual portfolio manifest absent"
+      ]
+    }
+  },
+  "linear_creation": {
+    "outcome": "rejected",
+    "reason": "workspace_free_issue_limit",
+    "resolution": "user_requested_existing_issue"
+  },
+  "continuous_sync": false,
+  "review_mapping_runtime_verified": false,
+  "product_implementation_verified": false
+}
