@@ -5,6 +5,7 @@ import contextlib
 import io
 import importlib
 import json
+import signal
 import socket
 import sys
 import tempfile
@@ -61,6 +62,7 @@ class FakeServices:
         self.read_failure = None
         self.read_failure_count = 0
         self.redirect = False
+        self.slow_drip = False
         self.lost = None
         self.task = {"id": CONFIG["task"]["id"], "number": 177, "version": 3, "title": "Create rudimentary UI for the website", "status": "todo",
                      "external_source": "trello", "external_id": CONFIG["trello"]["card_id"],
@@ -130,7 +132,20 @@ class FakeServices:
                     owner.lost = None
                     self.connection.shutdown(socket.SHUT_RDWR); self.connection.close(); return
                 self.send_response(200); self.send_header("Content-Type", "application/json"); self.end_headers()
-                self.wfile.write(json.dumps(value).encode())
+                encoded = json.dumps(value).encode()
+                try:
+                    if owner.slow_drip and path == "/linear/graphql" and "mutation" not in body["query"]:
+                        owner.slow_drip = False
+                        until, offset = time.monotonic() + 1.2, 0
+                        while time.monotonic() < until and offset < len(encoded):
+                            self.wfile.write(encoded[offset:offset + 1]); self.wfile.flush()
+                            offset += 1
+                            time.sleep(0.02)
+                        self.wfile.write(encoded[offset:])
+                    else:
+                        self.wfile.write(encoded)
+                except (BrokenPipeError, ConnectionResetError):
+                    pass
         self.server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
         self.thread.start()
@@ -390,6 +405,67 @@ class TrackerSyncTest(unittest.TestCase):
         self.assertEqual(self.worker.tick(apply=True)["status"], "deferred")
         self.assertEqual(len(self.fake.calls), count)
 
+    def test_tasks_retry_after_preserves_server_delay_before_bootstrap(self):
+        for status in (429, 503):
+            with self.subTest(status=status):
+                checkpoint = Path(self.directory.name) / "checkpoint.json"
+                if checkpoint.exists(): checkpoint.unlink()
+                self.fake.calls.clear()
+                self.fake.read_failure = (status, "1800")
+                self.fake.read_failure_count = 1
+                started = time.time()
+                result = self.worker.tick(apply=True)
+                self.assertEqual(result["status"], "deferred", result)
+                state = json.loads(checkpoint.read_text())
+                self.assertGreaterEqual(state["deferred_until"], started + 1800)
+                self.assertLess(state["deferred_until"], started + 1802)
+                self.assertEqual(len(self.fake.calls), 1)
+                self.assertEqual(self.worker.tick(apply=True)["status"], "deferred")
+                self.assertEqual(len(self.fake.calls), 1)
+
+    def test_jira_discovery_rechecks_authority_before_transition(self):
+        self.bootstrap()
+        self.fake.task["status"] = "in_progress"
+        self.fake.task["version"] += 1
+        for change in ("blocked", "version", "source_title"):
+            with self.subTest(change=change):
+                task_before = copy.deepcopy(self.fake.task)
+                title_before = self.fake.card["name"]
+                self.fake.calls.clear()
+                def hook(method, path, body):
+                    if method == "GET" and path.endswith("/transitions"):
+                        if change == "blocked": self.fake.task["status"] = "blocked"
+                        elif change == "version": self.fake.task["version"] += 1
+                        else: self.fake.card["name"] = "Source title changed during discovery"
+                self.fake.hook = hook
+                result = self.worker.tick(apply=True)
+                self.assertEqual(result["status"], "hold" if change == "blocked" else "conflict", result)
+                self.assertEqual(self.fake.writes(), [])
+                self.fake.hook = None
+                self.fake.task = task_before
+                self.fake.card["name"] = title_before
+        self.assertEqual(self.worker.tick(apply=True)["status"], "changed")
+        self.assertEqual(self.fake.issue["fields"]["status"]["id"], "10001")
+
+    def test_jira_discovery_revalidates_scope_and_source_markers(self):
+        self.bootstrap()
+        self.fake.task["status"] = "in_progress"
+        for change in ("key", "project", "marker"):
+            with self.subTest(change=change):
+                original = copy.deepcopy(self.fake.issue)
+                self.fake.calls.clear()
+                def hook(method, path, body):
+                    if method == "GET" and path.endswith("/transitions"):
+                        if change == "key": self.fake.issue["key"] = "KAN-99"
+                        elif change == "project": self.fake.issue["fields"]["project"]["id"] = "other-project"
+                        else: self.fake.issue["fields"]["description"] = "markers removed during discovery"
+                self.fake.hook = hook
+                result = self.worker.tick(apply=True)
+                self.assertEqual(result["status"], "conflict", result)
+                self.assertEqual(self.fake.writes(), [])
+                self.fake.hook = None
+                self.fake.issue = original
+
     def test_reads_retry_only_once_and_writes_never_retry(self):
         self.fake.read_failure = (503, None)
         self.fake.read_failure_count = 1
@@ -449,6 +525,75 @@ class TrackerSyncTest(unittest.TestCase):
         self.assertEqual(result["status"], "failure", result)
         self.assertEqual(result["codes"], ["tick_deadline"])
         self.assertEqual(self.fake.calls, [])
+
+    def test_absolute_deadline_interrupts_slow_drip_and_keeps_recoverable_intent(self):
+        self.worker.budget_seconds = 0.35
+        previous_handler = signal.getsignal(signal.SIGALRM)
+        def hook(method, path, body):
+            if path == "/linear/graphql" and "mutation" in body["query"]:
+                self.fake.slow_drip = True
+        self.fake.hook = hook
+        started = time.monotonic()
+        result = self.worker.tick(apply=True)
+        elapsed = time.monotonic() - started
+        self.assertLess(elapsed, 0.8, "socket inactivity timeout allowed a slow response to overrun the absolute budget")
+        self.assertEqual(result["status"], "failure", result)
+        self.assertEqual(result["codes"], ["tick_deadline"])
+        self.assertIn("trello", result["changed"], "deadline reporting discarded an already verified provider change")
+        state = json.loads((Path(self.directory.name) / "checkpoint.json").read_text())
+        self.assertIn("linear", state["pending"])
+        self.assertEqual(signal.getsignal(signal.SIGALRM), previous_handler)
+        self.assertEqual(signal.getitimer(signal.ITIMER_REAL), (0.0, 0.0))
+        self.fake.hook = None
+        self.worker.budget_seconds = 60
+        self.fake.calls.clear()
+        self.assertEqual(self.worker.tick(apply=True)["status"], "changed")
+        self.assertEqual(self.fake.writes(), [])
+
+    def test_deadline_crossed_during_final_readback_cannot_report_success(self):
+        expired = [False]
+        def hook(method, path, body):
+            if path == "/linear/graphql" and "mutation" not in body["query"] and any(c[0] == "POST" and "mutation" in c[2].get("query", "") for c in self.fake.calls if "/linear/" in c[1]):
+                expired[0] = True
+        self.fake.hook = hook
+        with patch("tracker_sync.time", wraps=time) as clock:
+            clock.monotonic.side_effect = lambda: time.monotonic() + (120 if expired[0] else 0)
+            result = self.worker.tick(apply=True)
+        self.assertEqual(result["status"], "failure", result)
+        self.assertEqual(result["codes"], ["tick_deadline"])
+        state = json.loads((Path(self.directory.name) / "checkpoint.json").read_text())
+        self.assertIn("linear", state["pending"])
+        self.fake.hook = None
+        self.fake.calls.clear()
+        self.assertEqual(self.worker.tick(apply=True)["status"], "changed")
+        self.assertEqual(self.fake.writes(), [])
+
+    def test_absolute_deadline_refuses_non_main_thread_before_io(self):
+        results = []
+        thread = threading.Thread(target=lambda: results.append(self.worker.tick(apply=True)))
+        thread.start(); thread.join(timeout=3)
+        self.assertFalse(thread.is_alive())
+        self.assertEqual(results[0]["status"], "failure", results)
+        self.assertEqual(results[0]["codes"], ["deadline_context_unsupported"])
+        self.assertEqual(self.fake.calls, [])
+
+    def test_absolute_deadline_preserves_an_existing_timer(self):
+        previous_handler = signal.getsignal(signal.SIGALRM)
+        previous_timer = signal.getitimer(signal.ITIMER_REAL)
+        handler = lambda signum, frame: None
+        signal.signal(signal.SIGALRM, handler)
+        signal.setitimer(signal.ITIMER_REAL, 5)
+        try:
+            result = self.worker.tick(apply=True)
+            self.assertEqual(result["status"], "failure", result)
+            self.assertEqual(result["codes"], ["deadline_timer_in_use"])
+            self.assertEqual(signal.getsignal(signal.SIGALRM), handler)
+            self.assertGreater(signal.getitimer(signal.ITIMER_REAL)[0], 4)
+            self.assertEqual(self.fake.calls, [])
+        finally:
+            signal.setitimer(signal.ITIMER_REAL, 0)
+            signal.signal(signal.SIGALRM, previous_handler)
+            signal.setitimer(signal.ITIMER_REAL, *previous_timer)
 
     def test_jira_reread_checks_all_managed_fields_before_mutation(self):
         self.bootstrap()

@@ -20,11 +20,11 @@
     "provider_write_roundtrip_verified": false
   },
   "verification": {
-    "focused_http_test_cases": 29,
+    "focused_http_test_cases": 36,
     "focused_http_result": "passed",
     "owning_test_scripts": {
-      "total": 121,
-      "passed": 119,
+      "total": 122,
+      "passed": 120,
       "skipped": 1,
       "partial": 1,
       "failed": 0,
@@ -46,13 +46,21 @@
       "planned_lifecycle_changes": false
     },
     "systemd_units_valid": true,
-    "installer_activation_refused_without_credentials": true
+    "installer_activation_refused_without_credentials": true,
+    "timer_activation_test_cases": 3,
+    "review_fixes_verified": [
+      "R1: verified preview required before activation",
+      "R2: Tasks Retry-After forwarded and honored",
+      "R3: final canonical guard after Jira discovery",
+      "R4: absolute I/O deadline and retained partial-change evidence"
+    ]
   },
   "deployment": "deployment_skipped_no_target",
   "limitations": [
     "A local user timer needs the machine and user service running.",
     "Guarded provider rereads do not provide an atomic compare-and-swap or cross-provider transaction.",
     "Chat plugin connections do not grant worker credentials.",
-    "Product UI requirements and repository remain unconfirmed."
+    "Product UI requirements and repository remain unconfirmed.",
+    "The absolute deadline requires Linux main-thread execution and holds if the caller already has an active alarm."
   ]
 }

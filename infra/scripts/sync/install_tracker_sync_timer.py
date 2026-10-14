@@ -81,12 +81,16 @@ def main() -> int:
              "--config", str(ROOT / "infra/platform/tracker-sync-pilot.json"),
              "--state-dir", str(ROOT / ".runtime/tracker-sync-pilot"), "--json"],
             capture_output=True, text=True, timeout=90, check=False)
-        if preview.returncode:
-            try:
-                report = json.loads(preview.stdout)
-            except ValueError:
-                report = {"status": "blocked", "code": "live_preview_failed"}
-            print(json.dumps({"activated": False, "preview": report}))
+        try:
+            preview_report = json.loads(preview.stdout)
+        except ValueError:
+            preview_report = None
+        verified_preview = (isinstance(preview_report, dict)
+                            and preview_report.get("schema") == "tracker-sync.report.v1"
+                            and preview_report.get("task_number") == 177
+                            and preview_report.get("status") in ("dry_run", "unchanged"))
+        if preview.returncode or not verified_preview:
+            print(json.dumps({"activated": False, "status": "blocked", "code": "live_preview_not_verified"}))
             return 2
         target = Path.home() / ".config/systemd/user"
         target.mkdir(parents=True, exist_ok=True)

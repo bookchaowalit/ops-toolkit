@@ -88,8 +88,11 @@ class TasksAdapter:
             try:
                 return self.store._call(method, path, body=body, headers=headers)
             except TaskStoreError as error:
+                retry = error.retry_after
+                if error.status == 429 or retry and error.status in (500, 502, 503, 504):
+                    raise SyncError("tasks_http_" + str(error.status), status="deferred", retry_after=retry_delay(retry) if retry else 900) from None
                 if method == "GET" and error.status in (500, 502, 503, 504) and attempt == 0: continue
-                raise SyncError("tasks_http_" + str(error.status), status="conflict" if error.status in (409, 412) else "deferred" if error.status == 429 else "failure", retry_after=900 if error.status == 429 else 0) from None
+                raise SyncError("tasks_http_" + str(error.status), status="conflict" if error.status in (409, 412) else "failure") from None
             except (urllib.error.URLError, TimeoutError, OSError, http.client.HTTPException):
                 if method == "GET" and attempt == 0: continue
                 raise SyncError("tasks_transport_unavailable") from None
@@ -127,18 +130,21 @@ class JiraAdapter:
     def read(self):
         return self.http.request("GET", self.path + "?fields=summary,status,description,updated,project", read=True)
 
-    def write(self, key, desired, current):
-        if key == "jira_summary":
-            self.http.request("PUT", self.path, {"fields": {"summary": desired}})
-            return
-        transitions = self.http.request("GET", self.path + "/transitions", read=True)
-        choices = [t["id"] for t in transitions.get("transitions", []) if str(t.get("to", {}).get("id")) == desired]
-        if len(choices) != 1: raise SyncError("jira_transition_unavailable", status="hold")
-        # Discovering transitions is another read: guard again immediately before POST.
+    def write(self, key, desired, current, *, guard):
+        choices = []
+        if key == "jira_status":
+            transitions = self.http.request("GET", self.path + "/transitions", read=True)
+            choices = [t["id"] for t in transitions.get("transitions", []) if str(t.get("to", {}).get("id")) == desired]
+            if len(choices) != 1: raise SyncError("jira_transition_unavailable", status="hold")
+        # All discovery and target reads precede the final canonical authority guard.
         fresh = self.read()
         if fresh.get("id") != current.get("id") or any(fresh.get("fields", {}).get(k) != current.get("fields", {}).get(k) for k in ("summary", "status")):
             raise SyncError("jira_concurrent_drift", status="conflict")
-        self.http.request("POST", self.path + "/transitions", {"transition": {"id": choices[0]}})
+        guard(fresh)
+        if key == "jira_summary":
+            self.http.request("PUT", self.path, {"fields": {"summary": desired}})
+        else:
+            self.http.request("POST", self.path + "/transitions", {"transition": {"id": choices[0]}})
 
 
 class LinearAdapter:

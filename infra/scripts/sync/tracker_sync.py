@@ -4,12 +4,15 @@ from __future__ import annotations
 
 import argparse
 import copy
+from contextlib import contextmanager
 import fcntl
 import hashlib
 import json
 import os
+import signal
 import sys
 import tempfile
+import threading
 import time
 import uuid
 from pathlib import Path
@@ -95,13 +98,41 @@ def report(status, codes=(), changed=(), planned=()):
         "codes": list(codes)[:10], "changed": list(changed)[:5], "planned": list(planned)[:5], "limitation": LIMITATION}
 
 
+@contextmanager
+def absolute_deadline(deadline):
+    """Interrupt blocking I/O on Linux; never replace another caller's active alarm."""
+    if sys.platform != "linux" or threading.current_thread() is not threading.main_thread():
+        raise SyncError("deadline_context_unsupported")
+    previous_handler = signal.getsignal(signal.SIGALRM)
+    previous_timer = signal.getitimer(signal.ITIMER_REAL)
+    if previous_handler is None: raise SyncError("deadline_context_unsupported")
+    if any(previous_timer): raise SyncError("deadline_timer_in_use")
+    remaining = deadline - time.monotonic()
+    if remaining <= 0: raise SyncError("tick_deadline")
+    def expired(signum, frame):
+        raise SyncError("tick_deadline")
+    signal.signal(signal.SIGALRM, expired)
+    try:
+        signal.setitimer(signal.ITIMER_REAL, remaining)
+        try:
+            yield
+        finally:
+            signal.setitimer(signal.ITIMER_REAL, 0)
+    finally:
+        signal.signal(signal.SIGALRM, previous_handler)
+        signal.setitimer(signal.ITIMER_REAL, *previous_timer)
+
+
 class SyncWorker:
-    def __init__(self, config, state_dir, adapters):
+    def __init__(self, config, state_dir, adapters, *, budget_seconds=60):
         if digest(config) != digest(PILOT): raise ValueError("config_outside_pilot")
+        if not isinstance(budget_seconds, (int, float)) or isinstance(budget_seconds, bool) or not 0 < budget_seconds <= 60:
+            raise ValueError("invalid_tick_budget")
         self.config = copy.deepcopy(config)
         self.config_hash = digest(config)
         self.directory = Path(state_dir)
         self.adapters = adapters
+        self.budget_seconds = budget_seconds
         self.deadline = None
 
     def check_budget(self):
@@ -174,6 +205,7 @@ class SyncWorker:
     def read(self, provider):
         self.check_budget()
         obj = self.adapters[provider].read()
+        self.check_budget()
         if not isinstance(obj, dict): raise SyncError(provider + "_response_invalid", status="conflict")
         self.validate(provider, obj)
         return obj
@@ -209,6 +241,19 @@ class SyncWorker:
         return False
 
     def tick(self, *, apply=False):
+        try:
+            self.deadline = time.monotonic() + self.budget_seconds
+            with absolute_deadline(self.deadline):
+                result = self._tick(apply=apply)
+                # Preserve verified partial-change evidence in an error report.
+                # Success still requires the final absolute-budget check.
+                if result["status"] in ("changed", "unchanged", "dry_run"):
+                    self.check_budget()
+                return result
+        except SyncError as error:
+            return report(error.status, [error.code])
+
+    def _tick(self, *, apply=False):
         changed, planned, state = [], [], None
         self.directory.mkdir(parents=True, exist_ok=True, mode=0o700)
         lock_fd = os.open(self.directory / "worker.lock", os.O_CREAT | os.O_RDWR, 0o600)
@@ -216,7 +261,6 @@ class SyncWorker:
             try: fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
             except BlockingIOError: return report("locked", ["another_tick_running"])
             try:
-                self.deadline = time.monotonic() + 60
                 for adapter in self.adapters.values():
                     if hasattr(adapter, "http"): adapter.http.deadline = self.deadline
                     if hasattr(adapter, "deadline"): adapter.deadline = self.deadline
@@ -225,9 +269,11 @@ class SyncWorker:
                 objects = {p: self.read(p) for p in ("tasks", "trello", "jira", "linear")}
                 self.check_budget()
                 linked = self.adapters["tasks"].read_external()
+                self.check_budget()
                 self.validate("tasks", linked)
                 self.check_budget()
                 board = self.adapters["trello"].read_board()
+                self.check_budget()
                 if board.get("id") != self.config["trello"]["board_id"] or board.get("idOrganization") != self.config["trello"]["workspace_id"]:
                     raise SyncError("trello_workspace_invalid", status="conflict")
                 wanted = self.desired(objects)
@@ -270,7 +316,17 @@ class SyncWorker:
                     if key == "trello": output = {**output, "description": replace_block(fresh["desc"], output["block"], self.config["managed_block"])}
                     if key == "linear": output = replace_block(fresh["description"], output, self.config["managed_block"])
                     self.check_budget()
-                    self.adapters[provider].write(key, output, fresh)
+                    if provider == "jira":
+                        def final_guard(jira_now):
+                            self.validate("jira", jira_now)
+                            for related in ("jira_summary", "jira_status"):
+                                self.guarded(state, related, self.value(related, jira_now), wanted[related])
+                            if self.authority(self.read("tasks"), self.read("trello")) != authority:
+                                raise SyncError("execution_authority_changed", status="conflict")
+                            self.check_budget()
+                        self.adapters[provider].write(key, output, fresh, guard=final_guard)
+                    else:
+                        self.adapters[provider].write(key, output, fresh)
                     verified = self.read(provider)
                     if digest(self.value(key, verified)) != after:
                         raise SyncError(key + "_readback_mismatch", status="conflict")
@@ -281,6 +337,7 @@ class SyncWorker:
                     state["baseline"][key] = after; del state["pending"][key]
                     if key not in changed: changed.append(key)
                     self.save(state)
+                self.check_budget()
                 result = report("changed" if changed else "unchanged", changed=changed)
             except SyncError as error:
                 result = report(error.status, [error.code], changed, planned)

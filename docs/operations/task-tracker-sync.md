@@ -16,6 +16,8 @@ Pilot นี้จำกัดเฉพาะ Tasks API #177 / Trello card `69b6
 
 `todo` → Backlog / To Do, `in_progress` → WIP / In Progress, `in_progress` พร้อม phase `Review` → Review / In Review, `done` → Done. `blocked`, `cancelled` หรือ phase ที่ขัดกับ status ทำให้หยุดและรายงาน ไม่เดาความหมายจาก Closed. เมื่อยังไม่มี product repository/requirements งาน UI ยังคงไม่ได้เริ่ม.
 
+ตัวรันนี้ใช้ Linux main thread และตัด blocking I/O ตามเส้นตาย60วินาที ด้วย systemd deadline90วินาทีเป็น backstop. ถ้าผู้เรียกมี active alarm อยู่แล้วหรือเรียกจาก thread อื่น ระบบจะหยุดก่อนอ่าน provider เพื่อรักษาสภาพของผู้เรียก. กรณีทำได้บางส่วนก่อน timeout รายงานและ pending journal จะเก็บหลักฐานการเปลี่ยนแปลงไว้.
+
 ## ตรวจและเปิดรัน
 
 รันจาก checkout ของ ops-toolkit:

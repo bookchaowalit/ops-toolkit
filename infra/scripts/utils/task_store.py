@@ -147,10 +147,12 @@ def client_settings(environ: Any = None) -> dict[str, str]:
 
 
 class TaskStoreError(RuntimeError):
-    def __init__(self, status: int, reason: str) -> None:
+    def __init__(self, status: int, reason: str, *, retry_after: str | None = None) -> None:
         super().__init__(f"{status}: {reason}")
         self.status = status
         self.reason = reason
+        # Public scheduling metadata only; credentials and other headers stay private.
+        self.retry_after = retry_after
 
 
 def tags_list(value: Any) -> list[str]:
@@ -323,7 +325,8 @@ class ApiTaskStore:
             except (ValueError, AttributeError):
                 detail = None
             reason = (detail.get("reason") or detail.get("error")) if isinstance(detail, dict) else "error"
-            raise TaskStoreError(error.code, reason) from None
+            retry_after = error.headers.get("Retry-After") if error.headers else None
+            raise TaskStoreError(error.code, reason, retry_after=retry_after) from None
 
     def _record(self, task: dict[str, Any]) -> dict[str, Any]:
         self._ids[task["number"]] = task["id"]
