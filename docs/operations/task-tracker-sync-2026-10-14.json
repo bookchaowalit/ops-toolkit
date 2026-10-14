@@ -20,7 +20,7 @@
     "provider_write_roundtrip_verified": false
   },
   "verification": {
-    "focused_http_test_cases": 36,
+    "focused_http_test_cases": 38,
     "focused_http_result": "passed",
     "owning_test_scripts": {
       "total": 122,
@@ -30,7 +30,7 @@
       "failed": 0,
       "timed_out": 0,
       "errors": 0,
-      "status": "partial"
+      "status": "partial-after-targeted-recheck"
     },
     "existing_limitations": [
       "ImageMagick not installed; media suite skipped",
@@ -52,8 +52,36 @@
       "R1: verified preview required before activation",
       "R2: Tasks Retry-After forwarded and honored",
       "R3: final canonical guard after Jira discovery",
-      "R4: absolute I/O deadline and retained partial-change evidence"
-    ]
+      "R4: absolute I/O deadline and retained partial-change evidence",
+      "R4-1: final checkpoint and outer success deadline retain verified changes and planned work; recovery has no duplicate writes"
+    ],
+    "focused_test_cases_total": 41,
+    "owning_test_scripts_initial": {
+      "total": 122,
+      "passed": 119,
+      "skipped": 1,
+      "partial": 1,
+      "failed": 1,
+      "timed_out": 0,
+      "errors": 0,
+      "status": "fail"
+    },
+    "owning_failed_script_recheck": {
+      "script": "infra/tests/quality/delivery_cli_contract_test.py",
+      "test_cases": 4,
+      "status": "passed",
+      "source_changes": false,
+      "initial_failure": "overview returned exit 2 during parallel owning suite",
+      "root_cause": "not established; isolated full script passed in 35.636 seconds"
+    },
+    "independent_review": {
+      "reviewer": "gpt-6.1-sol/high",
+      "rounds": 3,
+      "escalations": 1,
+      "final_code_sha": "8124eeb2dad1d310c2ebeac131147bd717533ac9",
+      "status": "passed-after-fixes",
+      "blocking_findings_remaining": 0
+    }
   },
   "deployment": "deployment_skipped_no_target",
   "limitations": [
