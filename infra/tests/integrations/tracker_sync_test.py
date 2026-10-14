@@ -550,6 +550,53 @@ class TrackerSyncTest(unittest.TestCase):
         self.assertEqual(self.worker.tick(apply=True)["status"], "changed")
         self.assertEqual(self.fake.writes(), [])
 
+    def test_deadline_during_final_checkpoint_preserves_verified_changes(self):
+        self.worker.budget_seconds = 0.35
+        previous_handler = signal.getsignal(signal.SIGALRM)
+        save = self.worker.save
+        def slow_final_save(state):
+            if state["last_status"] == "changed":
+                time.sleep(1)
+            save(state)
+        with patch.object(self.worker, "save", side_effect=slow_final_save):
+            result = self.worker.tick(apply=True)
+        self.assertEqual(result["status"], "failure", result)
+        self.assertEqual(result["codes"], ["tick_deadline"])
+        self.assertEqual(result["changed"], ["trello", "linear"])
+        self.assertEqual(result["planned"], ["trello", "linear"])
+        state = json.loads((Path(self.directory.name) / "checkpoint.json").read_text())
+        self.assertEqual(state["pending"], {})
+        self.assertEqual(set(state["baseline"]), {"task_title", "jira_summary", "jira_status", "trello", "linear"})
+        self.assertEqual(len(self.fake.writes()), 2)
+        self.assertEqual(signal.getsignal(signal.SIGALRM), previous_handler)
+        self.assertEqual(signal.getitimer(signal.ITIMER_REAL), (0.0, 0.0))
+        self.worker.budget_seconds = 60
+        self.fake.calls.clear()
+        recovered = self.worker.tick(apply=True)
+        self.assertEqual(recovered["status"], "unchanged", recovered)
+        self.assertEqual(recovered["changed"], [])
+        self.assertEqual(self.fake.writes(), [])
+
+    def test_final_success_budget_check_preserves_verified_changes(self):
+        expired = [False]
+        save = self.worker.save
+        def final_save(state):
+            save(state)
+            if state["last_status"] == "changed":
+                expired[0] = True
+        with patch.object(self.worker, "save", side_effect=final_save), patch("tracker_sync.time", wraps=time) as clock:
+            clock.monotonic.side_effect = lambda: time.monotonic() + (120 if expired[0] else 0)
+            result = self.worker.tick(apply=True)
+        self.assertEqual(result["status"], "failure", result)
+        self.assertEqual(result["codes"], ["tick_deadline"])
+        self.assertEqual(result["changed"], ["trello", "linear"])
+        self.assertEqual(result["planned"], ["trello", "linear"])
+        self.fake.calls.clear()
+        recovered = self.worker.tick(apply=True)
+        self.assertEqual(recovered["status"], "unchanged", recovered)
+        self.assertEqual(recovered["changed"], [])
+        self.assertEqual(self.fake.writes(), [])
+
     def test_deadline_crossed_during_final_readback_cannot_report_success(self):
         expired = [False]
         def hook(method, path, body):

@@ -241,20 +241,21 @@ class SyncWorker:
         return False
 
     def tick(self, *, apply=False):
+        progress = {"changed": [], "planned": []}
         try:
             self.deadline = time.monotonic() + self.budget_seconds
             with absolute_deadline(self.deadline):
-                result = self._tick(apply=apply)
+                result = self._tick(progress, apply=apply)
                 # Preserve verified partial-change evidence in an error report.
                 # Success still requires the final absolute-budget check.
                 if result["status"] in ("changed", "unchanged", "dry_run"):
                     self.check_budget()
                 return result
         except SyncError as error:
-            return report(error.status, [error.code])
+            return report(error.status, [error.code], **progress)
 
-    def _tick(self, *, apply=False):
-        changed, planned, state = [], [], None
+    def _tick(self, progress, *, apply=False):
+        changed, planned, state = progress["changed"], progress["planned"], None
         self.directory.mkdir(parents=True, exist_ok=True, mode=0o700)
         lock_fd = os.open(self.directory / "worker.lock", os.O_CREAT | os.O_RDWR, 0o600)
         with os.fdopen(lock_fd, "w") as lock:
@@ -290,7 +291,7 @@ class SyncWorker:
                     state["baseline"] = {k: digest(self.value(k, objects[PROVIDERS[k]])) for k in KEYS}
                 for key in KEYS:
                     if self.guarded(state, key, self.value(key, objects[PROVIDERS[key]]), wanted[key]): changed.append(key)
-                planned = [k for k in KEYS if self.value(k, objects[PROVIDERS[k]]) != wanted[k]]
+                planned[:] = [k for k in KEYS if self.value(k, objects[PROVIDERS[k]]) != wanted[k]]
                 if not apply: return report("dry_run" if planned or changed else "unchanged", planned=planned)
                 state["deferred_until"] = 0
                 self.save(state)
@@ -334,8 +335,8 @@ class SyncWorker:
                         if verified["version"] != fresh["version"] + 1 or verified["status"] != fresh["status"] or phase_of(verified) != phase_of(fresh):
                             raise SyncError("execution_authority_changed", status="conflict")
                         authority = self.authority(verified, card_now)
-                    state["baseline"][key] = after; del state["pending"][key]
                     if key not in changed: changed.append(key)
+                    state["baseline"][key] = after; del state["pending"][key]
                     self.save(state)
                 self.check_budget()
                 result = report("changed" if changed else "unchanged", changed=changed)
