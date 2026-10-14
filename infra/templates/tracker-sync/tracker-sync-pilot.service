@@ -1,0 +1,14 @@
+[Unit]
+Description=Guarded task 177 tracker synchronization
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=@OPS_ROOT@
+ExecStart=@PYTHON@ @OPS_ROOT@/infra/scripts/sync/tracker_sync.py --config @OPS_ROOT@/infra/platform/tracker-sync-pilot.json --state-dir @OPS_ROOT@/.runtime/tracker-sync-pilot --apply --json --quiet
+TimeoutStartSec=90
+KillMode=control-group
+UMask=0077
+NoNewPrivileges=true
+StandardInput=null

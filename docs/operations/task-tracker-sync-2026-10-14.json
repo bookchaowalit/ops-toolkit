@@ -1,0 +1,58 @@
+{
+  "schema": "tracker-sync.delivery-evidence.v1",
+  "observed_at": "2026-10-14",
+  "work_task_number": 180,
+  "scope_task_number": 177,
+  "scope_task_uuid": "01a13b0d-976a-7a17-94f8-2b95bb175612",
+  "scope": {
+    "trello_card_id": "69b6b2394811358126a19b4d",
+    "jira_key": "KAN-1",
+    "linear_parent": "BOO-27"
+  },
+  "runtime": {
+    "continuous_sync": false,
+    "timer_installed": false,
+    "timer_enabled": false,
+    "state": "awaiting-provider-credentials",
+    "interval_minutes": 15,
+    "credential_presence": "missing-all-five-provider-values",
+    "authentication_verified": false,
+    "provider_write_roundtrip_verified": false
+  },
+  "verification": {
+    "focused_http_test_cases": 29,
+    "focused_http_result": "passed",
+    "owning_test_scripts": {
+      "total": 121,
+      "passed": 119,
+      "skipped": 1,
+      "partial": 1,
+      "failed": 0,
+      "timed_out": 0,
+      "errors": 0,
+      "status": "partial"
+    },
+    "existing_limitations": [
+      "ImageMagick not installed; media suite skipped",
+      "Portfolio L3 requires explicit manifest; synthetic-only partial"
+    ],
+    "live_snapshot_preview": {
+      "status": "dry_run",
+      "writes": 0,
+      "planned": [
+        "trello",
+        "linear"
+      ],
+      "planned_lifecycle_changes": false
+    },
+    "systemd_units_valid": true,
+    "installer_activation_refused_without_credentials": true
+  },
+  "deployment": "deployment_skipped_no_target",
+  "limitations": [
+    "A local user timer needs the machine and user service running.",
+    "Guarded provider rereads do not provide an atomic compare-and-swap or cross-provider transaction.",
+    "Chat plugin connections do not grant worker credentials.",
+    "Product UI requirements and repository remain unconfirmed."
+  ]
+}

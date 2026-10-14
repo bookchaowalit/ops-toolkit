@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "pilot": "task-177",
+  "task": {
+    "id": "01a13b0d-976a-7a17-94f8-2b95bb175612",
+    "number": 177
+  },
+  "trello": {
+    "workspace_id": "605e3dd7400b1620126cb080",
+    "card_id": "69b6b2394811358126a19b4d",
+    "board_id": "697de98c7caf3602f76b0248",
+    "lists": {
+      "Backlog": "697de9b56ba3512a2565a1f8",
+      "WIP": "697de9b2e8235fc702551dd3",
+      "Review": "697de9ba62ad743534beebb0",
+      "Done": "697de9bd27a92285f988fcd7"
+    },
+    "source_marker": "trello:69b6b2394811358126a19b4d"
+  },
+  "jira": {
+    "issue_id": "10000",
+    "issue_key": "KAN-1",
+    "project_id": "10000",
+    "origin": "https://bookchaowalit.atlassian.net",
+    "status_ids": {
+      "Backlog": "10000",
+      "WIP": "10001",
+      "Review": "10003",
+      "Done": "10002"
+    },
+    "source_marker": "trello:69b6b2394811358126a19b4d"
+  },
+  "linear": {
+    "issue_id": "a2456197-4e66-40ed-ba42-a1510fce65ad",
+    "identifier": "BOO-27",
+    "team_id": "784ebf2d-d9f7-4545-a892-c96365331a90",
+    "source_marker": "trello:69b6b2394811358126a19b4d"
+  },
+  "managed_block": {
+    "start": "<!-- tracker-sync:task-177:start -->",
+    "end": "<!-- tracker-sync:task-177:end -->"
+  }
+}

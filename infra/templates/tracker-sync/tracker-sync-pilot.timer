@@ -1,0 +1,11 @@
+[Unit]
+Description=Check task 177 tracker synchronization every 15 minutes
+
+[Timer]
+OnCalendar=*-*-* *:00/15:00
+Persistent=true
+RandomizedDelaySec=30
+Unit=tracker-sync-pilot.service
+
+[Install]
+WantedBy=timers.target
