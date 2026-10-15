@@ -21,6 +21,21 @@ tasks:
       - python3 infra/tests/integrations/org_hub_registry_test.py
       - python3 infra/tests/integrations/org_hub_timer_test.py
 
+  docs:meta:check:
+    desc: Validate document metadata front matter and sidecars in a repository (task docs:meta:check -- <repo> [--visibility public|private|internal] [--json])
+    cmds:
+      - python3 infra/scripts/sync/document_metadata.py check {{.CLI_ARGS}}
+
+  docs:meta:next-id:
+    desc: Print the next free DOC id in a repository (task docs:meta:next-id -- <repo>)
+    cmds:
+      - python3 infra/scripts/sync/document_metadata.py next-id {{.CLI_ARGS}}
+
+  test:docs-meta:
+    desc: Test the document metadata validator
+    cmds:
+      - python3 infra/tests/integrations/document_metadata_test.py
+
   step:check:
     desc: Validate the universal step visualization contract
     dir: infra
