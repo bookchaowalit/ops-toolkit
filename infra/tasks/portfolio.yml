@@ -5,6 +5,22 @@ version: '3'
 # Product build/test implementations must stay inside their own repository.
 
 tasks:
+  hubs:sync:
+    desc: Preview/check/apply GitHub organization hub inventories (explicit index and checkout root)
+    cmds:
+      - python3 infra/scripts/sync/org_hub_registry.py {{.CLI_ARGS}}
+
+  hubs:timer:
+    desc: Validate or activate the local daily organization hub sync timer
+    cmds:
+      - python3 infra/scripts/sync/install_org_hub_timer.py {{.CLI_ARGS}}
+
+  test:org-hubs:
+    desc: Test organization registry synchronization and timer readiness
+    cmds:
+      - python3 infra/tests/integrations/org_hub_registry_test.py
+      - python3 infra/tests/integrations/org_hub_timer_test.py
+
   step:check:
     desc: Validate the universal step visualization contract
     dir: infra

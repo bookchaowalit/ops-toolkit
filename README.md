@@ -124,6 +124,15 @@ bounded JSON failures with a nonzero exit. The corresponding MCP tool is
 `get_delivery_context`; an existing server/client must reload its updated tool
 registration before it can expose the tool.
 
+## Organization hub registries
+
+`task hubs:sync -- --index /path/to/bookchaowalit-empire/registry/hubs.json --checkouts-root /path/to/hubs`
+previews GitHub metadata projections without writes. Add `--check` to detect drift,
+or `--apply --publish` to update and publish only the owning hub's registry files.
+`task hubs:timer -- ... --activate` enables a verified local daily 09:00 Bangkok timer.
+See [organization hub sync](docs/operations/org-hub-registry-sync.md) for ownership,
+recovery and the local-machine scheduling contract. `task test:org-hubs` runs its tests.
+
 ## Diary
 
 `task diary -- --record-conversation --topic ... --question-summary ... --outcome-summary ... --functions ...`
