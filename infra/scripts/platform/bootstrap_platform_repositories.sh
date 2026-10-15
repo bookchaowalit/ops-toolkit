@@ -86,6 +86,13 @@ for record in "${platforms[@]}"; do
   IFS='|' read -r platform_id repository platform_name capabilities source_paths source_status data_owner <<< "$record"
   source_path="${source_paths%%;*}"
   destination="$platform_root/$repository"
+  # A generic scaffold cannot recreate an existing runtime or its pilot contract.
+  # Skip before touching the destination, including any existing owner checkout.
+  if [[ "$source_status" == "implemented-in-this-repository" ]]; then
+    echo "SKIP $repository: existing local implementation; generic scaffold not created or modified."
+    echo "Use the canonical implementation: git clone https://github.com/bookchaowalit-backend/$repository.git $destination (only if destination is absent)."
+    continue
+  fi
   mkdir -p "$destination/scripts"
 
   copy_if_missing "$template_root/README.md" "$destination/README.md"
