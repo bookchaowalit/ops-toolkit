@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Refresh explicitly configured organization hub projections using GitHub CLI.
+"""Refresh explicitly configured organization and personal hub projections using GitHub CLI.
 
 Preview is read-only. --check exits 1 on drift; --apply writes and commits scoped
 projections; --apply --publish also pushes. Blockers exit 2. No credentials or
@@ -26,6 +26,8 @@ from zoneinfo import ZoneInfo
 
 SCHEMA = 'bookchaowalit.org-hub-sync.v1'
 SLUG = re.compile(r'[A-Za-z0-9][A-Za-z0-9_.-]*\Z')
+REPOSITORY_SLUG = re.compile(r'\.?[A-Za-z0-9][A-Za-z0-9_.-]*\Z')  # GitHub allows e.g. owner/.github.
+ORGANIZATION_SCOPE = 'All organization repositories except this hub, including archived repositories.'
 INVENTORY_SCHEMA = 'bookchaowalit.org-hub.v1'
 INDEX_SCHEMA = 'bookchaowalit.empire-hubs.v1'
 
@@ -72,9 +74,15 @@ class GitHub:
 
 
 def _name(value: object) -> str:
-    if not isinstance(value, str) or len(value.split('/')) != 2 or any(not SLUG.fullmatch(p) for p in value.split('/')):
+    parts = value.split('/') if isinstance(value, str) else []
+    if len(parts) != 2 or not SLUG.fullmatch(parts[0]) or not REPOSITORY_SLUG.fullmatch(parts[1]):
         raise SyncError('invalid_repository_name')
     return value
+
+
+def personal_scope(owner: str) -> str:
+    return (f'All repositories owned by the personal account {owner} except this hub, including archived '
+            'repositories. Organization repositories are listed in their own hubs.')
 
 
 def _json(path: Path) -> dict:
@@ -119,7 +127,8 @@ def normalize_repositories(organization: str, hub_repository: str, records: list
     return sorted(result, key=lambda row: row['full_name'].casefold())
 
 
-def build_inventory(existing: dict | None, entry: dict, records: list[dict], parent_url: str, today: str) -> dict:
+def build_inventory(existing: dict | None, entry: dict, records: list[dict], parent_url: str, today: str,
+                    scope: str = ORGANIZATION_SCOPE) -> dict:
     date.fromisoformat(today)
     if existing is not None and (existing.get('schema_version') != INVENTORY_SCHEMA
             or existing.get('organization') != entry['organization']
@@ -128,7 +137,7 @@ def build_inventory(existing: dict | None, entry: dict, records: list[dict], par
     result = {'schema_version': INVENTORY_SCHEMA, 'snapshot_date': today,
               'source': 'GitHub REST API', 'organization': entry['organization'],
               'hub_repository': entry['repository'], 'parent_reference': parent_url,
-              'inventory_scope': 'All organization repositories except this hub, including archived repositories.',
+              'inventory_scope': scope,
               'repositories': normalize_repositories(entry['organization'], entry['repository'], records)}
     if existing is not None:
         old_date = existing.get('snapshot_date')
@@ -255,6 +264,8 @@ def validate_index(index: dict, base: Path) -> None:
         if row is personal:
             if name.split('/')[0] != owner:
                 raise SyncError('invalid_hub_index')
+            if 'sync' in row:
+                projection_paths(row, base)
         else:
             org = row.get('organization')
             if org in orgs or org != name.split('/')[0] or not org.startswith(owner + '-'):
@@ -410,9 +421,22 @@ def synchronize(index_path: Path, base: Path, *, apply: bool, publish: bool,
             raise SyncError('hub_missing_from_organization')
         return meta, revision, rows
 
-    personal_meta = _metadata(client, index['personal_hub'])
+    personal = index['personal_hub']
+    personal_meta = _metadata(client, personal)
     with ThreadPoolExecutor(max_workers=4) as pool:
         snapshots = list(pool.map(fetch, index['organizations']))
+    hubs = [(entry, ORGANIZATION_SCOPE, *snapshot) for entry, snapshot in zip(index['organizations'], snapshots)]
+    if 'sync' in personal:
+        # /user/repos also covers private repos; affiliation=owner can still include
+        # repos of other owners in edge cases, so keep only the personal account's own.
+        rows = [row for row in client.pages('user/repos?per_page=100&affiliation=owner')
+                if isinstance(row, dict) and isinstance(row.get('owner'), dict)
+                and row['owner'].get('login') == owner]
+        normalize_repositories(owner, personal['repository'], rows)
+        if personal['repository'] not in {row['full_name'] for row in rows}:
+            raise SyncError('hub_missing_from_account')
+        revision = _revision(client, personal['repository'], personal_meta['default_branch'])
+        hubs.append(({**personal, 'organization': owner}, personal_scope(owner), personal_meta, revision, rows))
     updated_index = deepcopy(index)
     updated_index['personal_hub']['visibility'] = personal_meta['visibility']
     for entry, (meta, _, _) in zip(updated_index['organizations'], snapshots):
@@ -425,7 +449,7 @@ def synchronize(index_path: Path, base: Path, *, apply: bool, publish: bool,
     targets.append((umbrella, root, root_meta, root_sha,
                     {'registry/hubs.json': json_text(updated_index), 'README.md': root_readme}))
     results = []
-    for entry, (meta, revision, rows) in zip(index['organizations'], snapshots):
+    for entry, scope, meta, revision, rows in hubs:
         try:
             hub_root, inv_path, readme_path = projection_paths(entry, base)
             if meta['visibility'] != 'private' or meta.get('archived'):
@@ -433,7 +457,7 @@ def synchronize(index_path: Path, base: Path, *, apply: bool, publish: bool,
             prepare_checkout(hub_root, entry['repository'], meta['default_branch'], revision, apply=apply)
             hub_root, inv_path, readme_path = projection_paths(entry, base)
             existing = _json(inv_path) if inv_path.exists() else None
-            inventory = build_inventory(existing, entry, rows, parent, today)
+            inventory = build_inventory(existing, entry, rows, parent, today, scope)
             readme = replace_region(readme_path.read_text(), 'ORG-HUB INVENTORY', render_inventory(inventory))
             targets.append((entry['repository'], hub_root, meta, revision,
                             {str(inv_path.relative_to(hub_root)): json_text(inventory),
@@ -456,8 +480,9 @@ def synchronize(index_path: Path, base: Path, *, apply: bool, publish: bool,
     blocked = sum(row['status'] == 'blocked' for row in results)
     changed = sum(row['status'] in {'drift', 'updated'} for row in results)
     return {'schema': SCHEMA, 'status': 'blocked' if blocked else ('updated' if apply else 'drift') if changed else 'unchanged',
-            'checked_organization_hubs': len(index['organizations']), 'references_verified': len(snapshots) + 1,
-            'inventory_records': sum(len(rows) - 1 for _, _, rows in snapshots),
+            'checked_organization_hubs': len(index['organizations']), 'checked_personal_hubs': int('sync' in personal),
+            'references_verified': len(snapshots) + 1,
+            'inventory_records': sum(len(rows) - 1 for *_, rows in hubs),
             'changed_targets': changed, 'blocked_targets': blocked, 'results': results}
 
 

@@ -1,7 +1,7 @@
 # Organization hub registry sync
 
-ชุดคำสั่งนี้อัปเดต metadata จาก GitHub ให้ hub ของแต่ละ Org และตรวจลิงก์ของ
-umbrella กับ personal hub โดยเก็บทะเบียนไว้ใน repo เจ้าของแต่ละแห่ง
+ชุดคำสั่งนี้อัปเดต metadata จาก GitHub ให้ hub ของแต่ละ Org และ personal hub
+พร้อมตรวจลิงก์ของ umbrella โดยเก็บทะเบียนไว้ใน repo เจ้าของแต่ละแห่ง
 
 ## การเรียกใช้งาน
 
@@ -25,10 +25,17 @@ task hubs:sync -- --index /home/bookchaowalit/bookchaowalit-empire/registry/hubs
 
 Umbrella เก็บเฉพาะ hub metadata และตำแหน่งไฟล์ projection ในแต่ละ hub ผ่าน
 `organizations[].sync.inventory_path` และ `organizations[].sync.readme_path`
-personal `solo-empire` เป็น reference ที่ตรวจการเข้าถึงและ metadata ของ hub
-แต่ทะเบียนเดิมของ personal hub ยังคง schema และเจ้าของเดิม
 
-Org hubs ใช้ทะเบียน `repository-catalog/registries/repositories.json` และส่วน
+`personal_hub.sync` เป็น block ที่ไม่บังคับ ใช้กฎ path และ symlink เดียวกับ Org
+ถ้ามี worker จะอ่าน `/user/repos?affiliation=owner` แล้วเก็บเฉพาะ repo ที่
+`owner.login` ตรงกับเจ้าของ personal hub (`bookchaowalit/personal-hub`)
+ทะเบียนใช้ schema เดียวกับ Org โดย field `organization` เก็บชื่อบัญชีส่วนตัว และ
+`inventory_scope` ระบุว่าเป็น repo ของบัญชีส่วนตัว ส่วน repo ของ Org อยู่ใน hub ของ
+Org นั้น ถ้าไม่มี `sync` personal hub จะเป็นเพียง reference ที่ตรวจ metadata
+ชื่อ repo ที่ขึ้นต้นด้วยจุด เช่น `bookchaowalit/.github` ใช้ได้เฉพาะส่วนชื่อ repo
+ส่วนชื่อ owner และ `checkout_name` ยังห้ามขึ้นต้นด้วยจุด
+
+Org hubs และ personal hub ใช้ทะเบียน `repository-catalog/registries/repositories.json` และส่วน
 `ORG-HUB INVENTORY` ใน README ส่วน Work Hub ใช้
 `repository-catalog/registries/github-repositories.json` กับ
 `repository-catalog/GITHUB-REPOSITORIES.md` แยกจาก client registry เดิม

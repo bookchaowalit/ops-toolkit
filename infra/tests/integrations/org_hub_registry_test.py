@@ -217,13 +217,17 @@ class RegistrySyncTest(unittest.TestCase):
             self.m.prepare_checkout(root, 'test-org/test-hub', 'main', 'irrelevant', apply=False)
         self.assertEqual(error.exception.code, 'unexpected_branch')
 
-    def graph(self, fail_inventory=False):
+    def graph(self, fail_inventory=False, personal_sync=None):
         index = {'schema_version': 'bookchaowalit.empire-hubs.v1', 'updated': '2026-01-01',
                  'repository': 'test/empire', 'personal_hub': {'owner': 'test',
                  'repository': 'test/solo', 'url': 'https://github.com/test/solo',
                  'visibility': 'private', 'checkout_name': 'solo', 'purpose': 'Personal'},
                  'organizations': [self.entry]}
+        if personal_sync is not None:
+            index['personal_hub']['sync'] = personal_sync
         roots = {'test/empire': self.base / 'empire', 'test-org/test-hub': self.base / 'test-hub'}
+        if personal_sync is not None:
+            roots['test/solo'] = self.base / 'solo'
         for full_name, root in roots.items():
             git(self.base, 'init', '--quiet', '--initial-branch=main', str(root))
             git(root, 'config', 'user.name', 'Graph Test')
@@ -255,6 +259,10 @@ class RegistrySyncTest(unittest.TestCase):
                 if endpoint == 'orgs/test-org/repos?per_page=100&type=all':
                     if fail_inventory: raise m.SyncError('github_read_failed')
                     return [record(), record('test-org/test-hub')]
+                if endpoint == 'user/repos?per_page=100&affiliation=owner' and personal_sync is not None:
+                    # Owner affiliation may still surface another owner's repository; it is filtered out.
+                    return [record('test/solo'), record('test/.github', visibility='public'),
+                            record('test/old', archived=True), record('someone-else/shared')]
                 raise AssertionError(endpoint)
         return roots, Provider()
 
@@ -269,6 +277,71 @@ class RegistrySyncTest(unittest.TestCase):
             self.assertEqual(git(root, 'rev-parse', 'HEAD'), before[name])
             self.assertEqual(git(root, 'status', '--porcelain'), '')
         self.assertFalse((roots['test-org/test-hub'] / self.entry['sync']['inventory_path']).exists())
+
+    def test_repository_names_allow_a_leading_dot_only_in_the_repository_part(self):
+        self.assertEqual(self.m._name('test/.github'), 'test/.github')
+        for bad in ['.test/app', 'test/..', 'test/.', 'test/.git/x', 'test/-app']:
+            with self.subTest(bad=bad), self.assertRaises(self.m.SyncError):
+                self.m._name(bad)
+        rows = self.m.normalize_repositories('test-org', 'test-org/test-hub', [record('test-org/.github')])
+        self.assertEqual(rows[0]['full_name'], 'test-org/.github')
+        entry = json.loads(json.dumps(self.entry))
+        entry['checkout_name'] = '.github'
+        with self.assertRaises(self.m.SyncError):
+            self.m.projection_paths(entry, self.base)
+
+    def test_personal_inventory_keeps_personal_account_scope(self):
+        entry = {'organization': 'test', 'repository': 'test/solo'}
+        inventory = self.m.build_inventory(None, entry, [record('test/app')], 'https://github.com/test/empire',
+                                           '2026-10-15', scope=self.m.personal_scope('test'))
+        self.assertEqual(inventory['organization'], 'test')
+        self.assertEqual(inventory['inventory_scope'],
+                         'All repositories owned by the personal account test except this hub, including '
+                         'archived repositories. Organization repositories are listed in their own hubs.')
+
+    def test_personal_sync_block_uses_the_same_projection_safety_rules(self):
+        roots, _ = self.graph(personal_sync={'inventory_path': 'repository-catalog/registries/repositories.json',
+                                             'readme_path': 'README.md'})
+        index = json.loads((roots['test/empire'] / 'registry/hubs.json').read_text())
+        self.m.validate_index(index, self.base)
+        for config, code in [({'inventory_path': '../escape.json', 'readme_path': 'README.md'}, 'unsafe_projection_path'),
+                             ({'inventory_path': 'repository-catalog/registries/repositories.json',
+                               'readme_path': 'clients/private.md'}, 'unsafe_projection_path'),
+                             ('README.md', 'missing_sync_configuration')]:
+            index['personal_hub']['sync'] = config
+            with self.subTest(config=config), self.assertRaises(self.m.SyncError) as error:
+                self.m.validate_index(index, self.base)
+            self.assertEqual(error.exception.code, code)
+
+    def test_personal_hub_without_sync_block_is_only_a_reference(self):
+        roots, provider = self.graph()
+        report = self.m.synchronize(roots['test/empire'] / 'registry/hubs.json', self.base,
+                                   apply=False, publish=False, client=provider, today='2026-10-15')
+        self.assertNotIn('test/solo', [row['repository'] for row in report['results']])
+
+    def test_personal_hub_sync_writes_owned_repositories_with_personal_scope(self):
+        sync = {'inventory_path': 'repository-catalog/registries/repositories.json', 'readme_path': 'README.md'}
+        roots, provider = self.graph(personal_sync=sync)
+        index_path = roots['test/empire'] / 'registry/hubs.json'
+        preview = self.m.synchronize(index_path, self.base, apply=False, publish=False,
+                                     client=provider, today='2026-10-15')
+        self.assertEqual(preview['changed_targets'], 3)
+        self.assertEqual(preview['blocked_targets'], 0)
+        self.assertEqual(preview['checked_personal_hubs'], 1)
+        report = self.m.synchronize(index_path, self.base, apply=True, publish=False,
+                                    client=provider, today='2026-10-15')
+        self.assertEqual(report['blocked_targets'], 0)
+        solo = roots['test/solo']
+        inventory = json.loads((solo / sync['inventory_path']).read_text())
+        self.assertEqual(inventory['organization'], 'test')
+        self.assertEqual(inventory['hub_repository'], 'test/solo')
+        self.assertTrue(inventory['inventory_scope'].startswith('All repositories owned by the personal account test'))
+        self.assertEqual([r['full_name'] for r in inventory['repositories']], ['test/.github', 'test/old'])
+        self.assertIn('[.github](https://github.com/test/.github)', (solo / 'README.md').read_text())
+        self.assertEqual(git(solo, 'status', '--porcelain'), '')
+        again = self.m.synchronize(index_path, self.base, apply=False, publish=False,
+                                   client=provider, today='2026-10-16')
+        self.assertEqual(again['status'], 'unchanged')
 
     def test_preview_detects_drift_without_writing_or_committing(self):
         roots, provider = self.graph()
