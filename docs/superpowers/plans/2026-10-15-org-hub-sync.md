@@ -37,14 +37,14 @@
 - [x] Add failing timer readiness/quoting tests and implement `infra/scripts/sync/install_org_hub_timer.py`.
 - [x] Add sync metadata and generated regions to the umbrella and 11 new hubs; give Work Hub its separate GitHub inventory projection.
 - [x] Document commands, schedule, local-machine lifetime, failure handling and owning tooling references.
-- [ ] Run live preview/apply/check and obtain an independent review; fix blocking findings.
+- [x] Run live preview/apply/check and obtain an independent review; fix blocking findings.
 
 ## Task 3: Publish and activate
 
-- [ ] Commit/push only the intended owning-repository paths after verification.
-- [ ] Verify remote revisions and live no-change behavior.
-- [ ] Install/validate user units, run the actual oneshot, enable the timer and inspect the next trigger.
-- [ ] Report the operating schedule, results and any unresolved external/environmental limitations.
+- [x] Commit/push only the intended owning-repository paths after verification.
+- [x] Verify remote revisions and live no-change behavior.
+- [x] Install/validate user units, run the actual oneshot, enable the timer and inspect the next trigger.
+- [x] Report the operating schedule, results and any unresolved external/environmental limitations.
 
 ## Verification evidence before publication
 
@@ -52,3 +52,14 @@
 - Independent review: fixed both Important findings with failing-then-passing regressions for path revalidation after fast-forward and failure-report persistence. Literal Markdown branch rendering also has a regression.
 - Actual user-unit syntax validation passed after supplying the user's existing runtime directory when the shell omits XDG_RUNTIME_DIR.
 - Owning offline suite: 119/120 test scripts passed. `infra/tests/rnd/rnd_pipeline_test.py` fails because the external `bookchaowalit/ai-doc-assistant` checkout is absent. Its test, guard and environment resolver are unchanged; standalone reproduction confirms the same missing-evidence failure. This is an environmental limitation, not a full-suite pass.
+
+## Live rollout evidence — 2026-10-15
+
+- Source tooling and adoption documentation/configuration were committed and pushed in their 14 owning checkouts.
+- First live apply/publish: 12 changed targets, zero blocked targets; verified 12 Org hubs, 13 hub references and 298 repository records.
+- Live readiness check returned unchanged before timer activation.
+- Actual user service invocation completed with Result=success and ExecMainStatus=0.
+- The repeat apply/publish run returned unchanged: all 14 checkout HEADs and all 12 snapshot dates were preserved; working trees are clean.
+- Verified GitHub API authentication and Git push --dry-run from the user systemd service context.
+- bookchaowalit-org-hub-sync.timer is enabled/active; next trigger is 2026-10-16 09:00:00 Asia/Bangkok, with Persistent=true.
+- The owning-suite environmental limitation above remains explicit; the 24 new behavioral cases pass.
