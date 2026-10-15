@@ -33,7 +33,7 @@ UTILS_DIR = WORKFLOW_DIR.parent / "utils"
 if str(UTILS_DIR) not in sys.path:
     sys.path.insert(0, str(UTILS_DIR))
 
-from _env import PROJECT_ROOT  # noqa: E402
+from _env import PROJECT_ROOT, SKILLS_ROOT  # noqa: E402
 
 CONTRACT = "solo-empire.book-dev-engineering-loop-dispatch.v1"
 DEFAULT_TICKET = (
@@ -45,6 +45,8 @@ SUPPORTED_PROVIDERS = {"grok", "codex", "claude"}
 # hook still denies secrets and destructive or production-capable commands.
 CLAUDE_IMPLEMENT_TOOLS = "Read,Grep,Glob,Edit,Write,Bash,PowerShell"
 CLAUDE_PLAN_TOOLS = "Read,Grep,Glob"
+CLAUDE_CLI_ENV = "BOOK_DEV_CLAUDE_CLI"
+SKILL_FILE = SKILLS_ROOT / "book-dev-engineering-loop" / "SKILL.md"
 MODES = {"plan", "implement"}
 
 
@@ -87,9 +89,55 @@ def resolve_grok_cmd() -> list[str] | None:
     return [grok] if grok else None
 
 
+def _is_executable(path: Path) -> bool:
+    return path.is_file() and os.access(path, os.X_OK)
+
+
+def _version_key(path: Path) -> tuple[int, ...]:
+    head = path.name.split("-", 1)[0]
+    try:
+        return tuple(int(part) for part in head.split("."))
+    except ValueError:
+        return ()
+
+
 def resolve_claude_cmd() -> list[str] | None:
+    """Find Claude Code: $BOOK_DEV_CLAUDE_CLI, PATH, standard installs, then the desktop app's CLI.
+
+    Timers run with a minimal PATH, and the Claude desktop app keeps its CLI under
+    ~/.claude/remote/ccd-cli/<version>-<build> instead of on PATH.
+    """
+
+    override = os.environ.get(CLAUDE_CLI_ENV, "").strip()
+    if override:
+        path = Path(override).expanduser()
+        return [str(path)] if _is_executable(path) else None
     claude = shutil.which("claude")
-    return [claude] if claude else None
+    if claude:
+        return [claude]
+    home = Path.home()
+    for candidate in (home / ".local" / "bin" / "claude", home / ".claude" / "local" / "claude"):
+        if _is_executable(candidate):
+            return [str(candidate)]
+    desktop = home / ".claude" / "remote" / "ccd-cli"
+    if desktop.is_dir():
+        builds = [path for path in desktop.iterdir() if _is_executable(path) and _version_key(path)]
+        if builds:
+            return [str(max(builds, key=_version_key))]
+    return None
+
+
+def resolve_repo_dir(ticket: dict[str, Any]) -> Path:
+    """Return the selected nested repository; providers run inside it."""
+
+    repo = (ticket.get("selected") or {}).get("repository") or {}
+    raw = repo.get("path")
+    if not raw:
+        raise ValueError("execution ticket has no selected repository path")
+    path = (PROJECT_ROOT / raw).resolve()
+    if not (path / ".git").exists():
+        raise ValueError(f"selected repository is not a Git checkout: {raw}")
+    return path
 
 
 def provider_availability() -> dict[str, dict[str, Any]]:
@@ -135,9 +183,9 @@ def build_prompt(ticket: dict[str, Any], *, mode: str) -> str:
     repo = selected.get("repository") or {}
     task_id = task.get("id")
     task_label = f"#{task_id}" if task_id is not None else "synthetic"
-    markdown = (ticket.get("outputs") or {}).get("markdown") or (
+    markdown = PROJECT_ROOT / ((ticket.get("outputs") or {}).get("markdown") or (
         "data/runtime/agent-loop/book-dev/execution/current.md"
-    )
+    ))
     startup = ticket.get("agent_startup_prompt") or ticket.get("agent_prompt") or ""
     mode_line = (
         "Mode: PLAN ONLY. Inspect evidence, produce a disposition and verification plan. "
@@ -151,7 +199,7 @@ def build_prompt(ticket: dict[str, Any], *, mode: str) -> str:
 
 Hard stop rules (non-negotiable):
 - Work on exactly one candidate from the execution ticket.
-- Read skills/book-dev-engineering-loop/SKILL.md first.
+- Read {SKILL_FILE} first.
 - Read {markdown}.
 - Stay inside the selected nested repository only.
 - Preserve unrelated dirty work. Never git reset/clean.
@@ -165,7 +213,7 @@ Hard stop rules (non-negotiable):
 
 Ticket status: {ticket.get('status')}
 Task: {task_label} {_clean(task.get('title'), 200)}
-Repository: {repo.get('path')}
+Repository: {(PROJECT_ROOT / repo['path']).resolve() if repo.get('path') else None}
 Source: {selected.get('source') or 'open_task'}
 Recommendation: {_clean(selected.get('recommendation'), 300)}
 
@@ -196,6 +244,7 @@ def build_provider_command(
     max_turns: int,
     cwd: Path,
     last_message_path: Path,
+    read_dirs: tuple[Path, ...] = (),
 ) -> list[str]:
     if provider == "grok":
         cmd = resolve_grok_cmd()
@@ -247,9 +296,13 @@ def build_provider_command(
         # --tools restricts availability; --allowedTools alone only grants
         # permissions. No permission host or ambient MCP servers may expand it.
         tools = CLAUDE_PLAN_TOOLS if mode == "plan" else CLAUDE_IMPLEMENT_TOOLS
+        extra_dirs: list[str] = []
+        for directory in read_dirs:
+            extra_dirs += ["--add-dir", str(directory)]
         return [
             *cmd,
             "-p",
+            *extra_dirs,
             "--permission-mode",
             "plan" if mode == "plan" else "acceptEdits",
             "--permission-prompts",
@@ -280,6 +333,7 @@ def run_provider(
     timeout_sec: int,
     dry_run: bool,
     dispatch_dir: Path,
+    cwd: Path = PROJECT_ROOT,
 ) -> dict[str, Any]:
     log_path = dispatch_dir / f"{provider}.log"
     last_message_path = dispatch_dir / f"{provider}.last-message.md"
@@ -299,8 +353,9 @@ def run_provider(
             prompt_file=prompt_file,
             mode=mode,
             max_turns=max_turns,
-            cwd=PROJECT_ROOT,
+            cwd=cwd,
             last_message_path=last_message_path,
+            read_dirs=(dispatch_dir.parent.parent, SKILL_FILE.parent),
         )
     except RuntimeError as exc:
         result["status"] = "unavailable"
@@ -321,7 +376,7 @@ def run_provider(
         completed = subprocess.run(
             command,
             input=stdin_data,
-            cwd=str(PROJECT_ROOT),
+            cwd=str(cwd),
             capture_output=True,
             text=True,
             timeout=timeout_sec,
@@ -411,6 +466,7 @@ def dispatch(
     ticket = load_ticket(ticket_path)
     if not ticket.get("selected"):
         raise ValueError("execution ticket has no selected candidate to dispatch")
+    repo_dir = resolve_repo_dir(ticket)
 
     stamp = _now_stamp()
     dispatch_dir = ticket_path.parent / "dispatch" / stamp
@@ -429,6 +485,7 @@ def dispatch(
                 timeout_sec=timeout_sec,
                 dry_run=dry_run,
                 dispatch_dir=dispatch_dir,
+                cwd=repo_dir,
             )
         )
 

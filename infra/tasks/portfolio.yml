@@ -212,6 +212,18 @@ tasks:
     cmds:
       - bash scripts/setup/run-python3.sh scripts/workflows/book_dev_ai_dispatch.py --providers grok,codex {{.CLI_ARGS}}
 
+  book-dev:linear:cycle:
+    desc: Queue and dispatch one Linear issue labelled ai-dispatch (add --dry-run to preview)
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/workflows/book_dev_linear_cycle.py {{.CLI_ARGS}}
+
+  book-dev:linear:timer:
+    desc: Validate the Book Dev dispatch timer units (add -- --activate to install and enable)
+    dir: infra
+    cmds:
+      - bash scripts/setup/run-python3.sh scripts/workflows/install_book_dev_dispatch_timer.py {{.CLI_ARGS}}
+
   role-task:map:
     desc: Accept unambiguous role to task mappings
     dir: infra

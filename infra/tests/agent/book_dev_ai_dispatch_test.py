@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 import tempfile
 from pathlib import Path
@@ -16,10 +17,14 @@ from book_dev_ai_dispatch import (  # noqa: E402
     dispatch,
     parse_providers,
     provider_availability,
+    resolve_claude_cmd,
+    resolve_repo_dir,
+    run_provider,
 )
 
 
 def sample_ticket(tmp: Path) -> Path:
+    (tmp / "repo" / ".git").mkdir(parents=True)
     selected = {
         "task": {
             "id": 2135,
@@ -28,7 +33,7 @@ def sample_ticket(tmp: Path) -> Path:
             "priority": 2,
         },
         "repository": {
-            "path": "projects/product/engineering/book-dev/github/owner/repo",
+            "path": str(tmp / "repo"),
             "state": "dirty",
             "dirty_file_count": 3,
         },
@@ -125,6 +130,61 @@ def main() -> int:
             )
             assert unavailable["status"] == "unavailable"
             assert all(item["status"] == "unavailable" for item in unavailable["results"])
+
+        # The selected repository must be a real checkout; providers run inside it.
+        assert resolve_repo_dir(ticket) == (tmp / "repo").resolve()
+        try:
+            resolve_repo_dir({"selected": {"repository": {"path": str(tmp / "missing")}}})
+            raise AssertionError("expected missing checkout error")
+        except ValueError:
+            pass
+        assert str(tmp / "current.md") in build_prompt(ticket, mode="plan")
+
+        with mock.patch("book_dev_ai_dispatch.resolve_claude_cmd", return_value=["claude"]):
+            command = build_provider_command(
+                "claude",
+                prompt_file=tmp / "prompt.md",
+                mode="implement",
+                max_turns=3,
+                cwd=tmp,
+                last_message_path=tmp / "claude.last-message.md",
+                read_dirs=(tmp / "exec",),
+            )
+            assert command[command.index("--add-dir") + 1] == str(tmp / "exec")
+            completed = mock.Mock(returncode=0, stdout="done", stderr="")
+            (tmp / "dispatch" / "x").mkdir(parents=True)
+            with mock.patch("book_dev_ai_dispatch.subprocess.run", return_value=completed) as run:
+                result = run_provider(
+                    "claude",
+                    prompt="p",
+                    prompt_file=tmp / "prompt.md",
+                    mode="implement",
+                    max_turns=3,
+                    timeout_sec=60,
+                    dry_run=False,
+                    dispatch_dir=tmp / "dispatch" / "x",
+                    cwd=tmp / "repo",
+                )
+            assert result["status"] == "dispatched"
+            assert run.call_args.kwargs["cwd"] == str(tmp / "repo")
+
+    # Claude CLI lookup: explicit override, then the desktop app's newest build.
+    with tempfile.TemporaryDirectory() as temp_dir:
+        home = Path(temp_dir)
+        builds = home / ".claude" / "remote" / "ccd-cli"
+        builds.mkdir(parents=True)
+        for name in ("2.1.9-aaa", "2.1.295-bbb", "notes.txt"):
+            (builds / name).write_text("#!/bin/sh\n")
+            (builds / name).chmod(0o755)
+        env = {key: value for key, value in os.environ.items() if key != "BOOK_DEV_CLAUDE_CLI"}
+        with mock.patch.dict(os.environ, env, clear=True), mock.patch(
+            "book_dev_ai_dispatch.shutil.which", return_value=None
+        ), mock.patch("book_dev_ai_dispatch.Path.home", return_value=home):
+            assert resolve_claude_cmd() == [str(builds / "2.1.295-bbb")]
+            os.environ["BOOK_DEV_CLAUDE_CLI"] = str(builds / "2.1.9-aaa")
+            assert resolve_claude_cmd() == [str(builds / "2.1.9-aaa")]
+            os.environ["BOOK_DEV_CLAUDE_CLI"] = str(home / "missing")
+            assert resolve_claude_cmd() is None
 
     print("Book Dev AI dispatch tests passed")
     return 0

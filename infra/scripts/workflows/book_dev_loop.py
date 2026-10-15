@@ -107,7 +107,9 @@ def inspect_repository(repo: Path, root: Path) -> dict[str, Any]:
     """Collect bounded, read-only repository evidence."""
 
     ref = _repo_ref(repo, root)
-    relative = repo.relative_to(PROJECT_ROOT).as_posix()
+    # Clones sit beside this checkout, so the path may climb out of PROJECT_ROOT;
+    # consumers resolve it as PROJECT_ROOT / path.
+    relative = Path(os.path.relpath(repo, PROJECT_ROOT)).as_posix()
     status_code, status_text, status_error = _run_git(
         repo, ["status", "--porcelain=v1", "--untracked-files=normal"]
     )
