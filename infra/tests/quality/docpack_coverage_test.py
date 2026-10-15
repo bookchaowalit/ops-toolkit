@@ -96,7 +96,12 @@ class DocpackCoverageTest(unittest.TestCase):
 
     def cli(self, *args: str) -> tuple[int, str]:
         output = io.StringIO()
-        with patch.object(docpack_coverage, "run", side_effect=lambda **kw: ORIGINAL_RUN(self.root, **kw)):
+        # main() skips unless the registry folder exists; point it at the fixture so the
+        # result does not depend on the caller's SOLO_REGISTRY_DIR.
+        catalog = self.root / "repository-catalog"
+        with patch.object(docpack_coverage, "run", side_effect=lambda **kw: ORIGINAL_RUN(self.root, **kw)), \
+                patch.object(docpack_coverage, "REGISTRY_DIR", catalog), \
+                patch.object(docpack_coverage, "registry_path", lambda relative: catalog / relative):
             with contextlib.redirect_stdout(output):
                 status = docpack_coverage.main(list(args))
         return status, output.getvalue()

@@ -137,7 +137,15 @@ def sibling_repo_root(repo: str) -> Path:
     """Checkout root of `bookchaowalit/<repo>` (override: SOLO_<NAME>_ROOT, default ../<repo>)."""
     name = repo.split("/")[-1]
     override = os.environ.get(f"SOLO_{legacy_env_name(name)}_ROOT")
-    return Path(override).expanduser() if override else SIBLINGS_PARENT / name
+    if override:
+        return Path(override).expanduser()
+    default = SIBLINGS_PARENT / name
+    if default.exists() or SIBLINGS_PARENT.name not in ("public", "private"):
+        return default
+    # Hub layout github/<owner>/<visibility>/<repo>: a private sibling of a
+    # public checkout (or the reverse) sits in the other visibility folder.
+    other = SIBLINGS_PARENT.parent / ("private" if SIBLINGS_PARENT.name == "public" else "public") / name
+    return other if other.exists() else default
 
 
 # Workspace documentation (projects/, knowledge/, roles/, learning/, quiz/, goals/ ...)
