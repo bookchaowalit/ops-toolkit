@@ -1,0 +1,12 @@
+# Reviewed Trivy exceptions. Every entry needs a statement explaining why it is accepted.
+misconfigurations:
+  - id: DS-0002
+    paths:
+      - "infra/ci-runner/Dockerfile"
+    statement: >-
+      Accepted risk, not changed in the CI rollout. The Railway self-hosted runner image extends
+      myoung34/github-runner, whose entrypoint registers the runner and runs jobs as root by
+      default; jobs also need root for `start-postgres` (pg_ctlcluster). The container is
+      single-tenant (one repo-scoped runner per private repo, no Docker socket). Moving to a
+      non-root runner (RUN_AS_ROOT=false plus a sudo rule for start-postgres) is a separate,
+      owner-approved image change.
