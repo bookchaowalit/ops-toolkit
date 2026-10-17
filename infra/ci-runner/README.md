@@ -34,3 +34,16 @@ service with `RUNNER_SCOPE=org` and `ORG_NAME`.
 | Service | Scope | Target |
 | --- | --- | --- |
 | `runner-sales-crm` | repo | `bookchaowalit/sales-crm` |
+| `runner-book-storybook` | repo | `bookchaowalit/book-storybook` |
+| `runner-azure-migration-design` | repo | `bookchaowalit/azure-migration-design` |
+| `runner-marketing-linerichmenu-web` | repo | `bookchaowalit-website/marketing-linerichmenu-web` |
+
+`bookchaowalit-website` has one private repository, so it uses a repo-scoped runner: an org-scoped
+registration token needs the `admin:org` scope, which the local `gh` token does not have.
+
+Not on Railway yet:
+
+- `Happy-Teeth/*`: the account is a member without admin, so it cannot register runners there; an
+  org owner must create the registration token. These repos still use the org's own hosted minutes.
+- Jobs that need Docker (`services:`, `docker build`) or the Android SDK are not supported by this
+  image as is.
