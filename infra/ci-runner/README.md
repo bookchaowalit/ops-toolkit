@@ -34,3 +34,22 @@ service with `RUNNER_SCOPE=org` and `ORG_NAME`.
 | Service | Scope | Target |
 | --- | --- | --- |
 | `runner-sales-crm` | repo | `bookchaowalit/sales-crm` |
+| `runner-book-storybook` | repo | `bookchaowalit/book-storybook` |
+| `runner-azure-migration-design` | repo | `bookchaowalit/azure-migration-design` |
+| `runner-marketing-linerichmenu-web` | repo | `bookchaowalit-website/marketing-linerichmenu-web` |
+
+`bookchaowalit-website` has one private repository, so it uses a repo-scoped runner: an org-scoped
+registration token needs the `admin:org` scope, which the local `gh` token does not have.
+
+## Client repositories: no CI
+
+Client repositories do not get CI/CD or a runner (owner decision, 2026-10-17): they are deployed
+on the PaaS or our own servers. Their workflows are disabled with `gh workflow disable`, not
+deleted, so they can be turned back on with `gh workflow enable`. Disabled on 2026-10-17:
+
+- `bookchaowalit/{ev3-web, ev3-api, ev3-mobile, findfox-frontend, findfox-backend, findfox-mobile,
+  tma-moldflow-api, tma-moldflow-web, a2n-web, a2n-api}`
+
+`Happy-Teeth/*` are client repositories as well and get no runner. Their workflows were left enabled
+because `happy-teeth-line` runs the production deploy and the hourly toothbrush-reminder cron, and
+these jobs use the org's own hosted minutes.
