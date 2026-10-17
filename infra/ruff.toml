@@ -1,0 +1,9 @@
+# Ruff for the infra/ Python scripts and tests (DevSecOps Phase 1 CI).
+# The code predates any linter: Ruff's classic defaults (E4, E7, E9, F) report ~340 findings
+# (unused imports in dynamically loaded scripts, one-line statements, ambiguous names) that need
+# behaviour review. Until that clean-up, enforce only the rules that catch real breakage:
+# syntax errors, invalid comparisons/statements and undefined names.
+target-version = "py310"
+
+[lint]
+select = ["E9", "F63", "F7", "F82"]
