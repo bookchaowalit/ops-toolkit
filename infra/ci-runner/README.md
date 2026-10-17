@@ -41,9 +41,15 @@ service with `RUNNER_SCOPE=org` and `ORG_NAME`.
 `bookchaowalit-website` has one private repository, so it uses a repo-scoped runner: an org-scoped
 registration token needs the `admin:org` scope, which the local `gh` token does not have.
 
-Not on Railway yet:
+## Client repositories: no CI
 
-- `Happy-Teeth/*`: the account is a member without admin, so it cannot register runners there; an
-  org owner must create the registration token. These repos still use the org's own hosted minutes.
-- Jobs that need Docker (`services:`, `docker build`) or the Android SDK are not supported by this
-  image as is.
+Client repositories do not get CI/CD or a runner (owner decision, 2026-10-17): they are deployed
+on the PaaS or our own servers. Their workflows are disabled with `gh workflow disable`, not
+deleted, so they can be turned back on with `gh workflow enable`. Disabled on 2026-10-17:
+
+- `bookchaowalit/{ev3-web, ev3-api, ev3-mobile, findfox-frontend, findfox-backend, findfox-mobile,
+  tma-moldflow-api, tma-moldflow-web, a2n-web, a2n-api}`
+
+`Happy-Teeth/*` are client repositories as well and get no runner. Their workflows were left enabled
+because `happy-teeth-line` runs the production deploy and the hourly toothbrush-reminder cron, and
+these jobs use the org's own hosted minutes.
