@@ -19,6 +19,12 @@ token (`RUNNER_TOKEN`) created with `gh api -X POST repos/<owner>/<repo>/actions
 volume mounted at `/runner-config` (`CONFIGURED_ACTIONS_RUNNER_FILES_DIR`), so restarts reuse
 the registration. If the volume is lost, create a new registration token and redeploy.
 
+Do not set `EPHEMERAL` at all: the image treats any non-empty value, including `false`, as
+ephemeral, so the runner deregisters after one job. Set `DISABLE_AUTOMATIC_DEREGISTRATION=true`.
+If GitHub deletes the registration (the runner was offline too long), the volume holds stale
+config and the runner logs "registration has been deleted": replace the volume with an empty one,
+set a fresh `RUNNER_TOKEN`, and redeploy.
+
 Personal-account repositories (`bookchaowalit/*`) cannot share a runner; each needs its own
 service with `RUNNER_SCOPE=repo` and `REPO_URL`. Organization repositories can share one
 service with `RUNNER_SCOPE=org` and `ORG_NAME`.
