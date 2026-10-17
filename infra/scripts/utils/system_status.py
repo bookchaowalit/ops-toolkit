@@ -145,7 +145,9 @@ def quick_status():
     tasks = task_summary()
 
     received_fallback = f"฿{rev['received']:,.0f}"
-    print(f'🏰 Status: {rev.get("received_display", received_fallback)} received | {goals["tasks_done"]}/{goals["tasks_total"]} tasks | {"n/a" if habits.get("unavailable") else f"{habits['logged_today']}/{habits['active']}"} habits today | {tasks["done"]}/{tasks["total"]} tasks done')
+    # Built separately: nesting it in the f-string below reuses the outer quote (Python 3.12+ only).
+    habits_display = "n/a" if habits.get("unavailable") else f"{habits['logged_today']}/{habits['active']}"
+    print(f'🏰 Status: {rev.get("received_display", received_fallback)} received | {goals["tasks_done"]}/{goals["tasks_total"]} tasks | {habits_display} habits today | {tasks["done"]}/{tasks["total"]} tasks done')
 
 
 def json_status():
